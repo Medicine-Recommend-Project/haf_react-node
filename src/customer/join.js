@@ -1,9 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import axios from "axios";
 
-function join(){
-    //https://xn--xy1bk56a.run/axios/guide/form-format.html#%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80
-    const qs = require('qs');
+function Join(){
 
     const[check, setCheck] = useState({idCheck : "false", pwCheck : "false"});
     const[checkRs, setCheckRs] = useState("");
@@ -55,71 +53,59 @@ function join(){
 
     //const{cId, cName, cPw, cPh, cEmail, cAddress} = inputs;
 
-    let checkNothing = () => {
+    let validationCheck = () => {
+        let vc = 3;
+
         for(let i = 0; i < 7 ; i++){
             // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
             if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
                 alert('빈칸을 채워주세요!');
+                vc += 1;
                 break;
             }//end of if()
         }//end of for()
-    }; //end of checkNothing()
+        vc -= 1;
+        if(check.idCheck === "false" ? alert('아이디 중복 검사를 완료해주세요.') : vc -= 1 );
+        if(check.pwCheck === "false" ? alert('비밀번호가 일치하지 않습니다.') : vc -= 1 );
 
-    let checkId = () => {
+        return vc;
+    }; //end of validationCheck()
 
-        axios.post('http://localhost:8008/customer/checkId',
-            JSON.stringify({cId: inputs.cId}),
-            {headers: {
-                    "Content-Type": 'application/json;charset=utf-8',
-                    withCredentials: true
-                },
-            })
-            .then(response => {
-                console.log('checkId 응답 성공');
-                console.log(response.data);
 
-                if(response.data > 0){
-                    setCheck({
-                        ...check,
-                        idCheck: "false"
-                    });
-                    setCheckRs('이미 사용중인 아이디입니다!');
-                    alert("된건가");
-                }else{
+    let _checkId = async() => {
+        let url = '/customer/checkId';
+        let data = {"cId": inputs.cId};
+
+        fetch(url,{
+            method:"post",
+            headers: { "Content-Type":  "application/json" },
+            body: JSON.stringify(data),	// json화 해버리기
+        })
+            .then(res => res.json())
+            .then(json => {
+                if(json === 0){
                     setCheck({
                         ...check,
                         idCheck: "true"
                     });
                     setCheckRs('사용가능한 아이디입니다!');
+                }else{
+                    setCheck({
+                        ...check,
+                        idCheck: "false"
+                    });
+                    setCheckRs('이미 사용중인 아이디입니다!');
                 }
             })
             .catch(error => {
-                    if (error.response) {
-                        // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                        console.log('error.response');
-                        console.log(error.response.data);
-                        console.log(error.response.status);
-                        console.log(error.response.headers);
-                    }
-                    else if (error.request) {
-                        // 요청이 이루어 졌으나 응답을 받지 못했습니다.
-                        // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
-                        // Node.js의 http.ClientRequest 인스턴스입니다.
-                        console.log('error.request');
-                        console.log(error.request);
-                    }
-                    else {
-                        // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
-                        console.log('Error', error.message);
-                    }
                     console.log(error.config);
                 }
             );
+    }//end of _checkId()
 
-    };//end of checkId()
 
     let submitForm = async () => {
-        const url = 'http://localhost:8008/customer/join';
+        const url = '/customer/join';
         const axiosConfig = {
             headers: {
                 // "Content-Type": "application/json"
@@ -140,7 +126,6 @@ function join(){
                 console.log(res);
                 console.log(res.data);
             }).catch(e => {
-            console.log('여기서도 안되네~~');
             console.log(e);
         })
     }
@@ -150,14 +135,7 @@ function join(){
             <h3>회원 가입</h3>
             <form onSubmit={(e)=>{
                 e.preventDefault();
-                checkNothing();
-                if(check.idCheck === "false") {
-                    alert('아이디 중복 검사를 완료해주세요.');
-                }
-                if (check.pwCheck === "false") {
-                    alert('비밀번호가 일치하지 않습니다.');
-                }
-                submitForm();
+                if(validationCheck() > 0 ? console.log('유효성 검사 실패') : submitForm()) ;
             }}>
                 <table>
                     <tr>
@@ -165,7 +143,7 @@ function join(){
                         <td><input type="text" name="cId" placeholder="아이디 입력" onChange={onTyping} value={inputs.cId}/></td>
                         <td><button onClick={(e)=>{
                             e.preventDefault();
-                            checkId();
+                            _checkId();
                         }}>중복검사</button></td>
                         <td>{checkRs}</td>
                     </tr>
@@ -202,4 +180,4 @@ function join(){
     );
 }
 
-export default join;
+export default Join;

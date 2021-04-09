@@ -32,7 +32,7 @@ router.get("/hello", (req,res)=>{
                 res.send(data);
 
             } else {
-                console.log(err);
+                logger.error(err);
                 res.send(err);
             }
         });

@@ -1,26 +1,29 @@
 const express = require('express');
 const app = express();
-// const cors = require('cors');
 const bodyParser = require('body-parser');
 const port =process.env.PORT || 3001;
 const apiRoute = require('./routes/apiRoute');
+const customerRoute = require('.././servers/routes/customerRoute');
+// 로거 출력용 logger, morgan
+global.logger || (global.logger = require('./config/logger'));  // → 전역에서 사용
+const morganMiddleware = require('./config/morganMiddleware');
 
+//console.log 대신 logger.info() 사용
+app.use(morganMiddleware);
 
-//  setupProxy.js파일에 proxy설정 해서 이건 안해도 됨( 외부에서 접근가능하게 하려면 주석치지 마시고요~)
-// app.use(cors());
+// 출처: https://3dmpengines.tistory.com/1881
+//post 방식 일경우 begin
+//post 의 방식은 url 에 추가하는 방식이 아니고 body 라는 곳에 추가하여 전송하는 방식
+app.use(bodyParser.urlencoded({ extended: false }));            // post 방식 세팅
+app.use(bodyParser.json());                                     // json 사용 하는 경우의 세팅
+//post 방식 일경우 end
 
-app.use(bodyParser.json());
-
-//서버쪽에 더많은 api를 만들기위해 server.js 에 route 를 적용합니다.
-/*
-* app.use('/api/hello', (req, res) ) 뭐 이런거 여러개 만들기보다
-* api로 들어오는 경로는 apiRoute라는 파일에서
-* myPage로 들어오는 경로는 myPageRoute파일 이런식으로
-* 관리하면 훨씬 깔끔할 듯
-* */
 
 app.use('/api', apiRoute);
 
+app.use('/customer', customerRoute);
+
+
 app.listen(port, () => {
-    console.log(`SERVER ON ... Express is running on ${port}`);
-})
+    logger.debug(`SERVER ON ... Express is running on http:localhost:${port}`);
+});
