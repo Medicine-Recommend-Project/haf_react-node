@@ -5,7 +5,6 @@ const db = require('../../servers/config/db');
 router.post("/checkId", (req,res)=>{
 
     let cId = req.body.cId;     //req는 데이터를 받은건데 join.js에서 cID라는 key의 data를 보내줌
-    logger.info('check id 값: ' + cId);
 
     let sqlQuery = "SELECT COUNT(*) FROM haf_db.customer WHERE cid = ?"
     db.query(sqlQuery,[cId], (err, row) => {

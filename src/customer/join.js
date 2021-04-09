@@ -98,7 +98,7 @@ function Join(){
                 }
             })
             .catch(error => {
-                    console.log(error.config);
+                    console.log(error);
                 }
             );
     }//end of _checkId()
@@ -143,7 +143,10 @@ function Join(){
                         <td><input type="text" name="cId" placeholder="아이디 입력" onChange={onTyping} value={inputs.cId}/></td>
                         <td><button onClick={(e)=>{
                             e.preventDefault();
-                            _checkId();
+                            if(inputs.cId === null || inputs.cId === ""){
+                                setCheckRs('아이디를 입력하세요.');
+                            }else{ _checkId(); }
+
                         }}>중복검사</button></td>
                         <td>{checkRs}</td>
                     </tr>
