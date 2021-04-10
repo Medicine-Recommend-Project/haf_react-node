@@ -3,20 +3,24 @@ import axios from "axios";
 
 function Join(){
 
+    // id 중복 체크 검사여부 및 비밀번호&비밀번호 확인 일치 여부
     const[check, setCheck] = useState({idCheck : "false", pwCheck : "false"});
+    // 위의 check 결과를 유동적으로 view에 띄워주기 위함
     const[checkRs, setCheckRs] = useState("");
-
-    //input들을 관리하기 위함
+    // input들을 관리하기 위함
     const [inputs, setInputs] = useState({
-        cId: "",
-        cName: "",
-        cPw: "",
-        pwCheck: "",
-        cPh: "",
-        cEmail: "",
-        cAddress: ""
+        cId: "", name: "", cPw: "", pwCheck: "", ph: "", email: "", address: ""
     });
 
+    // 통신 시 header에 json타입으로 config 지정할 때 사용
+    let jsonHeaderConfig = {
+        headers: { "Content-Type": "application/json" }
+    }
+    // 정규식
+    const eng = /^[a-z|A-Z]*$/;
+    const num = /^\d*$/;
+
+    //input창에 입력을 하면 state에 값을 저장
     let onTyping = (e)=>{
         //e.target하면 해당 함수가 실행 된 tag가 선택됨. 그 안에서 name과 value값을 가져와 저장하는 것
         setInputs({
@@ -51,12 +55,11 @@ function Join(){
         }//end of outer if()
     }; //end of onTyping()
 
-    //const{cId, cName, cPw, cPh, cEmail, cAddress} = inputs;
-
+    //유효성(빈 칸, 정규 표현식 만족) 체크
     let validationCheck = () => {
         let vc = 3;
 
-        for(let i = 0; i < 7 ; i++){
+        for(let i in Object.keys(inputs)){
             // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
             if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
                 alert('빈칸을 채워주세요!');
@@ -71,14 +74,24 @@ function Join(){
         return vc;
     }; //end of validationCheck()
 
+    //아이디 중복 검사
+    let checkId = async() => {
 
-    let _checkId = async() => {
+        if(inputs.cId === null || inputs.cId === ""){
+            setCheckRs('아이디를 입력하세요.');
+            return;
+        }else if(inputs.cId.length < 6 ){
+            setCheckRs('아이디는 영문/숫자 포함 5자리 이상이여야합니다.');
+            return;
+        }
+
+
         let url = '/customer/checkId';
         let data = {"cId": inputs.cId};
 
         fetch(url,{
             method:"post",
-            headers: { "Content-Type":  "application/json" },
+            jsonHeaderConfig,
             body: JSON.stringify(data),	// json화 해버리기
         })
             .then(res => res.json())
@@ -106,28 +119,21 @@ function Join(){
 
     let submitForm = async () => {
         const url = '/customer/join';
-        const axiosConfig = {
-            headers: {
-                // "Content-Type": "application/json"
-                'Content-Type': 'multipart/form-data',
-                withCredentials: true
-            }
-        }
-        const formData = new FormData();
+        let data = {};
 
-        for(let i = 0; i < 7 ; i++){
-            // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]);
-            formData.append(Object.keys(inputs)[i],inputs[Object.keys(inputs)[i]]);
+        //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
+        for(let i in Object.keys(inputs)){
+            data[Object.keys(inputs)[i]] = inputs[Object.keys(inputs)[i]];
         }//end of for()
 
-        axios.post(url, formData, axiosConfig)
+        axios.post(url, JSON.stringify(data), jsonHeaderConfig)
             .then(res => {
-                console.log('통신 성공');
-                console.log(res);
                 console.log(res.data);
+                if(res.data > 0 ? alert('가입 성공') : alert('가입에 실패하였습니다. 다시 시도해주세요.'));
             }).catch(e => {
             console.log(e);
-        })
+            alert('가입에 실패하였습니다. 다시 시도해주세요.');
+        });
     }
 
     return(
@@ -137,45 +143,28 @@ function Join(){
                 e.preventDefault();
                 if(validationCheck() > 0 ? console.log('유효성 검사 실패') : submitForm()) ;
             }}>
-                <table>
-                    <tr>
-                        <td>아이디</td>
-                        <td><input type="text" name="cId" placeholder="아이디 입력" onChange={onTyping} value={inputs.cId}/></td>
-                        <td><button onClick={(e)=>{
-                            e.preventDefault();
-                            if(inputs.cId === null || inputs.cId === ""){
-                                setCheckRs('아이디를 입력하세요.');
-                            }else{ _checkId(); }
-
-                        }}>중복검사</button></td>
-                        <td>{checkRs}</td>
-                    </tr>
-                    <tr>
-                        <td>이름</td>
-                        <td><input type="text" name="cName" onChange={onTyping} value={inputs.cName}/></td>
-                    </tr>
-                    <tr>
-                        <td>비밀번호</td>
-                        <td><input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/></td>
-                    </tr>
-                    <tr>
-                        <td>비밀번호 확인</td>
-                        <td><input type="password" name="pwCheck" placeholder="비밀번호 재입력" onChange={ onTyping } value={inputs.pwCheck}/></td>
-                    </tr>
-                    <tr>
-                        <td>핸드폰</td>
-                        <td><input type="text" name="cPh" placeholder="숫자만 입력하세요"onChange={onTyping} value={inputs.cPh}/></td>
-                    </tr>
-                    <tr>
-                        <td>이메일 주소</td>
-                        <td><input type="mail" name="cEmail" placeholder="example@mail.com"onChange={onTyping} value={inputs.cEmail}/></td>
-                    </tr>
-                    <tr>
-                        <td>주소</td>
-                        <td><input type="text" name="cAddress" placeholder="추 후 API적용 예정"onChange={onTyping} value={inputs.cAddress}/></td>
-                    </tr>
-                    <tr><button type="submit" onSubmit={(e)=>{e.preventDefault();}}>가입하기</button></tr>
-                </table>
+                아이디
+                <input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
+                <button onClick={(e)=>{
+                    e.preventDefault();
+                    checkId();
+                }}>중복검사</button>
+                {checkRs}
+                <br/>
+                이름
+                <input type="text" name="name" onChange={onTyping} value={inputs.name}/><br/>
+                비밀번호
+                <input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/><br/>
+                비밀번호 확인
+                <input type="password" name="pwCheck" placeholder="비밀번호 재입력" onChange={ onTyping } value={inputs.pwCheck}/><br/>
+                핸드폰
+                <input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={inputs.ph}/><br/>
+                이메일 주소
+                <input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/><br/>
+                주소
+                <input type="text" name="address" placeholder="추 후 API적용 예정"onChange={onTyping} value={inputs.address}/><br/>
+                <button type="submit" onSubmit={(e)=>{e.preventDefault();}}>가입하기</button>
+                <br/>
                 아이디 체크 : {check.idCheck} <br/>
                 비번 체크 : {check.pwCheck}
             </form>

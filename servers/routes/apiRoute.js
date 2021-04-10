@@ -27,7 +27,7 @@ router.get('/group', (req, res) => {
 
 router.get("/hello", (req,res)=>{
 
-    db.query("SELECT * FROM haf_db.product", (err, data) => {
+    db.query("SELECT * FROM product", (err, data) => {
             if(!err) {
                 res.send(data);
 

@@ -3,6 +3,10 @@
 ### IntelliJ IDEA ###
 .idea
 
+#log
+/logs
+./servers/logs
+
 # dependencies
 /node_modules
 /.pnp

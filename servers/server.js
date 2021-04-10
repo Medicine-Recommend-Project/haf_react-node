@@ -8,7 +8,6 @@ const customerRoute = require('.././servers/routes/customerRoute');
 global.logger || (global.logger = require('./config/logger'));  // → 전역에서 사용
 const morganMiddleware = require('./config/morganMiddleware');
 
-//console.log 대신 logger.info() 사용
 app.use(morganMiddleware);
 
 // 출처: https://3dmpengines.tistory.com/1881
