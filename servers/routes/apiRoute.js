@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
 
+let sql;
+
 /**
  * 여기서 /api 로오는것은 route 에서 처리하도록 하고
  * apiRoute.js 에서 router.get('/',...)  으로 되어있죠.
@@ -27,10 +29,10 @@ router.get('/group', (req, res) => {
 
 router.get("/hello", (req,res)=>{
 
-    db.query("SELECT * FROM product", (err, data) => {
+    sql = db.query("SELECT * FROM product", (err, data) => {
             if(!err) {
+                logger.debug(sql.sql);
                 res.send(data);
-
             } else {
                 logger.error(err);
                 res.send(err);
@@ -40,5 +42,9 @@ router.get("/hello", (req,res)=>{
 
 });
 
+//console 창에 결과 출력하게 해주는 것
+let result = (result) =>{
+    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+}
 
 module.exports = router;

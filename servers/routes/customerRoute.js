@@ -7,7 +7,7 @@ let data, sqlQuery, sql;
 // 아이디 중복 체크
 router.post("/checkId", (req,res)=>{
     sqlQuery = " SELECT COUNT(*) FROM customer WHERE cid = ? ";
-    data = [req.body.cId];     //req는 데이터를 받은건데 join.js에서 cID라는 key의 data를 보내줌
+    data = req.body.cId;     //req는 데이터를 받은건데 join.js에서 cID라는 key의 data를 보내줌
 
     sql = db.query(sqlQuery, data, (err, row) => {
             if(!err) {
@@ -23,9 +23,9 @@ router.post("/checkId", (req,res)=>{
 
 // 회원가입
 router.post('/join', (req, res) => {
-    sqlQuery = " INSERT INTO customer(cid, name, cpw, ph, email, address) VALUES (?, ?, ?, ?, ?, ?) ";
+    sqlQuery = " INSERT INTO customer(cid, name, cpw, ph, email, address, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?) ";
     data = [
-        req.body.cId, req.body.name, req.body.cPw, req.body.ph, req.body.email, req.body.address
+        req.body.cId, req.body.name, req.body.cPw, req.body.ph, req.body.email, req.body.address, req.body.detailAddress
     ];
 
     sql = db.query(sqlQuery, data, (err, row) => {
