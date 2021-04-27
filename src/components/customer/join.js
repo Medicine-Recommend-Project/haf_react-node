@@ -87,7 +87,7 @@ function Join({history}){
                 break;
 
             default: return;    //위 case의 이름에 해당하는 애들이 아니면 return;
-        }
+        }//end of switch
         // console.log(e.target.name," : ", e.target.value);
 
     }; //end of onTyping()
@@ -153,13 +153,13 @@ function Join({history}){
 
     //회원 가입 폼 제출
     let submitForm = async () => {
-        const url = '/customer/join';
+        let url = '/customer/join' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
         for(let i in Object.keys(inputs)){
             data[Object.keys(inputs)[i]] = inputs[Object.keys(inputs)[i]];
-        }//end of for()
+        }//end of for
 
         axios.post(url, JSON.stringify(data), { headers: {"Content-Type": "application/json"} })
             .then(res => {
@@ -173,7 +173,7 @@ function Join({history}){
             }).catch(e => {
                 console.log(e);
                 alert('가입에 실패하였습니다. 다시 시도해주세요.');
-        });
+        });//end of axios.post();
     }//end of submitForm()
 
     return(

@@ -1,6 +1,6 @@
 const winston = require('winston');
 require('winston-daily-rotate-file');
-const logDir = '../../servers/logs';
+const logDir = './server/logs';
 
 // 참고 : https://velog.io/@denmark-banana/%EA%B0%84%EB%8B%A8%ED%95%9C-Node.js-API-Server-%EB%A7%8C%EB%93%A4%EA%B8%B0-1
 // 참고2 : https://velog.io/@ash/Node.js-%EC%84%9C%EB%B2%84%EC%97%90-logging-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-winston-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0
