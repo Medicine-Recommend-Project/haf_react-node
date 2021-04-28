@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-const passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
+const passport = require('passport');
+const { isLogin, isNotLogin } = require('./passportMw');
+
 let data, sqlQuery, sql;
 
 // 아이디 중복 체크
@@ -23,7 +24,7 @@ router.post("/checkId", (req,res)=>{
 });
 
 // 회원가입
-router.post('/join', (req, res) => {
+router.post('/join', isNotLogin, (req, res) => {
     sqlQuery = " INSERT INTO customer(cid, name, cpw, ph, email, zonecode, address, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
     data = [
         req.body.cId, req.body.name, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
@@ -40,11 +41,38 @@ router.post('/join', (req, res) => {
     })
 });
 
-// mypage 접속 시 해당하는 유저 정보 가져감
-router.post('/userinfo',(req, res)=>{
-    sqlQuery = "SELECT * FROM customer WHERE cid = ? " ;
-    data = req.body.cid ;
+// 로그인
+router.post('/login', (req, res, next)=>{
+    // logger.info(' login router로 잘 왔음');
+    passport.authenticate('local', (err, user, info)=>{
+        if(err){ return next(err); }
+        if(user){   // 로그인 성공
+            // logger.info('req.user : ' + JSON.stringify(user));
+            req.logIn(user, err =>{ // customCallback 사용시 req.logIn()메서드 필수
+                if(err){ return next(err); }
+                logger.info('req.login : ' + JSON.stringify(user))
+                return res.json('true');
+            }); // end of req.login()
+        } else{
+            logger.error('login 실패!!!');
+            return res.json('false');
+        }
+    })(req, res, next);  // 미들웨어 내 미들웨어에는 (req, res, next) 붙여줘야함
+    //end of authenticate();
+});
 
+// 로그아웃
+router.get('/logout', (req, res)=>{
+    req.logout();
+    // res.redirect('/');
+    req.session.destroy();
+    res.send('true')
+});
+
+// mypage 접속 시 해당하는 유저 정보 가져감
+router.post('/userinfo', isLogin,(req, res)=>{
+    sqlQuery = "SELECT * FROM customer WHERE cid = ? " ;
+    data = req.user.cid ;
     sql = db.query(sqlQuery, data, (err, row)=>{
         if(err) {
             logger.error(err);

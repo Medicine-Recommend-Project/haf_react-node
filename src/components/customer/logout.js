@@ -3,7 +3,7 @@ import React from "react";
 function Logout({history}) {
 
     let onLogout = async()=>{
-        let url = '/user/logout';
+        let url = '/customer/logout';
         fetch(url,{ method:"get",})
             .then(res => {
                 alert('로그아웃 성공');

@@ -1,37 +1,39 @@
+
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import ChangeCpw from "./changeCpw";
 
-function Mypage({history}) {
+function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오는 애라... history를 따로 선언해줘야 먹히네
+    //정규식...
     const regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g;
     const regNumOnly = /[^0-9]/g;   //숫자가 아닌 것
     const regPh1 = /^(\d{3})(\d)/;
     const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
-    const [getCid, setCid] = useState("")
     const [user, setUser] = useState({
         cid: "", name: "", ph: "", email: "", zonecode:"", address: "", detailAddress: ""
     });
-    const[checkRs, setCheckRs] = useState("");
+    const [checkRs, setCheckRs] = useState("");
     const [open, setOpen] = useState({ daum: false, changeCpw: false });    //다음 주소api를 팝업처럼 관리하기 위함
+    //팝업창 오픈 관리
     useEffect( ()=>{
         setOpen({ daum: false, changeCpw: false });
     },[]);
+
+    //로그인 된 아이디로 유저정보 검색해오기
     useEffect( ()=>{
-        axios.get('/user')
-            .then(res => { setCid(res.data.cid); })
+        let url = '/customer/userinfo';
+        axios.post(url)
+            .then(res => {
+                if(res.data === 'ppfalse'){
+                    alert('로그인이 필요한 서비스입니다.');
+                    history.push('/customer/login');
+                }
+                setUser(res.data);
+            })
             .catch(err => console.log(err))
     },[]);
-
-    useEffect( ()=>{ _searchUser() },[getCid]);
-
-    let _searchUser = ()=>{
-        let data = {"cid" : getCid};
-        axios.post('/customer/userinfo', data)
-            .then(res => { setUser(res.data); })
-            .catch(err => console.log(err))
-    }
 
     let onTyping = (e)=> {
         //e.target하면 해당 함수가 실행 된 tag가 선택됨. 그 안에서 name과 value값을 가져와 저장하는 것
@@ -64,7 +66,7 @@ function Mypage({history}) {
     }
     //비밀번호 변경 완료한 후
     let cpwHandler = (rs) =>{
-        console.log('비번 핸들러 rs : ' , rs);
+        // console.log('비번 핸들러 rs : ' , rs);
         if(rs === "close"){ setOpen({...open, changeCpw: false}); }
     }
 

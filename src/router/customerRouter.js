@@ -1,11 +1,14 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom"
+import axios from "axios";
+/************Routes************/
 import Join from "../components/customer/join";
 import Login from "../components/customer/login";
 import Logout from "../components/customer/logout";
 import Mypage from "../components/customer/mypage";
 
 function Customer({ match }) {
+
     return (
         <Router>
             <header>

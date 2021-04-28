@@ -5,10 +5,11 @@
 
 #log
 /logs
-./servers/logs
+servers/logs
+
 
 #db
-./servers/config/db.js
+servers/config/db.js
 
 # dependencies
 /node_modules

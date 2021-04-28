@@ -1,21 +1,22 @@
 import './App.css';
 import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
+import axios from "axios";
+import {useContext, useEffect, useState} from "react";
 /**********Route import**********/
 import Customer from './router/customerRouter';
-import {useEffect, useState} from "react";
-import axios from "axios";
+import Board from "./router/boardRouter";
 
 function App(){
     //로그인 시 session관리 위해 정보 저장
-    const [user, setUser] = useState({cid:"", grade:""});
+    const [user, setUser] = useState({cid:"", grade:"", name:""});
     useEffect(async() => {
-        axios.get('/user')
+        axios.get('/')
             .then(res => {
-                setUser({...user, cid: res.data.cid, grade: res.data.grade});
+                setUser({...user, cid: res.data.cid, grade: res.data.grade, name: res.data.name});
             })
             .catch(err => console.log(err))
     },[])
-    
+
     return(
         <div className="App">
             <Router>
@@ -27,11 +28,15 @@ function App(){
                     <Link to="/customer">
                         <button>customer</button>
                     </Link>
+                    <Link to="/board">
+                        <button>board</button>
+                    </Link>
                 </header>
                 <hr />
-                지금 로그인 정보 >> ID : {user.cid} , GRADE : {user.grade}
+                지금 로그인 정보 >> ID : {user.cid} , GRADE : {user.grade}, NAME : {user.name}
                 <Switch>
                     <Route path="/customer" component={Customer} />
+                    <Route path="/board" component={Board} />
 
                 </Switch>
             </Router>

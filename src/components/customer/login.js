@@ -2,18 +2,20 @@ import React, {useState} from "react";
 import axios from "axios";
 
 function Login({history}) {
-    const [user, setUser] = useState({
-        cId : "", cPw : ""
-        // , user_id : ""
-    });
+    const [user, setUser] = useState({ cid : "", cpw : "" });
 
     //input창 값 입력 시 useState에 반영
     let onTyping = (e)=> {
         setUser({...user, [e.target.name]: e.target.value});
     }// end of onTyping()
 
-    let loginUser = async()=> {
-        let url = '/user/login';
+    let loginUser = async(e)=> {
+        e.preventDefault();
+        if(user.cid === "" || user.cpw === "") {
+            alert('빈칸을 채워주세요');
+            return;
+        }
+        let url = '/customer/login';
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
@@ -37,9 +39,9 @@ function Login({history}) {
     return(
         <>
             <h1>Login</h1>
-            <form name="loginForm" onSubmit={(e)=>{e.preventDefault(); loginUser();}}>
-                <input type="text" name="cId" value={user.cId} onChange={onTyping} placeholder="ID"/><br/>
-                <input type="password" name="cPw" value={user.cPw} onChange={onTyping} placeholder="PW"/><br/>
+            <form name="loginForm" onSubmit={loginUser}>
+                <input type="text" name="cid" value={user.cid} onChange={onTyping} placeholder="ID"/><br/>
+                <input type="password" name="cpw" value={user.cpw} onChange={onTyping} placeholder="PW"/><br/>
                 <button type="submit">로그인</button>
             </form>
         </>
