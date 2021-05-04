@@ -9,7 +9,7 @@ import ReviewList from "../components/board/reviewList";
 function Board({ match }) {
 
     return (
-        <Router>
+        <>
             <header>
                 <Link to={`${match.path}/review`}>
                     <button>후기작성</button>
@@ -32,7 +32,7 @@ function Board({ match }) {
                 <Route exact path={`${match.path}/inquiryList`} component={InquiryList} />
             {/*    https://sustainable-dev.tistory.com/117  */}
             </Switch>
-        </Router>
+        </>
     )
 }
 

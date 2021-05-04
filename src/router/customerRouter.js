@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react"
+import React from "react"
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom"
-import axios from "axios";
 /************Routes************/
 import Join from "../components/customer/join";
 import Login from "../components/customer/login";
@@ -10,7 +9,7 @@ import Mypage from "../components/customer/mypage";
 function Customer({ match }) {
 
     return (
-        <Router>
+        <>
             <header>
                 <Link to={`${match.path}/join`}>
                     <button>Join</button>
@@ -31,7 +30,7 @@ function Customer({ match }) {
                 <Route exact path={`${match.path}/login`} component={Login} />
                 <Route exact path={`${match.path}/logout`} component={Logout} />
             </Switch>
-        </Router>
+        </>
     )
 }
 

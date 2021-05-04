@@ -25,9 +25,9 @@ router.post("/checkId", (req,res)=>{
 
 // 회원가입
 router.post('/join', isNotLogin, (req, res) => {
-    sqlQuery = " INSERT INTO customer(cid, name, cpw, ph, email, zonecode, address, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
+    sqlQuery = " INSERT INTO customer(cid, cname, cpw, ph, email, zonecode, address, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
     data = [
-        req.body.cId, req.body.name, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
+        req.body.cId, req.body.cname, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
     ];
 
     sql = db.query(sqlQuery, data, (err, row) => {
@@ -70,7 +70,7 @@ router.get('/logout', (req, res)=>{
 });
 
 // mypage 접속 시 해당하는 유저 정보 가져감
-router.post('/userinfo', isLogin,(req, res)=>{
+router.post('/userinfo', isLogin, (req, res)=>{
     sqlQuery = "SELECT * FROM customer WHERE cid = ? " ;
     data = req.user.cid ;
     sql = db.query(sqlQuery, data, (err, row)=>{
@@ -85,8 +85,8 @@ router.post('/userinfo', isLogin,(req, res)=>{
 
 // mypage에서 회원 정보 수정하기
 router.post('/mypage', (req, res)=>{
-    sqlQuery = "UPDATE customer SET name = ?, email= ?, ph= ?, zonecode= ?, address= ?, detailAddress= ? WHERE cid = ?" ;
-    data = [req.body.name, req.body.email , req.body.ph ,req.body.zonecode ,req.body.address ,req.body.detailAddress, req.body.cid];
+    sqlQuery = "UPDATE customer SET cname = ?, email= ?, ph= ?, zonecode= ?, address= ?, detailAddress= ? WHERE cid = ?" ;
+    data = [req.body.cname, req.body.email , req.body.ph ,req.body.zonecode ,req.body.address ,req.body.detailAddress, req.body.cid];
 
     sql = db.query(sqlQuery, data, (err, row)=>{
         result(row.affectedRows);
