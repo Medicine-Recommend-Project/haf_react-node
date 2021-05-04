@@ -14,11 +14,11 @@ module.exports = () => {
         passwordField: 'cpw',
         session: true, // 세션에 저장 여부
     },(username, password, done) => {
-        sqlQuery = "SELECT cid, grade, name FROM customer WHERE cid = ? AND cpw = ? "; //비밀번호 틀렸다고 경고창 띄울거면 cid =?만 하고 밑에서 결과값이랑 위에서 받은 password랑 비교하면 됨
+        sqlQuery = "SELECT cid, grade, cname FROM customer WHERE cid = ? AND cpw = ? "; //비밀번호 틀렸다고 경고창 띄울거면 cid =?만 하고 밑에서 결과값이랑 위에서 받은 password랑 비교하면 됨
         data = [username, password];
         sql = db.query(sqlQuery, data, (err, row)=> {
             logger.http('LocalStrategy start');
-            logger.debug('SESSION SQL 결과 : ' + sql.sql + ' ☞ ' + JSON.stringify(row[0]));
+            logger.debug('LocalStrategy : ' + sql.sql + ' ☞ ' + JSON.stringify(row[0]));
             if(err){
                 logger.error('LocalStrategy sql 에러' + err);
                 return done(err); // 서버 에러 처리
@@ -28,7 +28,7 @@ module.exports = () => {
                     return done(null, false); // done(에러, 성공, 사용자정의 메시지)
                 }else{
                     logger.info('로그인 성공')
-                    let user = {cid: row[0].cid, grade: row[0].grade, name: row[0].name}; //session에 넣을 정보
+                    let user = {cid: row[0].cid, grade: row[0].grade, cname: row[0].cname}; //session에 넣을 정보
                     // logger.info('로그인 성공 후 done에 넣기 전 user 정보 : '+ JSON.stringify(user));
                     return done(null, user);     // result 값으로 받아진 회원정보를 return 해줌
                 }

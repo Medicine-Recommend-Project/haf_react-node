@@ -28,7 +28,7 @@ function Login({history}) {
                 if(res.data === 'false'){ alert('아이디/비밀번호가 틀렸습니다.'); }
                 else {
                     alert('로그인 성공');
-                    history.push('/');
+                    history.goBack();
                 }
             }).catch(e => {
                 console.log(e);
