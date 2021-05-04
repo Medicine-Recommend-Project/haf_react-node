@@ -6,7 +6,7 @@ function InquiryList() {
 
     useEffect(()=>{
         let url = '/board/getBoards';
-        let data = { where : '문의' }
+        let data = { where : '문의' , pcode : '%' }
         axios.post(url, data)
             .then(res => {
                 setInquiries(res.data);
@@ -44,7 +44,9 @@ function InquiryList() {
                         <td>작성일자</td>
                     </tr>
                 </thead>
-                {inquiryList}
+                <tbody>
+                    {inquiryList}
+                </tbody>
             </table>
         </div>
     );

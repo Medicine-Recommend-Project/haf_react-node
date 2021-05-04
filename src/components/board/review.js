@@ -1,29 +1,29 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 
 function Review({history}) {
 
-    const [user, setUser] = useState({cid:"", name:""});
+    const [user, setUser] = useState({cid:"", cname:""});
     const [review, setReview] = useState({
         pCode: "", category : "후기", rating: 5, title: "", content: ""
     })
     const [products, setProducts] = useState({});
     const [stars, setStars] = useState(['★','★','★','★','★']);
 
-    useEffect(()=>{
+    useCallback(useEffect(()=>{
         let url = '/product/getPcode' ;
         axios.get(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
                     alert('로그인이 필요한 서비스입니다.');
-                    history.push('/customer/login');
+                    return history.push('/customer/login');
                 }
                 setProducts([res.data.row]);
-                setUser({...user, cid: res.data.cid, name: res.data.name})
+                setUser({...user, cid: res.data.cid, cname: res.data.cname})
                 setReview({...review, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
             })
             .catch(err => console.log(err))
-    },[])
+    },[]))
 
     let onTyping = (e)=> {
         setReview({...review, [e.target.name]: e.target.value});
@@ -69,7 +69,7 @@ function Review({history}) {
             data[Object.keys(review)[i]] = review[Object.keys(review)[i]];
         }//end of for
         data["cid"] = user.cid;
-        data["name"] = user.name;
+        data["cname"] = user.cname;
 
         // console.log('data : ',data);
         axios.post(url, data)
@@ -98,7 +98,7 @@ function Review({history}) {
                 </select>
                 <br/>
                 제목 <input type="text" name="title"  value={review.title} onChange={onTyping} placeholder="제목을 입력해주세요." /> <br/>
-                작성자 {user.name}님 ({user.cid}) <br/>
+                작성자 {user.cname}님 ({user.cid}) <br/>
                 평점 {rate} {review.rating}점 <br/>
                 내용 <br/>
                 <textarea name="content" value={review.content} onChange={onTyping} id="content" cols="30" rows="10"> </textarea> <br/>

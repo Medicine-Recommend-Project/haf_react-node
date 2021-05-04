@@ -1,9 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {useHistory} from "react-router-dom";
 
-function Inquiry({props}) {
-    let history = useHistory();
+function Inquiry({history}) {
 
     const [user, setUser] = useState({cid:"", name:""});
     const [inquiry, setInquiry] = useState({
@@ -76,7 +74,7 @@ function Inquiry({props}) {
 
     return(
         <div>
-            <h1>문의 게시판</h1>
+            <h2>문의 게시판입니다.</h2>
             <form onSubmit={submitForm}>
                 <select name="DetailCategory" value={inquiry.DetailCategory} onChange={onTyping}>
                     <option value="상품문의">상품문의</option>

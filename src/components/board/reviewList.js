@@ -1,14 +1,19 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-function ReviewList() {
+function ReviewList({history}) {
+
     const [reviews, setReviews] = useState({});
 
     useEffect(()=>{
         let url = '/board/getBoards';
-        let data = { where : '후기' }
+        let data = { where : '후기', pcode : '%' }
         axios.post(url, data)
             .then(res => {
+                if(res.data === 'ppfalse'){
+                    alert('로그인이 필요한 서비스입니다.');
+                    history.push('/customer/login');
+                }
                 setReviews(res.data);
                 // console.log(res.data[0].pcode);
             })
@@ -44,7 +49,9 @@ function ReviewList() {
                         <td>작성일자</td>
                     </tr>
                 </thead>
-                {reviewList}
+                <tbody>
+                    {reviewList}
+                </tbody>
             </table>
         </div>
     );
