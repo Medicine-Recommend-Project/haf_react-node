@@ -7,20 +7,20 @@ let data, sqlQuery, sql;
 
 // 게시판 다 불러오기
 router.post("/getBoards", (req,res)=>{
-    sqlQuery = "SELECT * FROM board WHERE category LIKE ?";
-    data = req.body.where;
+    sqlQuery = "SELECT * FROM board WHERE category LIKE ? AND pcode LIKE ?";
+    data = [ req.body.where, req.body.pcode];
     sql = db.query(sqlQuery, data, (err, row) => {
-        if(!err) {
+        if(err) {
+            logger.error(err);
+        } else {
             result(row.length);
             res.json(row);
-        } else {
-            logger.error(err);
         }
     });
 });
 
 // 문의글 게시판
-router.post("/inquiry", (req,res)=>{
+router.post("/inquiry", isLogin, (req,res)=>{
     sqlQuery = "INSERT INTO board(cid, pcode, category, DetailCategory, title, content) VALUES(?, ?, ?, ?, ?, ?) ";
     data = [req.body.cid , req.body.pCode ,req.body.category ,req.body.DetailCategory ,req.body.title ,req.body.content]
 
@@ -35,7 +35,7 @@ router.post("/inquiry", (req,res)=>{
 });
 
 // 후기글 게시판
-router.post("/review", (req,res)=>{
+router.post("/review", isLogin, (req,res)=>{
     sqlQuery = "INSERT INTO board(cid, pcode, category, rating, title, content) VALUES(?, ?, ?, ?, ?, ?) ";
     data = [req.body.cid , req.body.pCode ,req.body.category ,req.body.rating ,req.body.title ,req.body.content]
 
