@@ -11,7 +11,7 @@ router.get("/getPcode", isLogin, (req,res)=>{
     sql = db.query(sqlQuery, (err, row) => {
             if(!err) {
                 result(row.length);
-                let data = {row: row, cid: req.user.cid, name: req.user.name}
+                let data = {row: row, cid: req.user.cid, cname: req.user.cname}
                 res.json(data);
                 // res.json(row);
             } else {
@@ -20,8 +20,24 @@ router.get("/getPcode", isLogin, (req,res)=>{
         });
 });
 
+router.get('/products', (req, res)=> {
+    sqlQuery = "SELECT * FROM product ";
+    sql = db.query (sqlQuery, (err, row) => {
+            result(row.length);
+        if(err) { logger.error(err); }
+        else { res.json(row); }
+    });
+});
 
-
+router.post('/detail', (req, res)=> {
+    sqlQuery = "SELECT * FROM product WHERE pcode = ?";
+    data = [req.body.pcode];
+    sql = db.query (sqlQuery, data, (err, row) => {
+        result(JSON.stringify(row[0]));
+        if(err) { logger.error(err); }
+        else { res.json(row[0]); }
+    });
+});
 
 
 
