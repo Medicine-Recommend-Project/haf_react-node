@@ -21,6 +21,7 @@ function Payment({location}) {
     useEffect( ()=> {
         setOpen(false);
         setAgree(true);
+        console.log(location.props.buyingList);
         setBuyingList(location.props.buyingList);
     },[]);
 
@@ -74,16 +75,13 @@ function Payment({location}) {
 
     let daumHandler = (data) => {
         let api = {...data};
-        setDeliveryInfo({...deliveryInfo, address: api.fullAddress, zonecode : api.zonecode});
+        setDeliveryInfo({...deliveryInfo, address: api.fullAddress, zonecode : api.zonecode, detailAddress: ""});
         setOpen(false);
     };
 
     let agreement = (e)=>{
-        if(e.target.checked){
-            setAgree(false);
-        }else{
-            setAgree(true);
-        }
+        if(e.target.checked){ setAgree(false); }
+        else{ setAgree(true); }
     };
 
     let buyingProducts = async() =>{

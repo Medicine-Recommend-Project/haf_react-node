@@ -10,7 +10,6 @@ app.use(morganMiddleware);  // 콘솔창에 통신결과 나오게 해주는 것
 const session = require('express-session');
 const passport = require('passport');
 const passportConfig = require('./passport');
-// const flash = require('connect-flash');
 /**********라우트 목록**********/
 const apiRoute = require('./routes/apiRoute');
 const customerRoute = require('.././servers/routes/customerRoute');
@@ -21,15 +20,15 @@ const managementRoute = require('.././servers/routes/managementRoute');
 
 // 반드시 session이후에 passport.initialize()와 passport.session()이 위치해야 합니다.
 app.use(session({
-    secret: 'hafProject',
-    resave: false,   //공홈에는 이래되어있던데 뭔지 체크하고 주석풀든하자...
-    saveUninitialized: true,
-    cookie: { secure: false, maxAge: 60000  },
+    secret: 'hafProject',   //세션 암호화
+    resave: false,  //세션을 항상 저장할지 여부를 정하는 값. (false 권장)
+    saveUninitialized: true ,   //초기화되지 않은채 스토어에 저장되는 세션
+    // cookie: { secure: false, maxAge: 60000  },
 }));
 
-passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
+passportConfig(passport);
 
 app.use(express.json()); // json으로 받아들인 정보를 분석함
 // 아래 옵션이 false면 노드의 querystring 모듈을 사용하여 쿼리스트링을 해석하고, true면 qs 모듈을 사용하여 쿼리스트링을 해석한다

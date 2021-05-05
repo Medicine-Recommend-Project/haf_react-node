@@ -3,6 +3,7 @@
 export const ADD_ITEM = "ADD_ITEM";
 export const MODIFY_ITEM = "MODIFY_ITEM";
 export const DELETE_ALL_ITEM = "DELETE_ITEM";
+export const DELETE_IT = "DELETE_IT";
 export const DELETE_THIS_ITEM = "DELETE_THIS_ITEM";
 export const BUY_ITEMS = "BUY_ITEMS";
 
@@ -27,10 +28,17 @@ export const deleteAll = () => {
     };
 };
 
-export const deleteThis = (pcode) => {
+export const deleteIt = (pcode) => {
+    return {
+        type: DELETE_IT,
+        payload: pcode,
+    };
+};
+
+export const deleteThis = ([pcodes]) => {
     return {
         type: DELETE_THIS_ITEM,
-        payload: {pcode},
+        payload: pcodes,
     };
 };
 

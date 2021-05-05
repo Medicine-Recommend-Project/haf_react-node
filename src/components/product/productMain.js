@@ -44,6 +44,18 @@ function ProductMain({history}) {
                         <p>{ product.price }원</p>
                         <p>평점 ( {product.rating} ) {product.sales}개 구매 </p>
                     </div>
+                    <button className="btn btn-danger" onClick={()=>{history.push({
+                        pathname:`/order/payment`,
+                        props:{
+                            buyingList : [{
+                                pname: product.pname,
+                                quantity: 1,
+                                price: product.price,
+                                images: product.images
+                            }],
+                            totalPrice : product.price
+                        }
+                    })}}>구매하기</button>
                     <button className="btn btn-danger" onClick={()=>{addProduct(product);}}>장바구니 담기</button>
                 </div>
         );
