@@ -44,14 +44,8 @@ const basketReducer = (state = INITIAL_STATE , action) => {
             break;
         // 상품 구매
         case BUY_ITEMS:
-            let bk = [];
-            newState.basket.map((bp, i)=>{
-                console.log(bp);
-                if(bp.pcode !== action.payload[i].pcode) bk.push(bp);
-                return bk;
-            })
-            console.log(bk);
-            console.log(action.payload.length);
+            let pcodes = action.payload.reduce((pcodes, payload)=>{ pcodes.push(payload.pcode); return pcodes;},[])
+            let bk = newState.basket.filter(list => !pcodes.includes(list.pcode));  //pcodes 배열에 list.pcode가 포함되지 않은 것만 배열로 반환
             newState = {
                 basket: bk,
                 count : newState.count -= action.payload.length

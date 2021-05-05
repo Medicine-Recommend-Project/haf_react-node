@@ -15,21 +15,21 @@ router.post('/buying', (req, res)=>{
         else{
             result(JSON.stringify(row[0]));
             // 주문 title 테이블에 저장할 쿼리
-            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid) VALUES (?,?,?,?) ;";
-            let query1Param = [row[0].oCode, req.body.totalQuantity, req.body.totalPrice, req.user.cid]
+            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid, recipient, zonecode, address, detailAddress) VALUES (?,?,?,?,?,?,?,?) ;";
+            let query1Param = [row[0].oCode, req.body.totalQuantity, req.body.totalPrice, req.user.cid, req.body.deliveryInfo.recipient, req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress]
             let query1 = db.format(sqlQuery1, query1Param)
 
             // 주문 detail 테이블에 저장할 쿼리
-            let sqlQuery2 = " INSERT INTO orderDetail(ocode, cid, pcode, quantity, price) VALUES (?,?,?,?,?) ; ";
+            let sqlQuery2 = " INSERT INTO orderDetail(ocode, cid, pcode, pname, quantity, price) VALUES (?,?,?,?,?,?) ; ";
             let query2 = "";
             buyingList.map(product =>{
-                let query2Param = [row[0].oCode, req.user.cid, product.pcode, product.quantity, (product.price * product.quantity) ];
+                let query2Param = [row[0].oCode, req.user.cid, product.pcode, product.pname, product.quantity, (product.price * product.quantity) ];
                 return query2 += db.format(sqlQuery2, query2Param);
             });
 
             // 고객 테이블의 point 차감 쿼리
             let sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
-            let query3Param = [req.body.usePoint, req.user.cid];
+            let query3Param = [Number(req.body.usePoint), req.user.cid];
             let query3 = db.format(sqlQuery3, query3Param);
 
             let sql2 = db.query(query1 + query2 + query3,(err, row)=>{
@@ -54,7 +54,7 @@ router.get('/paymentDetail',(req, res)=>{
     sql = db.query(sqlQuery, data, (err, row)=>{
         if(err) logger.error(err);
         else{
-            result(row.affectedRows);
+            result(row.length);
             res.json(row);
         }
     })

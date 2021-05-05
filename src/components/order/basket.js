@@ -7,21 +7,24 @@ import {Link} from "react-router-dom";
 function Basket({history}) {
     let baskets = useSelector((store)=>store.basketReducer.basket);
     let dispatch = useDispatch();
-    
+
     const [checkProduct, setCheckProduct] = useState([]);
     const [allCheck, setAllCheck] = useState(true);
     const [pcodeList, setPcodeList] = useState([])
-    const [quantity, setQuantity] = useState(
-        baskets.reduce((quantity,pd)=> { quantity.push(pd.quantity); return quantity;},[])
-    );
+    const [quantity, setQuantity] = useState({});
+    //총 금액
+    const [totalPrice, setTotalPrice] = useState(0);
+
     useEffect(()=> {
         setCheckProduct(baskets);
         setPcodeList( baskets.reduce((pcl,pd) => { pcl.push(pd.pcode); return pcl;},[]) );
+        setQuantity(baskets.reduce((quantity,pd)=> { quantity.push(pd.quantity); return quantity;},[]));
     },[baskets]);
 
     useEffect(()=> {
         if(checkProduct.length === baskets.length){ setAllCheck(true) }
         else{ setAllCheck(false) }
+        setTotalPrice(checkProduct.reduce((totalPrice, product)=>{ return totalPrice + product.price * product.quantity },0));
     },[checkProduct]); //checkProduct가 변할때마다 실행
 
     let checkboxHandler = (e, product)=>{
@@ -79,12 +82,11 @@ function Basket({history}) {
         </tr>
     ));
 
-    //총 금액
-    const totalPrice = checkProduct.length > 0 && checkProduct.reduce((totalPrice, product)=>{ return totalPrice + product.price * product.quantity },0);
 
     return(
         <div>
             <h1>장바구니</h1>
+            {            ( baskets.length === 0 ? <tr><td>장바구니에 담긴 상품이 존재하지 않습니다.</td></tr> : (
             <table style={{width:"100%", border:"1px solid blue"}}>
                 <thead>
                     <tr style={{width:"100%", border:"1px solid blue"}}>
@@ -99,6 +101,8 @@ function Basket({history}) {
                     {basketList}
                 </tbody>
             </table>
+
+                ))}
             <p>
                 <span style={{fontWeight:"bold"}}>결제 예상 금액</span>
                 <Link to={{

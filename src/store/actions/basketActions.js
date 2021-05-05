@@ -34,7 +34,7 @@ export const deleteThis = (pcode) => {
     };
 };
 
-export const buyProduct = (product)=>{
+export const buyProduct = ([product])=>{
     return {
         type: BUY_ITEMS,
         payload: product
