@@ -3,6 +3,7 @@ import React from "react";
 function CommonPI({product}) {
     return(
         <div id="information">
+            <hr/>
                 <h3>고시 정보</h3>
             <p>
                 포함 성분 : 아주 좋은 영양 성분들 <br/>

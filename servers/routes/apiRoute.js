@@ -42,6 +42,52 @@ router.get("/hello", (req,res)=>{
 
 });
 
+
+router.post('/product/products', (req, res)=> {
+
+    let limit = req.body.limit ? parseInt(req.body.limit) : 20;
+    // ▲req.body.limit가 String일때 숫자로 바꿔주는 역할 //limit에 지정된 숫자가 없다면 20으로 함
+    let skip = req.body.skip ? parseInt(req.body.limit) : 0;
+    let findArgs = {};
+
+    // logger.error('req.body.filters : ' + req.body.filters);
+    // logger.error('req.body.filters[0] : ' + req.body.filters[0]);
+    // logger.error('req.body.filters[0][0] : ' + req.body.filters[0][0]);
+
+    for (let key in req.body.filters) {
+        if (req.body.filters[key].length > 0) {
+
+            logger.info('key : ' + key);
+
+            if (key === "price") {
+                findArgs[key] = {
+                    //Greater than equal
+                    $gte: req.body.filters[key][0],
+                    //Less than equal
+                    $lte: req.body.filters[key][1]
+                }
+            } else {
+                findArgs[key] = req.body.filters[key];
+            }
+
+        }
+    }
+    sqlQuery = "SELECT * from testdb "
+    sql = db.query(sqlQuery, (err, row) => {
+
+        if (!err) {
+
+            result(row.length);
+            res.json(row);
+
+        } else {
+            logger.error(err);
+        }
+    });
+});
+
+
+
 //console 창에 결과 출력하게 해주는 것
 let result = (result) =>{
     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);

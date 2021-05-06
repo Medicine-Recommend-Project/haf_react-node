@@ -2,12 +2,22 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 function PaymentDetails() {
+    let date = new Date();
+    let year = date.getFullYear(); // 년도
+    let month = date.getMonth() + 1;  // 월
+    let day = date.getDate();  // 날짜
+
+    console.log(year+'/'+month+'/'+day);
 
     const [paymentDetails, setPaymentDetails] = useState({});
 
     useEffect(()=>{
         let url = '/order/paymentDetail';
-        axios.get(url)
+        let data = {
+            prevDate: year+'/'+date.getMonth()+'/'+day,
+            nowDate: year+'/'+month+'/'+day,
+        }
+        axios.post(url, data)
             .then(res =>{
                 setPaymentDetails(res.data);
             })

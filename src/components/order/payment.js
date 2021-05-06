@@ -21,7 +21,6 @@ function Payment({location}) {
     useEffect( ()=> {
         setOpen(false);
         setAgree(true);
-        console.log(location.props.buyingList);
         setBuyingList(location.props.buyingList);
     },[]);
 

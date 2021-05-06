@@ -1,6 +1,6 @@
 /* eslint-disable */
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
 
@@ -31,7 +31,6 @@ function App(){
                 {/*지금 로그인 정보 >> ID : {user.cid} , GRADE : {user.grade}, NAME : {user.cname}*/}
                 <Switch>
                     <Route exact path="/" component={Main}/>
-                    {/*<Route exact path="localhost:3000" component={Main}/>*/}
                     <Route path="/product" component={Product}/>
                     <Route path="/customer" component={Customer} />
                     <Route path="/board" component={Board} />

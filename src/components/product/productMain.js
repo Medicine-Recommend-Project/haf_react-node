@@ -1,7 +1,11 @@
 /* eslint-disable */
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import axios from 'axios'
-import { Button,Jumbotron } from 'react-bootstrap';
+import { Jumbotron } from 'react-bootstrap';
+import {
+    Card, CardImg, CardText, CardBody,
+    CardTitle, CardSubtitle, CardFooter, Button, ButtonGroup, Alert
+} from 'reactstrap';
 import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
 
@@ -20,10 +24,14 @@ function ProductMain({history}) {
     }, []);
 
 
-    let productDetail = (pcode)=>{ history.push(`/product/detail/${pcode}`); }
+    let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[])
+    let goToBasket = useCallback((product) => {
+        addProduct(product);
+        alert(product.pname + '상품을 장바구니에 담앗습니다.');
+    } ,[])
 
     //상품코드, 상품명, 수량
-    let addProduct = (product) => {
+    let addProduct = useCallback((product) => {
         let item = {
             pcode : product.pcode,
             pname : product.pname,
@@ -31,32 +39,40 @@ function ProductMain({history}) {
             quantity : 1,
         }
         dispatch(addBasket(item));
-    }
+    })
 
-    const Card = Products.length > 0 && Products.map((product, i)=> {
+    let goingToBuy = useCallback((product)=>{
+        history.push({
+            pathname:`/order/payment`,
+            props:{
+                buyingList : [{
+                    pname: product.pname,
+                    quantity: 1,
+                    price: product.price,
+                    images: product.images
+                }],
+                totalPrice : product.price
+            }
+        });
+    },[]);
+
+    const Cards = Products.length > 0 && Products.map((product, i)=> {
         return(
-                <div className="col-md-3" key={i} style={{border: "1px solid pink"}}>
-                    <div onClick={()=>{productDetail(product.pcode);}} style={{border: "1px solid blue"}}>
+                <div className="col-md-3" key={i}>
+                    <Card style={{maxWidth: "230px"}}>
                         {/*<img src={ `http://localhost:3001/${product.images}` } style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'150px'}} />*/}
-                        <img src="http://placehold.it/500x500" style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
-                        <h4>{ product.pname }</h4>
-                        <p>{ product.description }</p>
-                        <p>{ product.price }원</p>
-                        <p>평점 ( {product.rating} ) {product.sales}개 구매 </p>
-                    </div>
-                    <button className="btn btn-danger" onClick={()=>{history.push({
-                        pathname:`/order/payment`,
-                        props:{
-                            buyingList : [{
-                                pname: product.pname,
-                                quantity: 1,
-                                price: product.price,
-                                images: product.images
-                            }],
-                            totalPrice : product.price
-                        }
-                    })}}>구매하기</button>
-                    <button className="btn btn-danger" onClick={()=>{addProduct(product);}}>장바구니 담기</button>
+                        <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `http://localhost:3001/${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
+                        <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
+                            <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>{ product.pname }</CardTitle>
+                            <CardText className="mb-2 ">{ product.description } </CardText>
+                            <CardSubtitle className="mb-2 text-muted">⭐{product.rating} 구매: {product.sales}</CardSubtitle>
+                            <CardText tag="h5">{ product.price }원</CardText>
+                        </CardBody>
+                        <CardFooter>
+                            <Button onClick={()=>{goingToBuy(product);}} size="sm" outline color="success">구매</Button>{' '}
+                            <Button onClick={()=>{goToBasket(product);}} size="sm" outline color="info">장바구니</Button>
+                        </CardFooter>
+                    </Card>
                 </div>
         );
     })
@@ -79,10 +95,8 @@ function ProductMain({history}) {
             <div style={{textAlign:'center'}}>
                 <h2>Medicine</h2>
             </div>
-            <div className="container">
-                <div className="row">
-                    { Card }
-                </div>
+            <div className="container row">
+                { Cards }
             </div>
             <div style={{display:'flex', justifyContent:'center'}}>
                 <button onClick={e=>{e.preventDefault()}}>더보실라우?</button>

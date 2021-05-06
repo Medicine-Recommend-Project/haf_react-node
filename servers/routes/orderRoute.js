@@ -48,9 +48,9 @@ router.post('/buying', (req, res)=>{
     }); // end of sql1
 });// end of router.post('/buying');
 
-router.get('/paymentDetail',(req, res)=>{
-    sqlQuery = "SELECT * FROM orderDetail WHERE cid = ? ORDER BY odate DESC ";
-    data = [req.user.cid];
+router.post('/paymentDetail',(req, res)=>{
+    sqlQuery = "SELECT * FROM orderDetail WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ";
+    data = [req.user.cid, req.user.prevDate, req.user.nowDate];
     sql = db.query(sqlQuery, data, (err, row)=>{
         if(err) logger.error(err);
         else{

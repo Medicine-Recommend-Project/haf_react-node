@@ -6,14 +6,9 @@ function Product({ match }) {
 
     return (
         <>
-            <header>
-                <Link to={`${match.path}/upload`}>
-                    <button>상품업로드</button>
-                </Link>
-            </header>
             <Switch>
-                <Route exact path={`${match.path}/upload`} component={UploadProduct} />
                 <Route path={`${match.path}/detail/:pcode`} component={ProductDetail} />
+                <Route exact path={`${match.path}/upload`} component={UploadProduct} />
             </Switch>
         </>
     )

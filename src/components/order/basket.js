@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from "react-redux";
-import {deleteIt, deleteThis} from "../../store/actions/basketActions";
+import {deleteAll, deleteIt, deleteThis} from "../../store/actions/basketActions";
 import React, {useCallback, useEffect, useState} from "react";
 import {changeQuantity} from "../../store/actions/basketActions";
 import {Link} from "react-router-dom";
@@ -83,7 +83,21 @@ function Basket({history}) {
                 {product.quantity}
                 <button onClick={()=> { quantityButtonHandler(i, product, 1); }}> + </button>
             </td>
-            <td>{product.price * product.quantity}</td>
+            <td>
+                {product.price * product.quantity}
+                <button className="btn btn-danger" onClick={()=>{history.push({
+                    pathname:`/order/payment`,
+                    props:{
+                        buyingList : [{
+                            pname: product.pname,
+                            quantity: 1,
+                            price: product.price,
+                            images: product.images
+                        }],
+                        totalPrice : product.price
+                    }
+                })}}>구매하기</button>
+            </td>
         </tr>
     ));
 
@@ -100,7 +114,8 @@ function Basket({history}) {
                                     선택({checkProduct.length}/{baskets.length})
                             </td>
                             <td>
-                                    <button onClick={()=>checkDelete()}>선택상품 삭제</button>
+                                <button onClick={()=>checkDelete()}>선택상품 삭제</button>
+                                <button onClick={()=>dispatch(deleteAll())}>전체 삭제</button>
 
                             </td>
                         </tr>

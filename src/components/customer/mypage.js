@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
@@ -12,14 +12,12 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
     const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
     const [user, setUser] = useState({
-        cid: "", name: "", ph: "", email: "", zonecode:"", address: "", detailAddress: ""
+        cid: "", cname: "", ph: "", email: "", zonecode:"", address: "", detailAddress: ""
     });
     const [checkRs, setCheckRs] = useState("");
     const [open, setOpen] = useState({ daum: false, changeCpw: false });    //다음 주소api를 팝업처럼 관리하기 위함
     //팝업창 오픈 관리
-    useEffect( ()=>{
-        setOpen({ daum: false, changeCpw: false });
-    },[]);
+    useEffect( ()=> setOpen({ ...open, daum: false, changeCpw: false }),[]);
 
     //로그인 된 아이디로 유저정보 검색해오기
     useEffect( ()=>{
@@ -28,7 +26,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
             .then(res => {
                 if(res.data === 'ppfalse'){
                     alert('로그인이 필요한 서비스입니다.');
-                    history.push('/customer/login');
+                    history.replace('/customer/login');
                 }
                 setUser(res.data);
             })
@@ -84,7 +82,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
             .then(res => {
                 if(res.data > 0){
                     alert('수정되었습니다.');
-                    setUser({...user, cId: "", name: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
+                    setUser({...user, cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/');
                 }else{
                     alert('수정에 실패하였습니다. 다시 시도해주세요.');
@@ -105,7 +103,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
                 아이디
                 <input type="text" name="cId" value={user.cid} readOnly/><br/>
                 이름
-                <input type="text" name="name" onChange={onTyping} value={user.name}/><br/>
+                <input type="text" name="cname" onChange={onTyping} value={user.cname}/><br/>
                 비밀번호
                 <button onClick={e=>{e.preventDefault(); setOpen({...open, changeCpw: true});}}>비밀번호 변경</button><br/>
                 {

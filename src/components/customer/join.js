@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
@@ -10,16 +11,17 @@ function Join({history}){
     const[checkRs, setCheckRs] = useState({idRs : "", pwRs : "", emRs : "", phRs : ""});
     // input들을 관리하기 위함
     const [inputs, setInputs] = useState({
-        cId: "", name: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""
+        cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""
     });
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
+
     // 밑에 useEffect로 setOpen관리하는 이유 : https://velog.io/@ohgoodkim/-%EC%97%90%EB%9F%AC%EB%85%B8%ED%8A%B8-Cant-perform-a-React-state-update-on-an-unmounted-component
     useEffect(() => {
-        return () => {
+        return () =>
             //useState를 true나 false로 지정하면 이렇게 기본 값 설정해줘야 콘솔창에 에러안나나 보다
             setOpen(false);
             setCheck({...check, idCk : false, pwCk : false});
-        } // cleanup function을 이용
+         // cleanup function을 이용
     }, []);
 
     // 정규식 참고 : https://uznam8x.tistory.com/62 //정규식 세부내용 알고싶으면 https://xively.tistory.com/22
@@ -48,7 +50,6 @@ function Join({history}){
                 }else {
                     setCheckRs({...checkRs, idRs:'❌ 영문/숫자만 포함 된 4글자 이상이여야합니다.'});
                 }
-
                 setCheck({ ...check, idCk: false });
                 break;
 
@@ -92,25 +93,6 @@ function Join({history}){
 
     }; //end of onTyping()
 
-    //유효성(빈 칸, id 중복 검사, pw 조건 만족) 체크
-    let validationCheck = () => {
-        let vc = 3; // 회원가입 위한 조건이 다 만족하는지 체크하기 위해서 만듦. 왠지 모르겠는데 그냥 return;해도 밑에 문장들까지 싹 실행하길래...ㅠㅠ
-
-        for(let i in Object.keys(inputs)){
-            // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
-            if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
-                alert('빈칸을 채워주세요!');
-                vc += 1;
-                break;
-            }//end of if()
-        }//end of for()
-        vc -= 1;
-        if(check.idCk ? vc -= 1 : alert('아이디 중복 검사를 완료해주세요.') );
-        if(check.pwCk ? vc -= 1 : alert('비밀번호가 조건에 만족하지 않습니다.') );
-
-        return vc;
-    }; //end of validationCheck()
-
     //아이디 중복 검사
     let checkId = async() => {
 
@@ -151,8 +133,30 @@ function Join({history}){
         setOpen(false);
     }
 
+    //유효성(빈 칸, id 중복 검사, pw 조건 만족) 체크
+    let validationCheck = () => {
+        let vc = 3; // 회원가입 위한 조건이 다 만족하는지 체크하기 위해서 만듦. 왠지 모르겠는데 그냥 return;해도 밑에 문장들까지 싹 실행하길래...ㅠㅠ
+
+        for(let i in Object.keys(inputs)){
+            // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
+            if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
+                alert('빈칸을 채워주세요!');
+                vc += 1;
+                break;
+            }//end of if()
+        }//end of for()
+        vc -= 1;
+        if(check.idCk ? vc -= 1 : alert('아이디 중복 검사를 완료해주세요.') );
+        if(check.pwCk ? vc -= 1 : alert('비밀번호가 조건에 만족하지 않습니다.') );
+
+        return vc;
+    }; //end of validationCheck()
+
     //회원 가입 폼 제출
     let submitForm = async () => {
+
+        if(validationCheck() > 0) return;
+
         let url = '/customer/join' ;
         let data = {};
 
@@ -165,7 +169,7 @@ function Join({history}){
             .then(res => {
                 if(res.data > 0){
                     alert('가입 성공. 환영합니다!');
-                    setInputs({...inputs, cId: "", name: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
+                    setInputs({...inputs, cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/customer/login');
                 }else{
                     alert('가입에 실패하였습니다. 다시 시도해주세요.');
@@ -180,8 +184,7 @@ function Join({history}){
         <div>
             <h3>회원 가입</h3>
             <form onSubmit={(e)=>{
-                e.preventDefault();
-                if(validationCheck() > 0 ? console.log('유효성 검사 실패') : submitForm() );
+                e.preventDefault(); submitForm();
             }}>
                 아이디
                 <input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
@@ -191,7 +194,7 @@ function Join({history}){
                 }}>중복검사</button>
                 {checkRs.idRs} <br/>
                 이름
-                <input type="text" name="name" onChange={onTyping} value={inputs.name}/><br/>
+                <input type="text" name="cname" onChange={onTyping} value={inputs.cname}/><br/>
                 비밀번호
                 <input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
                 {checkRs.pwRs} <br/>
@@ -203,9 +206,7 @@ function Join({history}){
                 <input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/>
                 {checkRs.emRs} <br/>
                 주소<br/>
-                {
-                    open ? <DaumPostcodeAPI handler={daumHandler}/> : null
-                }
+                { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
                 {inputs.zonecode} {inputs.address} <button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</button>
                 <br/>
                 상세 주소
@@ -213,8 +214,6 @@ function Join({history}){
                 <br/>
                 <button type="submit" onSubmit={(e)=>{e.preventDefault();}}>가입하기</button>
                 <br/>
-                {/*아이디 체크 : {check.idCk} <br/>*/}
-                {/*비번 체크 : {check.pwCk}*/}
             </form>
         </div>
     );
