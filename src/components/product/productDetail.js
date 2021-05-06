@@ -1,24 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {Link} from 'react-router-dom';
 import axios from "axios";
 import CommonPI from "../home/commonProductInformations";
 import {useDispatch} from "react-redux";
-import {addBasket, deleteAll} from "../../store/actions/basketActions";
+import {addBasket} from "../../store/actions/basketActions";
 import {Image, Tab, Tabs} from "react-bootstrap";
 import {
-    Badge,
-    Button,
-    ButtonGroup,
-    Card,
-    CardBody,
-    CardTitle,
-    Col,
-    Input,
-    Row,
-    Table,
-    UncontrolledTooltip
+    Badge, Button, ButtonGroup,
+    Card, CardBody, CardTitle,
+    Col, Input, Row,
+    Table, UncontrolledTooltip
 } from "reactstrap";
-import TooltipContent from "../home/tooltipContent";
 
 function ProductDetail({match, history}) {
     const [product, setProduct] = useState({});

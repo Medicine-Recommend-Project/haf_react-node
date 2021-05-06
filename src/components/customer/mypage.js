@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import ChangeCpw from "./changeCpw";
+import {Button, Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 
 function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오는 애라... history를 따로 선언해줘야 먹히네
     //정규식...
@@ -96,36 +97,60 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
     return(
         <div>
             마이페이지다 <br/>
-            <form onSubmit={(e)=>{
-                e.preventDefault();
-                submitForm();
-            }}>
-                아이디
-                <input type="text" name="cId" value={user.cid} readOnly/><br/>
-                이름
-                <input type="text" name="cname" onChange={onTyping} value={user.cname}/><br/>
-                비밀번호
-                <button onClick={e=>{e.preventDefault(); setOpen({...open, changeCpw: true});}}>비밀번호 변경</button><br/>
-                {
-                    open.changeCpw ? <ChangeCpw cid={user.cid} handler={cpwHandler}/> : null
-                }
-                핸드폰
-                <input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={user.ph}/><br/>
-                이메일 주소
-                <input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={user.email}/>
-                {checkRs}<br/>
-                주소<br/>
+            <FormGroup row>
+                <Label sm={2}>아이디</Label>
+                <Col sm={3}>
+                    <Input name="cId" value={user.cid} readOnly/>
+                </Col>
+            </FormGroup>{/* 아이디 FormGroup*/}
+            <FormGroup row>
+                <Label sm={2}>이름</Label>
+                <Col sm={3}>
+                    <Input type="text" name="cname" onChange={onTyping} value={user.cname}/>
+                </Col>
+            </FormGroup>{/* 이름 FormGroup*/}
+            <FormGroup row>
+                <Label sm={2}> 비밀번호 </Label>
+                <Button onClick={()=>{setOpen({...open, changeCpw: true});}} color="warning">비밀번호 변경</Button><br/>
+                { open.changeCpw ? <ChangeCpw cid={user.cid} handler={cpwHandler}/> : null }
+            </FormGroup>{/* 비번 FormGroup*/}
+            <FormGroup row>
+                <Label sm={2}> 핸드폰 </Label>
+                <Col sm={3}>
+                    <Input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={user.ph}/>
+                </Col>
+            </FormGroup>{/*핸드폰 FormGroup*/}
+            <FormGroup row>
+                <Label sm={2}> 이메일 주소 </Label>
+                <Col sm={3}>
+                    <Input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={user.email}/>
+
+                </Col>
+                <Col sm={10} className={"text-left"}>
+                    {checkRs}
+                </Col>
+            </FormGroup>{/*이메일 FormGroup*/}
+            <FormGroup row>
+                <Label sm={2}> 주소 </Label>
+                <FormGroup>
+                    <Col lg={12} className={"text-left"}>
+                        {user.zonecode}{'  '}{user.address}
+                    </Col>
+                    <Row form>
+                        <Col lg={8}>
+                            <Input type="text" name="detailAddress" onChange={onTyping } value={user.detailAddress} placeholder="상세 주소 입력"/>
+                        </Col>
+                        <Col lg={4}>
+                            <Button onClick={() =>{setOpen({...open, daum: true});} } color="warning">주소찾기</Button>
+                        </Col>
+                    </Row>
+                </FormGroup>
                 {
                     open.daum ? <DaumPostcodeAPI handler={daumHandler}/> : null
-                }
-                {user.zonecode} {user.address} <button onClick={e => {e.preventDefault(); setOpen({...open, daum: true});}}>주소찾기</button>
-                <br/>
-                상세 주소
-                <input type="text" name="detailAddress" onChange={onTyping} value={user.detailAddress}/>
-                <br/>
-                <button type="submit" onSubmit={(e)=>{e.preventDefault();}}>수정하기</button>
-                <br/>
-            </form>
+                } <br/>
+            </FormGroup>{/*주소 FormGroup*/}
+            <br/>
+            <Button onClick={()=>{submitForm();}} color="warning">수정하기</Button><br/>
         </div>
     );
 }

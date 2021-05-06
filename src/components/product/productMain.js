@@ -4,7 +4,7 @@ import axios from 'axios'
 import { Jumbotron } from 'react-bootstrap';
 import {
     Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, CardFooter, Button, ButtonGroup, Alert
+    CardTitle, CardSubtitle, CardFooter, Button
 } from 'reactstrap';
 import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
@@ -17,7 +17,6 @@ function ProductMain({history}) {
         let url = '/product/products' ;
         axios.get(url)
             .then(res =>{
-                // console.log(res.data);
                 if(res.data.length > 0) setProducts(res.data);
                 else alert("상품 데이터 가져오기 실패!")
             })

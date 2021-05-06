@@ -2,6 +2,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
+import {Button, Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 
 function Join({history}){
 
@@ -16,8 +17,15 @@ function Join({history}){
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
 
     // 밑에 useEffect로 setOpen관리하는 이유 : https://velog.io/@ohgoodkim/-%EC%97%90%EB%9F%AC%EB%85%B8%ED%8A%B8-Cant-perform-a-React-state-update-on-an-unmounted-component
-    useEffect(() => {
-        return () =>
+    useEffect(async () => {
+            axios.get("/customer/isNotLogin")
+                .then(res => {
+                    if(res.data === "pptrue") {
+                        alert('이미 로그인 중입니다.');
+                        history.push("/");
+                    }
+                })
+                .catch(err => alert(err))
             //useState를 true나 false로 지정하면 이렇게 기본 값 설정해줘야 콘솔창에 에러안나나 보다
             setOpen(false);
             setCheck({...check, idCk : false, pwCk : false});
@@ -58,7 +66,7 @@ function Join({history}){
                 else { setCheck({ ...check, pwCk: false }); }
 
                 if(regEngNum6.test(e.target.value)){
-                    setCheckRs({...checkRs, pwRs:'🟢'});
+                    setCheckRs({...checkRs, pwRs:''});
                 }else{
                     setCheckRs({...checkRs, pwRs:'❌ 영문/숫자만 포함 6글자 이상이여야합니다.'});
                     setCheck({ ...check, pwCk: "false"  });
@@ -74,7 +82,7 @@ function Join({history}){
                 break;
 
             case 'email':
-                if(regEmail.test(e.target.value)){ setCheckRs({...checkRs, emRs:'🟢'}); }
+                if(regEmail.test(e.target.value)){ setCheckRs({...checkRs, emRs:''}); }
                 else{ setCheckRs({...checkRs, emRs:'❌ 이메일 형식에 맞지 않습니다. 근데 이건 형식 안맞아도 가입됨'}); }
                 break;
 
@@ -115,7 +123,7 @@ function Join({history}){
             .then(json => {
                 if(json === 0){
                     setCheck({ ...check, idCk: true });
-                    setCheckRs({...checkRs, idRs:'🟢'});
+                    setCheckRs({...checkRs, idRs:''});
                 }else{
                     setCheck({ ...check, idCk: false });
                     setCheckRs({...checkRs, idRs:'❌ 이미 사용중인 아이디입니다!'});
@@ -140,6 +148,7 @@ function Join({history}){
         for(let i in Object.keys(inputs)){
             // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
             if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
+                if(Object.keys(inputs)[i] ==="email") continue;
                 alert('빈칸을 채워주세요!');
                 vc += 1;
                 break;
@@ -183,38 +192,76 @@ function Join({history}){
     return(
         <div>
             <h3>회원 가입</h3>
-            <form onSubmit={(e)=>{
-                e.preventDefault(); submitForm();
-            }}>
-                아이디
-                <input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
-                <button onClick={(e)=>{
-                    e.preventDefault();
-                    checkId();
-                }}>중복검사</button>
-                {checkRs.idRs} <br/>
-                이름
-                <input type="text" name="cname" onChange={onTyping} value={inputs.cname}/><br/>
-                비밀번호
-                <input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
-                {checkRs.pwRs} <br/>
-                비밀번호 확인
-                <input type="password" name="pwCheck" placeholder="비밀번호 재입력" onChange={ onTyping } value={inputs.pwCheck}/><br/>
-                핸드폰
-                <input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={inputs.ph}/><br/>
-                이메일 주소
-                <input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/>
-                {checkRs.emRs} <br/>
-                주소<br/>
-                { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
-                {inputs.zonecode} {inputs.address} <button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</button>
+            <Form>
+                <FormGroup row>
+                    <Label sm={2}>아이디<strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={3}>
+                        <Input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
+                    </Col>
+                    <Col sm={2}>
+                        <Button onClick={()=>{ checkId();}}>중복검사</Button>
+                    </Col>
+                    <Col sm={10} className={"text-left"}>
+                        {checkRs.idRs}
+                    </Col>
+                </FormGroup>{/* 아이디 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}>이름<strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={3}>
+                        <Input type="text" name="cname" onChange={onTyping} value={inputs.cname}/>
+                    </Col>
+                </FormGroup>{/* 이름 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}> 비밀번호<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Col sm={3}>
+                        <Input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
+                    </Col>
+                    <Col sm={10} className={"text-left"}>
+                        {checkRs.pwRs}
+                    </Col>
+                </FormGroup>{/* 비번 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}> 비밀번호 확인<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Col sm={3}>
+                        <Input type="password" name="pwCheck" placeholder="비밀번호 재입력" onChange={ onTyping } value={inputs.pwCheck}/>
+                    </Col>
+                </FormGroup>{/*비번확인 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}> 핸드폰 <strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={3}>
+                        <Input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={inputs.ph}/>
+                    </Col>
+                </FormGroup>{/*핸드폰 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}> 이메일 주소 </Label>
+                    <Col sm={3}>
+                        <Input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/>
+                    </Col>
+                    <Col sm={10} className={"text-left"}>
+                        {checkRs.emRs}
+                    </Col>
+                </FormGroup>{/*이메일 FormGroup*/}
+                <FormGroup row>
+                    <Label sm={2}> 주소<strong style={{color:"red"}}>＊</strong> </Label>
+                    <FormGroup>
+                        <Col lg={12} className={"text-left"}>
+                            {inputs.zonecode}{'  '}{inputs.address}
+                        </Col>
+                        <Row form>
+                            <Col lg={8}>
+                                <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} placeholder="상세 주소 입력"/>
+                            </Col>
+                            <Col lg={4}>
+                                <Button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
+                            </Col>
+                        </Row>
+                    </FormGroup>
+                    { open ? <DaumPostcodeAPI handler={daumHandler}/> : null } <br/>
+                </FormGroup>{/*주소 FormGroup*/}
                 <br/>
-                상세 주소
-                <input type="text" name="detailAddress" onChange={onTyping} value={inputs.detailAddress}/>
+                <Button onClick={()=>{ submitForm();}}>가입하기</Button>
                 <br/>
-                <button type="submit" onSubmit={(e)=>{e.preventDefault();}}>가입하기</button>
-                <br/>
-            </form>
+            </Form>
         </div>
     );
 }

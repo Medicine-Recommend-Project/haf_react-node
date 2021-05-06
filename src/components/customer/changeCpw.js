@@ -1,6 +1,8 @@
 /* eslint-disable */
 import react, {useEffect, useState} from "react";
 import axios from "axios";
+import { Card, CardBody, CardText, CardTitle, Input} from "reactstrap";
+import {Button} from "react-bootstrap";
 
 const ChangeCpw = (props)=> {
     // 대/소문자,숫자 포함하여 6글자 이상
@@ -20,7 +22,7 @@ const ChangeCpw = (props)=> {
                 else { setCheckRs({ ...checkRs, eq: "false" }); }
 
                 if (regEngNum6.test(e.target.value)) {
-                    setCheckRs({...checkRs, pwRs: '🟢'});
+                    setCheckRs({...checkRs, pwRs: ''});
                 } else {
                     setCheckRs({...checkRs, pwRs: '❌ 영문/숫자만 포함 6글자 이상이여야합니다.' , eq: "false"});
                 }
@@ -40,10 +42,11 @@ const ChangeCpw = (props)=> {
 
     }
 
-    let width = 800;
-    let height = 200;
+    let width = 300;
+    let height = 400;
     const pwStyle = {
-        backgroundColor: "#777777" ,
+        backgroundColor: "#777" ,
+        borderColor: '#333',
         color: "white" ,
         display: "block",
         position: "absolute",
@@ -51,7 +54,8 @@ const ChangeCpw = (props)=> {
         height: height,
         padding: "7px",
         left: (window.screen.width / 2) - (width / 2),
-        top: (window.screen.height / 2) - (height / 2)
+        top: (window.screen.height / 2) - (height / 2),
+        zIndex: 1
     };
 
     //비밀번호 변경 통신
@@ -64,7 +68,7 @@ const ChangeCpw = (props)=> {
             }//end of if()
         }//end of for()
         if(checkRs.eq === "false"){
-            alert('비밀번호 양식/재확인 확인해주세요.');
+            alert('새 비밀번호의 양식이나 재확인이 맞지않습니다.');
             return;
         }
 
@@ -88,12 +92,27 @@ const ChangeCpw = (props)=> {
     }//end of submitForm()
 
     return(
-        <div style={pwStyle}>
-            기존 비밀번호 입력 <input type="password" onChange={onTyping} name="oldCpw"/> <br/>
-            새 비밀번호 <input type="password" onChange={onTyping} name="cpw"/> {checkRs.pwRs}<br/>
-            새 비밀번호 재 확인 <input type="password" onChange={onTyping} name="pwCheck"/> <br/>
-            <button onClick={e=>{ e.preventDefault(); submitCpw(); }}>수정하기</button>
-            <button onClick={e=>{ e.preventDefault(); props.handler("close"); }}>닫기</button>
+        <div>
+            <Card body inverse style={pwStyle}>
+                <CardTitle tag="h5">비밀번호 수정</CardTitle>
+                <CardBody className="text-left">
+                <CardText>
+                    기존 비밀번호 입력 <Input type="password" onChange={onTyping} name="oldCpw"/>
+                </CardText>
+                <CardText>
+                    새 비밀번호 <Input type="password" onChange={onTyping} name="cpw"/>
+                    {checkRs.pwRs}
+                </CardText>
+                <CardText>
+                    새 비밀번호 재 확인 <Input type="password" onChange={onTyping} name="pwCheck"/>
+                </CardText>
+                </CardBody>
+                <CardBody>
+                    <Button onClick={e=>{ e.preventDefault(); submitCpw(); }} >수정하기</Button>
+                        {'    '}
+                    <Button onClick={e=>{ e.preventDefault(); props.handler("close"); }} >닫기</Button>
+                </CardBody>
+            </Card>
         </div>
     );
 }

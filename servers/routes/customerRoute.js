@@ -6,6 +6,14 @@ const { isLogin, isNotLogin } = require('./passportMw');
 
 let data, sqlQuery, sql;
 
+router.get("/isLogin", isLogin, (req,res)=>{
+//    단순한 로그인 판별
+})
+
+router.get("/isNotLogin", isNotLogin, (req,res)=>{
+//    단순한 로그인 판별
+})
+
 // 아이디 중복 체크
 router.post("/checkId", (req,res)=>{
     sqlQuery = " SELECT COUNT(*) FROM customer WHERE cid = ? ";
