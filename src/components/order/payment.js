@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
+import {Col, Row, Table} from "reactstrap";
 
 function Payment({location}) {
     let dispatch = useDispatch();
@@ -62,13 +63,20 @@ function Payment({location}) {
         <tr key={i}>
             <td>{i}</td>
             <td>
-                <img src="http://placehold.it/50x50" alt="상품 미리보기"/>
-                {product.pname}
+                <Row>
+                    <Col sm={3}>
+                        <img src={ `/${product.images}` } width={70} height={70} alt="상품 미리보기"/>
+                    </Col>
+                    <Col className="text-left font-weight-bold">
+                        {product.pname}
+                        <br/>
+                        <span className="text-muted">
+                            {product.quantity} 개
+                        </span>
+                    </Col>
+                </Row>
             </td>
-            <td>
-                {product.quantity}
-            </td>
-            <td>{product.price * product.quantity}</td>
+            <td className="font-weight-bold">{product.price * product.quantity} 원</td>
         </tr>
     ));
 
@@ -112,22 +120,28 @@ function Payment({location}) {
     return(
         <div>
             <h1>결제화면</h1>
-            <table style={{width:"100%", border:"1px solid blue"}}>
+            <Table striped bordered>
                 <thead>
-                <tr style={{width:"100%", border:"1px solid blue"}}>
-                    <th>번호</th>
-                    <th>상품</th>
-                    <th>수량</th>
-                    <th>총금액</th>
-                </tr>
+                    <tr>
+                        <th>번호</th>
+                        <th>상품</th>
+                        <th>총금액</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {buying}
+                    {buying}
                 </tbody>
-            </table>
-            <p>
-                <span style={{fontWeight:"bold"}}>결제 예정 금액 {totalPrice}원</span>
-            </p>
+            </Table>
+            <Table bordered>
+                <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
+                    <td>
+                        결제 예정 금액
+                    </td>
+                    <td className="text-right">
+                        <span style={{color:"cornflowerblue", fontSize:"120%"}}>{totalPrice}</span> 원
+                    </td>
+                </tr>
+            </Table>
             <div id="sideNav"
                  style={{position: "absolute" , right: "3px", border: "1px solid gray", backgroundColor: "skyblue", height: "30vh", zIndex:"1"}}
             >

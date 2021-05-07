@@ -3,6 +3,7 @@ import {deleteAll, deleteIt, deleteThis} from "../../store/actions/basketActions
 import React, {useCallback, useEffect, useState} from "react";
 import {changeQuantity} from "../../store/actions/basketActions";
 import {Link} from "react-router-dom";
+import {Button, ButtonGroup, Col, Input, Row, Table} from "reactstrap";
 
 function Basket({history}) {
     let baskets = useSelector((store)=>store.basketReducer.basket);
@@ -11,7 +12,7 @@ function Basket({history}) {
     const [checkProduct, setCheckProduct] = useState([]);
     const [allCheck, setAllCheck] = useState(true);
     const [pcodeList, setPcodeList] = useState([])
-    const [quantity, setQuantity] = useState({});
+    const [quantity, setQuantity] = useState([]);
     //총 금액
     const [totalPrice, setTotalPrice] = useState(0);
 
@@ -24,39 +25,44 @@ function Basket({history}) {
     useEffect(()=> {
         if(checkProduct.length === baskets.length){ setAllCheck(true) }
         else{ setAllCheck(false) }
-        setTotalPrice(checkProduct.reduce((totalPrice, product)=>{ return totalPrice + product.price * product.quantity },0));
+        setTotalPrice(baskets.reduce((total, product, i)=>{ if(pcodeList.includes(product.pcode)){ total+= product.price * quantity[i]; } return total;},0));
     },[checkProduct]); //checkProduct가 변할때마다 실행
 
+    //개별적인 상품 체크박스 핸들러
     let checkboxHandler = (e, product)=>{
         if( e.target.checked && !pcodeList.includes(product.pcode)){
             setCheckProduct([...checkProduct, product]);
             setPcodeList([...pcodeList, product.pcode])
         } else{
             setCheckProduct(checkProduct.filter((el)=> el.pcode !== product.pcode));
-            setPcodeList(pcodeList.filter((el)=> el !== product.pcode))
+            setPcodeList(pcodeList.filter((el)=> el !== product.pcode));
         }
     };
-
+    //전체 상품 선택 및 해제 핸들러
     let allCheckHandler = (e)=>{
         if(e.target.checked){
             setAllCheck(true);
             setCheckProduct(baskets);
-            let pcl = [];
-            baskets.map(pd => pcl.push(pd.pcode));
-            setPcodeList(pcl);
-        }
-        else{
+            setPcodeList(baskets.reduce((pcl,pd) => { pcl.push(pd.pcode); return pcl;},[]));
+            setQuantity(baskets.reduce((quantity,pd)=> { quantity.push(pd.quantity); return quantity;},[]));
+        } else{
             setAllCheck(false);
             setCheckProduct([]);
             setPcodeList([]);
+            setTotalPrice(0)
         }
     }
     //수량 조절 핸들러
     let quantityButtonHandler = (index, product, number) =>{
         let q = [...quantity];
-        if(q[index] === 1 && number === -1){ return; }
+        if(q[index] === 1 && number === -1){ return; }  //현재 수량이 1인데 감소하려고하면 return;
+
         q[index] += number; //해당 인덱스와 동일한 수량 state의 수량 변경
         setQuantity(q);
+
+        //체크되어있는 상품의 수량을 변경 시 총 금액 변경 (여기서 q[i]인 이유. quantity state가 즉시 반영 되기 전이기 때문에... 직접 수정한 복사본 q로 수정하는게 더 정확함)
+        setTotalPrice(baskets.reduce((total, product, i)=>{ if(pcodeList.includes(product.pcode)){ total+= product.price * q[i]; } return total;},0));
+
         dispatch(changeQuantity(product.pcode, q[index]));
     }
 
@@ -70,84 +76,119 @@ function Basket({history}) {
     const basketList = baskets && baskets.map((product, i) => (
         <tr key={i}>
             <td>
-                <input type="checkbox" onChange={event => checkboxHandler(event,product)} checked={(pcodeList.includes(product.pcode) ? true : false)} />
+                <input type="checkbox" onChange={event => checkboxHandler(event,product)}
+                       checked={pcodeList.includes(product.pcode)}
+                />
             </td>
             <td>{i}</td>
-            <td onClick={()=>{history.push(`/product/detail/${product.pcode}`);}}>
-                <img src="http://placehold.it/50x50" alt="상품 미리보기"/>
-                {product.pname}
+            <td onClick={()=>{history.push(`/product/detail/${product.pcode}`);}} style={{cursor:"pointer"}}>
+                <Row >
+                    <Col sm={3}>
+                        <img src={ `/${product.images}` } width={70} height={70} alt="상품 미리보기"/>
+                    </Col>
+                    <Col sm={5} className="text-md-left">
+                        {product.pname}
+                    </Col>
+                </Row>
             </td>
-            <td><button onClick={()=>{dispatch(deleteIt(product.pcode));}}>x</button></td>
             <td>
-                <button onClick={()=> { quantityButtonHandler(i, product, -1); }}> - </button>
-                {product.quantity}
-                <button onClick={()=> { quantityButtonHandler(i, product, 1); }}> + </button>
+                <Button onClick={()=>{dispatch(deleteIt(product.pcode));}} close />
             </td>
             <td>
-                {product.price * product.quantity}
-                <button className="btn btn-danger" onClick={()=>{history.push({
-                    pathname:`/order/payment`,
-                    props:{
-                        buyingList : [{
-                            pname: product.pname,
-                            quantity: 1,
-                            price: product.price,
-                            images: product.images
-                        }],
-                        totalPrice : product.price
-                    }
-                })}}>구매하기</button>
+                <ButtonGroup size="sm">
+                    <Button onClick={()=> { quantityButtonHandler(i, product, -1); }}> - </Button>
+                    <Input value={product.quantity} disabled bsSize="sm" style={{width:"40px", textAlign:"center"}}/>
+                    <Button onClick={()=> { quantityButtonHandler(i, product, 1); }}> + </Button>
+                </ButtonGroup>
+            </td>
+            <td>
+                <span className="font-weight-bold" style={{color:"cornflowerblue"}}>{product.price * product.quantity}</span>원{'  '}
+                <Button
+                    onClick={()=>{history.push({
+                        pathname:`/order/payment`,
+                        props:{
+                            buyingList : [{
+                                pname: product.pname,
+                                quantity: product.quantity,
+                                price: product.price,
+                                images: product.images
+                            }],
+                            totalPrice : product.price * product.quantity
+                        }})}}
+                    color="success"
+                >구매하기</Button>
             </td>
         </tr>
     ));
 
+    let goToBuy = ()=>{
+        if(checkProduct.length <= 0) {
+            alert('상품을 선택해주세요.');
+            return;
+        }
+
+        history.push({
+            pathname:`/order/payment`,
+            props:{
+                buyingList : checkProduct,
+                totalPrice : totalPrice
+            }
+        })
+    }
 
     return(
         <div>
             <h1>장바구니</h1>
             {( baskets.length === 0 ? <strong>장바구니에 담긴 상품이 존재하지 않습니다.</strong> : (
                 <div id="basketTable">
-                    <table style={{width:"100%", border:"1px solid blue"}}>
+                    <Table hover striped >
                         <thead>
                         <tr>
-                            <td colSpan={5} style={{textAlign:"left"}}>
-                                    선택({checkProduct.length}/{baskets.length})
-                            </td>
+                            <th colSpan={5} className="text-left">
+                                선택({checkProduct.length}/{baskets.length})
+                            </th>
                             <td>
-                                <button onClick={()=>checkDelete()}>선택상품 삭제</button>
-                                <button onClick={()=>dispatch(deleteAll())}>전체 삭제</button>
-
+                                <Button onClick={()=>checkDelete()} outline>선택상품 삭제</Button>
+                                {'   '}
+                                <Button onClick={()=>dispatch(deleteAll())} outline color="danger">전체 삭제</Button>
                             </td>
                         </tr>
-                            <tr style={{width:"100%", border:"1px solid blue"}}>
+                            <tr>
                                 <th>
                                     <input type="checkbox" onChange={allCheckHandler} checked={allCheck}/>
                                 </th>
-                                <th>번호</th>
-                                <th colSpan={2}>상품</th>
+                                <th colSpan={3}>상품</th>
                                 <th>수량</th>
-                                <th>총금액</th>
+                                <th>상품금액</th>
                             </tr>
                         </thead>
                         <tbody>
                             {basketList}
                         </tbody>
-                    </table>
-                    <p>
-                        <span style={{fontWeight:"bold"}}>결제 예상 금액</span>
-                        <Link to={{
-                            pathname:`/order/payment`,
-                            props:{
-                                buyingList : checkProduct,
-                                totalPrice : totalPrice
-                            }
-                        }}>구매하기</Link>
-                    </p>
-                    <p>
-                    총 금액 {totalPrice} 원
-                    + 배송비 {(totalPrice >= 100000 ? <span>0</span> : <span>2500</span>)} 원
-                    = {(totalPrice >= 100000 ? totalPrice : totalPrice+2500)} 원
-                    </p>
+                    </Table>
+
+                    <Table bordered>
+                        <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
+                            <td>
+                                결제 예상 금액
+                            </td>
+                            <td>
+                                {totalPrice} 원
+                                + 배송비 {(totalPrice >= 100000 ? <span className="text-danger" >0</span> : <span className="text-danger">2500</span>)} 원
+                            </td>
+                            <td className="text-left">
+                                <span style={{color:"cornflowerblue", fontSize:"120%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
+                            </td>
+                        </tr>
+                    </Table>
+                    <div style={{marginBottom:"30px"}}>
+                        <Button onClick={()=>{goToBuy();}}
+                            size="lg"
+                            color="success"
+                            style={{width:"30%"}}
+                        >구매하기</Button>
+                    </div>
+
                 </div>
             ))}
         </div>

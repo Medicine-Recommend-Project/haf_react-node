@@ -22,7 +22,6 @@ const upload = multer({ storage: storage }).single("file");
 
 router.post('/image', (req, res) =>{
     //가져온 이미지를 저장을 해주면 된다요
-    logger.info('서버까진 왔는디...');
     upload(req, res, err => {
         if(err) {
             logger.error(err);

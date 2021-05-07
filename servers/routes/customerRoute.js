@@ -7,11 +7,13 @@ const { isLogin, isNotLogin } = require('./passportMw');
 let data, sqlQuery, sql;
 
 router.get("/isLogin", isLogin, (req,res)=>{
-//    단순한 로그인 판별
+    // 로그인 되어있는지 판별
+    res.json(req.user);
 })
 
 router.get("/isNotLogin", isNotLogin, (req,res)=>{
-//    단순한 로그인 판별
+    // 로그인 안되어있는지 판별
+    res.json(req.user);
 })
 
 // 아이디 중복 체크

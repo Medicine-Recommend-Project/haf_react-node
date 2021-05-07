@@ -2,20 +2,18 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 function PaymentDetails() {
-    let date = new Date();
-    let year = date.getFullYear(); // 년도
-    let month = date.getMonth() + 1;  // 월
-    let day = date.getDate();  // 날짜
-
-    console.log(year+'/'+month+'/'+day);
+    let year = new Date().getFullYear(); // 년도
+    let month = new Date().getMonth(); // 월 -1 되어있음
+    let day = new Date().getDate();  // 날짜
 
     const [paymentDetails, setPaymentDetails] = useState({});
 
     useEffect(()=>{
         let url = '/order/paymentDetail';
         let data = {
-            prevDate: year+'/'+date.getMonth()+'/'+day,
-            nowDate: year+'/'+month+'/'+day,
+            prevDate:  (''+year+'/'+month+'/'+day),
+            nowDate: (''+year+'/'+(month + 1)+'/'+day),
+            // nowDate: '2021/05/04',
         }
         axios.post(url, data)
             .then(res =>{
@@ -28,7 +26,7 @@ function PaymentDetails() {
             <tr key={i}>
                 <td>{i}</td>
                 <td>
-                    {detail.pcode}번 상품
+                    {detail.pcode}번
                     <img src="http://placehold.it/50x50" alt="상품 미리보기"/>
                     {detail.pname}
                 </td>

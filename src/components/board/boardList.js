@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {Table} from "reactstrap";
 
 function BoardList({history}) {
     const [allBoards, setAllBoards] = useState({});
@@ -20,7 +21,7 @@ function BoardList({history}) {
 
     const boards = allBoards.length > 0 && allBoards.map((board, i) => (
         <tr key={i}>
-            <td>{board.bcode}</td>
+            <th scope="row">{board.bcode}</th>
             <td>{board.category}</td>
             <td>{board.detailCategory}</td>
             <td>{board.pcode}</td>
@@ -35,24 +36,24 @@ function BoardList({history}) {
     return(
         <div>
             <h1>게시판이오</h1>
-            <table style={{border: "1px solid black"}}>
+            <Table bordered hover striped>
                 <thead>
                     <tr>
-                        <td>게시글 번호</td>
-                        <td>카테고리</td>
-                        <td>문의 종류</td>
-                        <td>상품 코드</td>
-                        <td>평점</td>
-                        <td>제목</td>
-                        <td>내용</td>
-                        <td>작성자</td>
-                        <td>작성일자</td>
+                        <th>게시글 번호</th>
+                        <th>카테고리</th>
+                        <th>문의 종류</th>
+                        <th>상품 코드</th>
+                        <th>평점</th>
+                        <th>제목</th>
+                        <th>내용</th>
+                        <th>작성자</th>
+                        <th>작성일자</th>
                     </tr>
                 </thead>
                 <tbody>
                     {boards}
                 </tbody>
-            </table>
+            </Table>
         </div>
     );
 }

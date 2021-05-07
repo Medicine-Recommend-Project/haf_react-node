@@ -26,7 +26,7 @@ function ProductMain({history}) {
     let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[])
     let goToBasket = useCallback((product) => {
         addProduct(product);
-        alert(product.pname + '상품을 장바구니에 담앗습니다.');
+        alert(product.pname + '상품을 장바구니에 담았습니다.');
     } ,[])
 
     //상품코드, 상품명, 수량
@@ -35,6 +35,7 @@ function ProductMain({history}) {
             pcode : product.pcode,
             pname : product.pname,
             price : product.price,
+            images: product.images,
             quantity : 1,
         }
         dispatch(addBasket(item));
@@ -60,7 +61,7 @@ function ProductMain({history}) {
                 <div className="col-md-3" key={i}>
                     <Card style={{maxWidth: "230px"}}>
                         {/*<img src={ `http://localhost:3001/${product.images}` } style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'150px'}} />*/}
-                        <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `http://localhost:3001/${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
+                        <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                         <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
                             <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>{ product.pname }</CardTitle>
                             <CardText className="mb-2 ">{ product.description } </CardText>

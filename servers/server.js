@@ -26,6 +26,8 @@ app.use(session({
     // cookie: { secure: false, maxAge: 60000  },
 }));
 
+app.use('/uploads', express.static('uploads')); //uploads 폴더로 이동
+
 app.use(passport.initialize());
 app.use(passport.session());
 passportConfig(passport);
@@ -60,7 +62,7 @@ app.use('/order', orderRoute);
 
 app.use('/management', managementRoute);
 
-app.use('/uploads', express.static('uploads')); //uploads 폴더로 이동
+
 
 
 

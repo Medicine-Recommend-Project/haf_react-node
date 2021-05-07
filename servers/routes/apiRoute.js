@@ -45,6 +45,8 @@ router.get("/hello", (req,res)=>{
 
 router.post('/product/products', (req, res)=> {
 
+    //찾아보니까 페이징 할 때 쓰는 거네...
+
     let limit = req.body.limit ? parseInt(req.body.limit) : 20;
     // ▲req.body.limit가 String일때 숫자로 바꿔주는 역할 //limit에 지정된 숫자가 없다면 20으로 함
     let skip = req.body.skip ? parseInt(req.body.limit) : 0;

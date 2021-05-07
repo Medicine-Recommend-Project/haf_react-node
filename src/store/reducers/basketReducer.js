@@ -10,7 +10,6 @@ const basketReducer = (state = INITIAL_STATE , action) => {
             for(let j=0; j < newState.basket.length; j++){  // 이미 장바구니에 담겨있는 상품을 추가하면 수량만 변경
                 if(newState.basket[j].pcode === action.payload.pcode){
                     newState.basket[j].quantity += action.payload.quantity;
-                    console.log(action.payload.pcode, ' 상품 추가 : ', newState.basket[j].quantity)
                     return newState;
                 }
             }
@@ -24,7 +23,6 @@ const basketReducer = (state = INITIAL_STATE , action) => {
             newState.basket.forEach(pd => {
                 if(pd.pcode === action.payload.pcode){
                     pd.quantity = action.payload.quantity
-                    console.log(pd.pcode, '수량 수정 :', pd.quantity);
                 }
             });
             break;

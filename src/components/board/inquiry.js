@@ -1,14 +1,17 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useCallback} from "react";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
+import {Button, Col, Form, FormGroup, Input, Label} from "reactstrap";
+import {FormLabel} from "react-bootstrap";
 
-function Inquiry({history}) {
+function Inquiry({location}) {
+    let history = useHistory();
 
-    const [user, setUser] = useState({cid:"", name:""});
+    const [user, setUser] = useState({cid:"", cname:""});
     const [inquiry, setInquiry] = useState({
         pCode: "", category : "문의", DetailCategory: "상품문의",title: "", content: ""
     })
     const [products, setProducts] = useState({});
-
 
     useEffect(()=>{
         let url = '/product/getPcode' ;
@@ -19,8 +22,12 @@ function Inquiry({history}) {
                     history.push('/customer/login');
                 }
                 setProducts([res.data.row]);
-                setUser({...user, cid: res.data.cid, name: res.data.name})
-                setInquiry({...inquiry, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
+                setUser({...user, cid: res.data.cid, cname: res.data.cname})
+                if(location.pcode !== ""){
+                    setInquiry({...inquiry, pCode: location.pcode})
+                }else{
+                    setInquiry({...inquiry, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
+                }
             })
             .catch(err => console.log(err))
     },[])
@@ -54,7 +61,7 @@ function Inquiry({history}) {
             data[Object.keys(inquiry)[i]] = inquiry[Object.keys(inquiry)[i]];
         }//end of for
         data["cid"] = user.cid;
-        data["name"] = user.name;
+        data["cname"] = user.cname;
 
         // console.log('data : ',data);
         axios.post(url, data)
@@ -75,24 +82,58 @@ function Inquiry({history}) {
     return(
         <div>
             <h2>문의 게시판입니다.</h2>
-            <form onSubmit={submitForm}>
-                <select name="DetailCategory" value={inquiry.DetailCategory} onChange={onTyping}>
-                    <option value="상품문의">상품문의</option>
-                    <option value="교환및반품">교환및반품</option>
-                    <option value="결제문의">결제문의</option>
-                    <option value="기타">기타</option>
-                </select> <br/>
-                상품
-                <select name="pCode" value={inquiry.pCode} onChange={onTyping}>
-                    {productsList}
-                </select>
-                <br/>
-                제목 <input type="text" name="title"  value={inquiry.title} onChange={onTyping} placeholder="제목을 입력해주세요." /> <br/>
-                작성자 {user.name}님 ({user.cid}) <br/>
-                내용 <br/>
-                <textarea name="content" value={inquiry.content} onChange={onTyping} id="content" cols="30" rows="10"> </textarea> <br/>
-                <button type="submit">작성하기</button>
-            </form>
+            <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Form onSubmit={submitForm}>
+                    <FormGroup row>
+                        <Col lg={3}>
+                            <FormLabel>문의</FormLabel>
+                        </Col>
+                        <Col lg={6}>
+                            <Input type="select" name="DetailCategory" value={inquiry.DetailCategory} onChange={onTyping}>
+                                <option value="상품문의">상품문의</option>
+                                <option value="교환및반품">교환및반품</option>
+                                <option value="결제문의">결제문의</option>
+                                <option value="기타">기타</option>
+                            </Input>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col lg={3}>
+                            <Label>상품</Label>
+                        </Col>
+                        <Col lg={9}>
+                            <Input type="select" name="pCode" value={inquiry.pCode} onChange={onTyping} bssize="sm">
+                                {productsList}
+                            </Input>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col lg={3}>
+                            <FormLabel>제목</FormLabel>
+                        </Col>
+                        <Col lg={9}>
+                            <Input type="text" name="title"  value={inquiry.title} onChange={onTyping} placeholder="제목을 입력해주세요." />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col lg={3}>
+                            <Label> 작성자 </Label>
+                        </Col>
+                        <Col lg={9}>
+                            {user.cname}님 ({user.cid})
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col lg={3}>
+                            <FormLabel>내용</FormLabel>
+                        </Col>
+                        <Col lg={9}>
+                            <Input type="textarea" name="content" value={inquiry.content} onChange={onTyping} id="content" cols="30" rows="10"> </Input>
+                        </Col>
+                    </FormGroup>
+                    <Button type="submit">작성하기</Button>
+                </Form>
+            </div>
         </div>
     );
 }

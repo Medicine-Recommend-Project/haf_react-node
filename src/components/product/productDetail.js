@@ -12,12 +12,12 @@ import {
 } from "reactstrap";
 
 function ProductDetail({match, history}) {
+    let dispatch = useDispatch();
     const [product, setProduct] = useState({});
     const [quantity, setQuantity] = useState(1);
     const [reviewBoards, setReviewBoards] = useState({});
     const [inquiryBoards, setInquiryBoards] = useState({});
     const [index, setIndex] = useState("0");
-    let dispatch = useDispatch();
 
     useCallback(useEffect(()=>{
         if(match.params.pcode !== ""){
@@ -66,6 +66,7 @@ function ProductDetail({match, history}) {
             pcode : product.pcode,
             pname : product.pname,
             price : product.price,
+            images: product.images,
             quantity : quantity,
         }
         dispatch(addBasket(item));
@@ -135,7 +136,7 @@ function ProductDetail({match, history}) {
             <tbody>
                 <tr>
                     <td colSpan="2" className="text-left"><strong>{board.title}</strong></td>
-                    <td className="text-left" >{changeStars(board.rating)}</td>
+                    <td className="text-left" >평점: {changeStars(board.rating)}</td>
                     <td className="text-right" >작성자: {board.cid} 작성일: {board.bdate}</td>
                 </tr>
                 <tr>
@@ -159,6 +160,13 @@ function ProductDetail({match, history}) {
         </div>
     );
 
+    let goInquiryPage = (pcode)=>{
+        history.push({
+            pathname: "/board/inquiry",
+            pcode: pcode
+        });
+    }
+
     const inquiryBoard = inquiryBoards.length > 0 && inquiryBoards.map((board,i)=>(
         <tr key={i}>
             <td>{board.detailCategory}</td>
@@ -173,7 +181,7 @@ function ProductDetail({match, history}) {
         <div id="inquiry" style={{marginTop: "20px"}}>
             <Row>
                 <Col sm={9} style={{textAlign:"left", fontWeight:"bold", fontSize:"larger"}}> 문의 ({inquiryBoards.length})</Col>
-                <Col sm={3}> <Button onClick={()=>{history.push("/board/inquiry");}}>문의하기</Button></Col>
+                <Col sm={3}> <Button onClick={()=>{ goInquiryPage(product.pcode); }}>문의하기</Button></Col>
             </Row>
             <Table striped bordered>
                 <thead>
@@ -196,7 +204,7 @@ function ProductDetail({match, history}) {
         <div className="container" style={{position: "relative"}}>
             <Row style={{marginBottom: "50px"}}>
                 <Col md={5} md={5}>
-                    <Image src={ `http://localhost:3001/${product.images}` } style={{width:'100%', height:'100%', minWidth:'250px', maxWidth:'400px'}} />
+                    <Image src={ `/${product.images}` } style={{width:'100%', height:'100%', minWidth:'250px', maxWidth:'400px'}} />
                 </Col>
                 <Col id="detailTop">
                     <div className="text-left" style={{fontWeight:"bold", marginLeft:"10px"}}>
@@ -233,7 +241,6 @@ function ProductDetail({match, history}) {
                         </Col>
                         <Col xs="auto">
                             <Button id="goBasket" onClick={()=> { addProduct();}}  size="lg" color="info" >장바구니 담기</Button>
-                            <UncontrolledTooltip placement="top" target="goBasket" trigger="click">상품 추가 완료 </UncontrolledTooltip>
                         </Col>
                     </Row>
                 </Col>
@@ -256,6 +263,7 @@ function ProductDetail({match, history}) {
                         </div>
                         <CommonPI product={product} />
                         {Review}
+                        <hr/>
                         {Inquiry}
                     </Tab>
                     {/*****후기 탭*****/}
