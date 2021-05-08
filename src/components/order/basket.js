@@ -126,7 +126,6 @@ function Basket({history}) {
             alert('상품을 선택해주세요.');
             return;
         }
-
         history.push({
             pathname:`/order/payment`,
             props:{
@@ -143,24 +142,24 @@ function Basket({history}) {
                 <div id="basketTable">
                     <Table hover striped >
                         <thead>
-                        <tr>
-                            <th colSpan={5} className="text-left">
-                                선택({checkProduct.length}/{baskets.length})
-                            </th>
-                            <td>
-                                <Button onClick={()=>checkDelete()} outline>선택상품 삭제</Button>
-                                {'   '}
-                                <Button onClick={()=>dispatch(deleteAll())} outline color="danger">전체 삭제</Button>
-                            </td>
-                        </tr>
                             <tr>
-                                <th>
-                                    <input type="checkbox" onChange={allCheckHandler} checked={allCheck}/>
+                                <th colSpan={5} className="text-left">
+                                    선택({checkProduct.length}/{baskets.length})
                                 </th>
-                                <th colSpan={3}>상품</th>
-                                <th>수량</th>
-                                <th>상품금액</th>
+                                <td>
+                                    <Button onClick={()=>checkDelete()} outline>선택상품 삭제</Button>
+                                    {'   '}
+                                    <Button onClick={()=>dispatch(deleteAll())} outline color="danger">전체 삭제</Button>
+                                </td>
                             </tr>
+                                <tr>
+                                    <th>
+                                        <input type="checkbox" onChange={allCheckHandler} checked={allCheck}/>
+                                    </th>
+                                    <th colSpan={3}>상품</th>
+                                    <th>수량</th>
+                                    <th>상품금액</th>
+                                </tr>
                         </thead>
                         <tbody>
                             {basketList}
@@ -168,18 +167,20 @@ function Basket({history}) {
                     </Table>
 
                     <Table bordered>
-                        <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
-                            <td>
-                                결제 예상 금액
-                            </td>
-                            <td>
-                                {totalPrice} 원
-                                + 배송비 {(totalPrice >= 100000 ? <span className="text-danger" >0</span> : <span className="text-danger">2500</span>)} 원
-                            </td>
-                            <td className="text-left">
-                                <span style={{color:"cornflowerblue", fontSize:"120%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
+                                <td>
+                                    결제 예상 금액
+                                </td>
+                                <td>
+                                    {totalPrice} 원
+                                    + 배송비 {(totalPrice >= 100000 ? <span className="text-danger" >0</span> : <span className="text-danger">2500</span>)} 원
+                                </td>
+                                <td className="text-left">
+                                    <span style={{color:"cornflowerblue", fontSize:"120%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
+                                </td>
+                            </tr>
+                        </tbody>
                     </Table>
                     <div style={{marginBottom:"30px"}}>
                         <Button onClick={()=>{goToBuy();}}

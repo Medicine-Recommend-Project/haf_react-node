@@ -15,8 +15,13 @@ router.post('/buying', (req, res)=>{
         else{
             result(JSON.stringify(row[0]));
             // 주문 title 테이블에 저장할 쿼리
-            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid, recipient, zonecode, address, detailAddress) VALUES (?,?,?,?,?,?,?,?) ;";
-            let query1Param = [row[0].oCode, req.body.totalQuantity, req.body.totalPrice, req.user.cid, req.body.deliveryInfo.recipient, req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress]
+            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid, ph, recipient, zonecode, address, detailAddress) VALUES (?,?,?,?,?,?,?,?,?) ;";
+            let query1Param = [
+                row[0].oCode, req.body.totalQuantity, req.body.totalPrice, req.user.cid,
+                req.body.deliveryInfo.ph, req.body.deliveryInfo.recipient,
+                req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress
+            ]
+
             let query1 = db.format(sqlQuery1, query1Param)
 
             // 주문 detail 테이블에 저장할 쿼리
@@ -27,10 +32,19 @@ router.post('/buying', (req, res)=>{
                 return query2 += db.format(sqlQuery2, query2Param);
             });
 
-            // 고객 테이블의 point 차감 쿼리
-            let sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
-            let query3Param = [Number(req.body.usePoint), req.user.cid];
+            let sqlQuery3, query3Param;
+            logger.info("req.body.saveAddr"+req.body.saveAddr);
+            if(req.body.saveAddr){  //만약 새로운 배송지 정보를 기본 배송지로 저장한다면
+                // 기본 주소지 변경 + 포인트 차감
+                sqlQuery3 = " UPDATE customer SET point = point-?, zonecode = ?, address = ?, detailAddress = ? WHERE cid = ? ;" ;
+                query3Param = [Number(req.body.usePoint), req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress, req.user.cid];
+            }else{
+                // 고객 테이블 point 차감
+                 sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
+                 query3Param = [Number(req.body.usePoint), req.user.cid];
+            }
             let query3 = db.format(sqlQuery3, query3Param);
+
 
             let sql2 = db.query(query1 + query2 + query3,(err, row)=>{
                 if(err) logger.error('에러다 : '+err);

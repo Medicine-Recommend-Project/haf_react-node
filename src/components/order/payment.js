@@ -4,24 +4,30 @@ import { useHistory } from "react-router-dom";
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
-import {Col, Row, Table} from "reactstrap";
+import {Button, Col, Form, FormGroup, Input, Label, Row, Table} from "reactstrap";
 
 function Payment({location}) {
     let dispatch = useDispatch();
     let history = useHistory();
     const regNumOnly = /[^0-9]/g;   //숫자가 아닌 것
+    const regPh1 = /^(\d{3})(\d)/;
+    const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
     const [buyingList, setBuyingList] = useState({});
     const [user, setUser] = useState({});
     const [point, setPoint] = useState({ usePoint: 0, checked: false });
     const [agree, setAgree] = useState(true)
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
-    const [deliveryInfo, setDeliveryInfo] = useState({recipient: "", zonecode: "", address: "", detailAddress: ""})
+    const [deliveryInfo, setDeliveryInfo] = useState({recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""})
     const totalPrice = location.props.totalPrice - point.usePoint;
+    const [addr, setAddr] = useState(0);
+    const [saveAddr, setSaveAddr] = useState(false);
 
     useEffect( ()=> {
         setOpen(false);
         setAgree(true);
+        setAddr(0);
+        setSaveAddr(false);
         setBuyingList(location.props.buyingList);
     },[]);
 
@@ -36,12 +42,21 @@ function Payment({location}) {
                 }
                 let userData = {...res.data};
                 setUser(userData);
-                setDeliveryInfo({...deliveryInfo, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress})
+                setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress})
             })
             .catch(err => console.log(err))
     },[]);
 
     let onTyping = (e)=> {
+        if(e.target.name === "ph"){
+            let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
+            //핸드폰 번호 중간에 - 넣어주기
+            if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
+            if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
+            // - 들어간 번호를 다시 useState의 ph에 넣어주기
+            setDeliveryInfo({ ...deliveryInfo, ph: value });
+            return;
+        }
         setDeliveryInfo({...deliveryInfo, [e.target.name]: e.target.value});
     }// end of onTyping()
 
@@ -76,7 +91,7 @@ function Payment({location}) {
                     </Col>
                 </Row>
             </td>
-            <td className="font-weight-bold">{product.price * product.quantity} 원</td>
+            <td className="font-weight-bold" style={{fontSize:"120%"}}>{product.price * product.quantity} 원</td>
         </tr>
     ));
 
@@ -92,7 +107,7 @@ function Payment({location}) {
     };
 
     let buyingProducts = async() =>{
-        let totalQuantity = buyingList.reduce((tQuantity, product)=>{return tQuantity+=product.quantity},0)
+        let totalQuantity = buyingList.reduce((tQuantity, product)=>{ tQuantity+=product.quantity; return tQuantity; },0)
         let url = '/order/buying';
         let data = {
             buyingList: buyingList,
@@ -100,6 +115,7 @@ function Payment({location}) {
             totalPrice: totalPrice,
             deliveryInfo: deliveryInfo,
             usePoint: point.usePoint,
+            saveAddr: saveAddr
         };
         axios.post(url, data)
             .then(res => {
@@ -118,121 +134,195 @@ function Payment({location}) {
     }
 
     return(
-        <div>
+        <div style={{width:"95%", margin:"0 auto"}}>
             <h1>결제화면</h1>
             <Table striped bordered>
                 <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>상품</th>
-                        <th>총금액</th>
-                    </tr>
+                <tr>
+                    <th>번호</th>
+                    <th>상품</th>
+                    <th>상품금액</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {buying}
+                {buying}
                 </tbody>
             </Table>
-            <Table bordered>
+            <Table style={{marginBottom:"30px"}}>
                 <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
-                    <td>
+                    <td width={300} className="text-left">
                         결제 예정 금액
                     </td>
-                    <td className="text-right">
-                        <span style={{color:"cornflowerblue", fontSize:"120%"}}>{totalPrice}</span> 원
+                    <td colSpan={3} className="text-right">
+                        <span style={{color:"cornflowerblue", fontSize:"150%"}}>{totalPrice}</span> 원
                     </td>
                 </tr>
             </Table>
-            <div id="sideNav"
-                 style={{position: "absolute" , right: "3px", border: "1px solid gray", backgroundColor: "skyblue", height: "30vh", zIndex:"1"}}
-            >
-                결제 금액 {totalPrice}원<br/>
-                <hr/>
-                상품 할인 금액 0원 <br/>
-                배송비 {(totalPrice >= 100000 ? 0 : 2500)}원<br/>
-                적립금 사용 {point.usePoint} 원<br/>
-                <hr/>
-                최종 결제 금액 {(totalPrice >= 100000 ? totalPrice : totalPrice+2500)} 원
+            {/*<div id="sideNav"*/}
+            {/*     style={{position: "absolute" , right: "3px", border: "1px solid gray", backgroundColor: "skyblue", height: "30vh", zIndex:"1"}}*/}
+            {/*>*/}
+            {/*    결제 금액 {totalPrice}원<br/>*/}
+            {/*    <hr/>*/}
+            {/*    상품 할인 금액 0원 <br/>*/}
+            {/*    배송비 {(totalPrice >= 100000 ? 0 : 2500)}원<br/>*/}
+            {/*    적립금 사용 {point.usePoint} 원<br/>*/}
+            {/*    <hr/>*/}
+            {/*    최종 결제 금액 {(totalPrice >= 100000 ? totalPrice : totalPrice+2500)} 원*/}
+            {/*</div>*/}
+            <div>
+                <div id="pointDiv">
+                    <h3 className="text-left">쿠폰 및 적립금 사용</h3>
+                    <hr/>
+                    <Table id="pointTable" bordered>
+                        <tbody>
+                        <tr>
+                            <th scope="row" width={"20%"}>쿠폰 적용</th>
+                            <td className="text-left">적용 가능 쿠폰이 없습니다.</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">적립금 사용</th>
+                            <td  className="text-left">
+                                <Row>
+                                    <Col sm={3}>
+                                        <Input type="text" name="usePoint" value={point.usePoint} onChange={pointHandler} placeholder="0"/>
+                                    </Col>
+                                    <Col sm={5} className="text-left">
+                                        <input type="checkbox" onClick={pointHandler} checked={point.checked} /> 모두 사용
+                                    </Col>
+                                </Row>
+                                보유 적립금 : {user.point}원 (사용 가능: {user.point - point.usePoint})
+                            </td>
+                        </tr>
+                        </tbody>
+                    </Table>
+                </div> {/*end of 쿠폰, 적립금 div*/}
+                <div id="addressDiv">
+                    <h3 className="text-left">배송지 정보</h3>
+                    <hr/>
+                    <Table id="addressTable" bordered>
+                        <tbody>
+                        <tr>
+                            <th scope="row" width={"20%"}>배송지 선택</th>
+                            <td>
+                                <FormGroup tag="fieldset" row >
+                                    <FormGroup check style={{marginLeft:"15px"}}>
+                                        <Label check>
+                                            <Input type="radio" name="addr"
+                                                   onClick={()=>{setAddr(0); setDeliveryInfo(user); }}
+                                                   checked={addr===0}
+                                            />
+                                            나의 배송지
+                                        </Label>
+                                    </FormGroup>
+                                    <FormGroup check style={{marginLeft:"15px"}}>
+                                        <Label check>
+                                            <Input type="radio" name="addr"
+                                                   onClick={()=>{ setAddr(1); setDeliveryInfo({recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""})}}
+                                                   checked={addr===1}
+                                            />
+                                            새 배송지
+                                        </Label>
+                                    </FormGroup>
+                                </FormGroup>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">수령인</th>
+                            <td>
+                                <Col sm={4}>
+                                    <Input type="text" name="recipient" onChange={onTyping} value={deliveryInfo.recipient}/>
+                                </Col>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">연락처</th>
+                            <td className="text-left">
+                                <Col sm={4}>
+                                    <Input type="text" name="ph" onChange={onTyping} value={deliveryInfo.ph}/>
+                                </Col>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                배송지 주소 <br/> <br/>
+                                <Button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
+                            </th>
+                            <td>
+                                <FormGroup>
+                                    <Col lg={12} className="text-left mb-3">
+                                        {deliveryInfo.zonecode}{'  '}{deliveryInfo.address}
+                                    </Col>
+                                    <Row form>
+                                        <Col sm={4}>
+                                            <Input type="text" name="detailAddress" onChange={onTyping } value={deliveryInfo.detailAddress} placeholder="상세 주소 입력"/>
+                                        </Col>
+                                        {( addr === 1 ?
+                                                <Col className="text-left">
+                                                    <input type="checkbox" onChange={()=>{setSaveAddr(!saveAddr);}} checked={saveAddr}/> 기본 배송지로 저장
+                                                </Col> :
+                                                null
+                                        )}
+
+                                    </Row>
+                                </FormGroup>
+                            </td>{/*주소 FormGroup*/}
+                        </tr>
+                        </tbody>
+                    </Table>
+                </div> {/*end of 배송지 div*/}
+
+                <div id="pay">
+                    <h3 className="text-left">결제 방법</h3>
+                    <hr/>
+                    <Table bordered>
+                        <tbody>
+                        <tr>
+                            <th scope="row" width={"20%"}>결제 수단</th>
+                            <td>
+                                <FormGroup tag="fieldset" row >
+                                    <FormGroup check style={{marginLeft:"15px"}}>
+                                        <Label check>
+                                            <Input type="radio" name="pay"/>
+                                            카드 결제
+                                        </Label>
+                                    </FormGroup>
+                                    <FormGroup check style={{marginLeft:"15px"}}>
+                                        <Label check>
+                                            <Input type="radio" name="pay"/>
+                                            무통장 입금
+                                        </Label>
+                                    </FormGroup>
+                                    <FormGroup check style={{marginLeft:"15px"}}>
+                                        <Label check>
+                                            <Input type="radio" name="pay"/>
+                                            휴대폰 결제
+                                        </Label>
+                                    </FormGroup>
+                                </FormGroup>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </Table>
+                </div> {/*end of 결제방법 div*/}
+                <div id="agreement">
+                    <h3 className="text-left">개인정보 약관 동의</h3>
+                    <hr/>
+                    <p>
+                        약관...
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </p>
+                    <input type="checkbox" onClick={agreement}/> 약관에 동의합니다.
+                </div> {/*end of 개인정보 동의 div*/}
             </div>
-            <div id="pointDiv">
-                <h3>쿠폰 및 적립금 사용</h3>
-                <hr/>
-                <table id="pointTable">
-                    <tbody>
-                    <tr>
-                        <td>쿠폰 적용</td>
-                        <td>적용 가능 쿠폰이 없습니다.</td>
-                    </tr>
-                    <tr>
-                        <td>적립금 사용</td>
-                        <td>
-                            <input type="text" name="usePoint" value={point.usePoint} onChange={pointHandler}/>원
-                            <input type="checkbox" onClick={pointHandler} checked={point.checked} placeholder="0"/>모두 사용 <br/>
-                            보유 적립금 : {user.point}원 (사용 가능: {user.point - point.usePoint})
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div> {/*end of 쿠폰, 적립금 div*/}
-            <div id="addressDiv">
-                <h3>배송지 정보</h3>
-                <hr/>
-                <table id="addressTable">
-                    <tbody>
-                    <tr>
-                        <td>수령인</td>
-                        <td><input type="text" name="recipient" onChange={onTyping}/></td>
-                    </tr>
-                    <tr>
-                        <td>연락처</td>
-                        <td>{user.ph}</td>
-                    </tr>
-                    <tr>
-                        <td>배송지 선택</td>
-                        <td>
-                            <input type="radio" value="나의 배송지" checked={true}/>나의 배송지
-                            <input type="radio" value="새 배송지"/> 새 배송지
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>배송지 주소</td>
-                        <td><button onClick={() => { setOpen(true); }}> 주소 검색</button></td>
-                        { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>{deliveryInfo.zonecode} {deliveryInfo.address}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-
-                        <td><input type="text" name="detailAddress" value={deliveryInfo.detailAddress} onChange={onTyping}/></td>
-
-                    </tr>
-                    </tbody>
-                </table>
-            </div> {/*end of 배송지 div*/}
-            <div id="pay">
-                <h3>결제 방법</h3>
-                <hr/>
-                <p>
-                    <input type="radio"/>카드 결제
-                    <input type="radio"/>무통장 입금
-                    <input type="radio"/>휴대폰 결제
-                </p>
-            </div> {/*end of 결제방법 div*/}
-            <div id="agreement">
-                <h3>개인정보 약관 동의</h3>
-                <hr/>
-                <p>
-                    약관...
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                </p>
-                <input type="checkbox" onClick={agreement}/> 약관에 동의합니다.
-            </div> {/*end of 개인정보 동의 div*/}
-            <button onClick={()=>{ buyingProducts()}} disabled={agree}>구매하기</button>
+            { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
+            <Button onClick={()=>{ buyingProducts()}}
+                    disabled={agree}
+                    color="primary" size="lg" style={{width:"40%", margin:"40px"}}
+            >
+                구매하기</Button>
         </div>
     );
 }
