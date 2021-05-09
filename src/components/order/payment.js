@@ -73,10 +73,20 @@ function Payment({location}) {
         }
     }
 
-    //장바구니 목록관리
+    let daumHandler = (data) => {
+        let api = {...data};
+        setDeliveryInfo({...deliveryInfo, address: api.fullAddress, zonecode : api.zonecode, detailAddress: ""});
+        setOpen(false);
+    };
+
+    let agreement = (e)=>{
+        if(e.target.checked){ setAgree(false); }
+        else{ setAgree(true); }
+    };
+
+    //구매 목록
     const buying = buyingList.length>0 && buyingList.map((product, i) => (
         <tr key={i}>
-            <td>{i}</td>
             <td>
                 <Row>
                     <Col sm={3}>
@@ -91,20 +101,9 @@ function Payment({location}) {
                     </Col>
                 </Row>
             </td>
-            <td className="font-weight-bold" style={{fontSize:"120%"}}>{product.price * product.quantity} 원</td>
+            <td className="font-weight-bold" style={{fontSize:"120%", width:"200px"}}>{product.price * product.quantity} 원</td>
         </tr>
     ));
-
-    let daumHandler = (data) => {
-        let api = {...data};
-        setDeliveryInfo({...deliveryInfo, address: api.fullAddress, zonecode : api.zonecode, detailAddress: ""});
-        setOpen(false);
-    };
-
-    let agreement = (e)=>{
-        if(e.target.checked){ setAgree(false); }
-        else{ setAgree(true); }
-    };
 
     let buyingProducts = async() =>{
         let totalQuantity = buyingList.reduce((tQuantity, product)=>{ tQuantity+=product.quantity; return tQuantity; },0)
@@ -134,18 +133,16 @@ function Payment({location}) {
     }
 
     return(
-        <div style={{width:"95%", margin:"0 auto"}}>
-            <h1>결제화면</h1>
+        <div style={{width:"90%", margin:"50px auto 0"}}>
             <Table striped bordered>
                 <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>상품</th>
-                    <th>상품금액</th>
-                </tr>
+                    <tr>
+                        <th>상품</th>
+                        <th>상품금액</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {buying}
+                    {buying}
                 </tbody>
             </Table>
             <Table style={{marginBottom:"30px"}}>

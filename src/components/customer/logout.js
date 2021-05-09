@@ -15,7 +15,7 @@ function Logout({history}) {
             .catch(err => alert(err))
     },[])
 
-    let onLogout = async()=>{
+    let onLogout = ()=>{
         let url = '/customer/logout';
         fetch(url,{ method:"get"})
             .then(res => {

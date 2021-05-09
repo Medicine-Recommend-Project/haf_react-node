@@ -101,8 +101,10 @@ function Basket({history}) {
                     <Button onClick={()=> { quantityButtonHandler(i, product, 1); }}> + </Button>
                 </ButtonGroup>
             </td>
-            <td>
-                <span className="font-weight-bold" style={{color:"cornflowerblue"}}>{product.price * product.quantity}</span>원{'  '}
+            <td className="font-weight-bold text-right" style={{fontSize:"120%", width:"150px"}}>
+                <span style={{color:"cornflowerblue"}}>{product.price * product.quantity}</span>원{'  '}
+            </td>
+            <td width={150}>
                 <Button
                     onClick={()=>{history.push({
                         pathname:`/order/payment`,
@@ -136,17 +138,16 @@ function Basket({history}) {
     }
 
     return(
-        <div>
-            <h1>장바구니</h1>
+        <div style={{marginTop:"50px"}}>
             {( baskets.length === 0 ? <strong>장바구니에 담긴 상품이 존재하지 않습니다.</strong> : (
-                <div id="basketTable">
+                <div id="basketTable" style={{margin:"0 auto", width:"90%"}}>
                     <Table hover striped >
                         <thead>
                             <tr>
                                 <th colSpan={5} className="text-left">
                                     선택({checkProduct.length}/{baskets.length})
                                 </th>
-                                <td>
+                                <td colSpan={2}>
                                     <Button onClick={()=>checkDelete()} outline>선택상품 삭제</Button>
                                     {'   '}
                                     <Button onClick={()=>dispatch(deleteAll())} outline color="danger">전체 삭제</Button>
@@ -158,7 +159,7 @@ function Basket({history}) {
                                     </th>
                                     <th colSpan={3}>상품</th>
                                     <th>수량</th>
-                                    <th>상품금액</th>
+                                    <th colSpan={2}>상품금액</th>
                                 </tr>
                         </thead>
                         <tbody>
@@ -176,7 +177,7 @@ function Basket({history}) {
                                     {totalPrice} 원
                                     + 배송비 {(totalPrice >= 100000 ? <span className="text-danger" >0</span> : <span className="text-danger">2500</span>)} 원
                                 </td>
-                                <td className="text-left">
+                                <td>
                                     <span style={{color:"cornflowerblue", fontSize:"120%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
                                 </td>
                             </tr>

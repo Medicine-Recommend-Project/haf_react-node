@@ -22,7 +22,7 @@ function Login({history}) {
         setUser({...user, [e.target.name]: e.target.value});
     }// end of onTyping()
 
-    let loginUser = async(e)=> {
+    let loginUser = (e)=> {
         e.preventDefault();
         if(user.cid === "" || user.cpw === "") {
             alert('빈칸을 채워주세요');
@@ -55,10 +55,10 @@ function Login({history}) {
             <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
             <Form name="loginForm" onSubmit={loginUser} >
                 <Col>
-                    <Input type="text" name="cid" value={user.cid} onChange={onTyping} placeholder="ID" sm={2} size="lg"/><br/>
+                    <Input type="text" name="cid" value={user.cid} onChange={onTyping} placeholder="ID" sm={2} bsSize="lg"/><br/>
                 </Col>
                 <Col>
-                    <Input type="password" name="cpw" value={user.cpw} onChange={onTyping} placeholder="PW" sm={2} size="lg"/><br/>
+                    <Input type="password" name="cpw" value={user.cpw} onChange={onTyping} placeholder="PW" sm={2} bsSize="lg"/><br/>
                 </Col>
                 <Button type="submit">로그인</Button>
                 <Button onClick={()=>{history.push('/customer/join')}}>회원가입</Button>

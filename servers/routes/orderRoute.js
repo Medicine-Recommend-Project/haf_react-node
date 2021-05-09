@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-const passport = require('passport');
-const { isLogin, isNotLogin } = require('./passportMw');
 
 let data, sqlQuery, sql;
 
@@ -63,13 +61,48 @@ router.post('/buying', (req, res)=>{
 });// end of router.post('/buying');
 
 router.post('/paymentDetail',(req, res)=>{
-    sqlQuery = "SELECT * FROM orderDetail WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ";
+    sqlQuery = "SELECT * FROM orderTitle WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
+    let sqlQuery2 = "SELECT * FROM orderDetail WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
     data = [req.user.cid, req.body.prevDate, req.body.nowDate];
-    sql = db.query(sqlQuery, data, (err, row)=>{
+
+    let sqlQuery3 = "SELECT pcode, images FROM product WHERE pcode = ? ;";
+
+    let query1 = db.format(sqlQuery, data);
+    let query2 = db.format(sqlQuery2, data);
+
+    sql = db.query(query1 + query2, (err, row)=>{
         if(err) logger.error(err);
-        else{
-            result(row.length);
-            res.json(row);
+        else {
+            let result1 = row[0];
+            let result2 = row[1]
+            logger.debug('SQL 결과1 : '+ query1 + ' ☞ ' + result1.length);
+            logger.debug('SQL 결과2 : '+ query2 + ' ☞ ' + result2.length);
+
+            //중복되는 pcode를 제외하기 위함
+            let pcodes = result2.reduce((pcode, row) => {
+                if(!pcode.includes(row.pcode)) pcode.push(row.pcode);
+                return pcode;
+            },[]);
+
+            let query3 = "";
+            pcodes.map((pcode) => { return query3 += db.format(sqlQuery3, pcode);});
+
+            db.query(query3, (err, row2)=>{
+                if(err) logger.error('sql2 에러 : ' + err);
+                else{
+                    logger.debug(sqlQuery3 +' → ' + row2.length);
+
+                    // 이렇게 안하면 모양이 [[{}}] 배열 내 배열 내 객체의 형태가 됨.
+                    // 꺼내려면 images[0].[0].images 이렇게 해야돼서... 보내주기 전에 2중 배열 제거!
+                    let img = row2.map((row) =>{ return row[0]; });
+
+                    res.json({
+                        orderTitle: result1,
+                        orderDetail: result2,
+                        images: img
+                    });
+                }// end of if()
+            })// end of sql2
         }
     })
 })
