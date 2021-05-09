@@ -1,10 +1,10 @@
 import {useDispatch} from "react-redux";
 import {buyProduct} from "../../store/actions/basketActions";
 import { useHistory } from "react-router-dom";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
-import {Button, Col, Form, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
 
 function Payment({location}) {
     let dispatch = useDispatch();
@@ -18,10 +18,12 @@ function Payment({location}) {
     const [point, setPoint] = useState({ usePoint: 0, checked: false });
     const [agree, setAgree] = useState(true)
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
-    const [deliveryInfo, setDeliveryInfo] = useState({recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""})
-    const totalPrice = location.props.totalPrice - point.usePoint;
+    const [deliveryInfo, setDeliveryInfo] = useState({recipient: "", ph: "",zonecode: "", address: "", detailAddress: "", method: "" })
     const [addr, setAddr] = useState(0);
     const [saveAddr, setSaveAddr] = useState(false);
+    const totalPrice = location.props.totalPrice;
+    const delFee = (totalPrice >= 100000 ? 0 : 2500);
+    const finalTotalPrice = location.props.totalPrice - point.usePoint + delFee;
 
     useEffect( ()=> {
         setOpen(false);
@@ -79,6 +81,12 @@ function Payment({location}) {
         setOpen(false);
     };
 
+    let methodHandler = (e)=>{
+        if(e.target.checked){
+            setDeliveryInfo({...deliveryInfo, method: e.target.value});
+        }
+    }
+
     let agreement = (e)=>{
         if(e.target.checked){ setAgree(false); }
         else{ setAgree(true); }
@@ -118,12 +126,15 @@ function Payment({location}) {
         };
         axios.post(url, data)
             .then(res => {
-                if(res.data === 'success'){
+                if(res.data.result === 'success'){
                     alert('구매가 완료되었습니다.');
                     // console.log('구매 시 보내는 리스트 : ', buyingList)
                     dispatch(buyProduct([buyingList]));
-                    history.push('/order/paymentDetails');
-                }else if(res.data === 'false'){
+                    history.replace({
+                        pathname: '/order/paymentDetails',
+                        ocode: res.data.ocode
+                    });
+                }else if(res.data.result === 'false'){
                     alert('결제 실패. 다시 시도해주세요.');
                 }else {
                     alert('문제가 발생했습니다.');
@@ -151,7 +162,7 @@ function Payment({location}) {
                         결제 예정 금액
                     </td>
                     <td colSpan={3} className="text-right">
-                        <span style={{color:"cornflowerblue", fontSize:"150%"}}>{totalPrice}</span> 원
+                        <span style={{color:"cornflowerblue", fontSize:"150%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
                     </td>
                 </tr>
             </Table>
@@ -214,7 +225,10 @@ function Payment({location}) {
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
                                             <Input type="radio" name="addr"
-                                                   onClick={()=>{ setAddr(1); setDeliveryInfo({recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""})}}
+                                                   onClick={()=>{
+                                                       setAddr(1);
+                                                       setDeliveryInfo({...deliveryInfo ,recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""});
+                                                   }}
                                                    checked={addr===1}
                                             />
                                             새 배송지
@@ -269,29 +283,53 @@ function Payment({location}) {
                 </div> {/*end of 배송지 div*/}
 
                 <div id="pay">
-                    <h3 className="text-left">결제 방법</h3>
+                    <h3 className="text-left">결제</h3>
                     <hr/>
                     <Table bordered>
                         <tbody>
+                        <tr>
+                            <th>상품 금액</th>
+                            <th className="text-left">{totalPrice}원</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                적립금 사용
+                            </td>
+                            <td className="text-left">
+                                -{point.usePoint} 원
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>배송비</td>
+                            <td className="text-left">
+                                +{delFee}원
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>최종 결제 금액</td>
+                            <td className="text-left font-weight-bold" style={{fontSize:"130%"}}>
+                                {finalTotalPrice}원
+                            </td>
+                        </tr>
                         <tr>
                             <th scope="row" width={"20%"}>결제 수단</th>
                             <td>
                                 <FormGroup tag="fieldset" row >
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
-                                            <Input type="radio" name="pay"/>
+                                            <Input type="radio" name="pay" value="카드" onChange={(e)=>{methodHandler(e)}}/>
                                             카드 결제
                                         </Label>
                                     </FormGroup>
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
-                                            <Input type="radio" name="pay"/>
+                                            <Input type="radio" name="pay" value="무통장입금" onChange={(e)=>{methodHandler(e)}}/>
                                             무통장 입금
                                         </Label>
                                     </FormGroup>
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
-                                            <Input type="radio" name="pay"/>
+                                            <Input type="radio" name="pay" value="휴대폰" onChange={(e)=>{methodHandler(e)}}/>
                                             휴대폰 결제
                                         </Label>
                                     </FormGroup>
