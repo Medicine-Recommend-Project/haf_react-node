@@ -200,7 +200,7 @@ function ProductDetail({match, history}) {
     );
 
     return (
-        <div className="container" style={{position: "relative", margin: "0 auto"}}>
+        <div className="container" style={{position: "relative", margin: "40px auto"}}>
             <Row style={{marginBottom: "50px"}}>
                 <Col md={7}>
                     <Image src={ `/${product.images}` } style={{width:'100%', height:'100%', minWidth:'250px', maxWidth:'400px'}} />

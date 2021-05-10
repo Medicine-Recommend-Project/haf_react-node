@@ -54,6 +54,12 @@ function NavBar2(){
                         </div>
                     </Nav>
                     <Nav>
+                        <NavDropdown title="내 정보" id="collasible-nav-dropdown">
+                            <NavDropdown.Item onClick={()=>{history.push("/customer/join");}}>회원가입</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=>{history.push("/customer/mypage");}}>내정보 관리</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=>{history.push("/order/paymentList");}}>결제 내역</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=>{history.push("/board/inquiry");}}>문의 하기</NavDropdown.Item>
+                        </NavDropdown>
                         {(
                             loginCheck ?
                                 <Button variant="primary" onClick={()=>{onLogout();}}>로그아웃</Button>
@@ -62,13 +68,6 @@ function NavBar2(){
                                     <Button variant="primary">로그인</Button>
                                 </Link>
                         )}
-
-                        <NavDropdown title="내 정보" id="collasible-nav-dropdown">
-                            <NavDropdown.Item onClick={()=>{history.push("/customer/join");}}>회원가입</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/customer/mypage");}}>내정보 관리</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/order/paymentList");}}>결제 내역</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/board/inquiry");}}>문의 하기</NavDropdown.Item>
-                        </NavDropdown>
                         <Link to="/product/upload">
                             <Button variant="outline-primary">upload</Button>
                         </Link>

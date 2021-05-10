@@ -9,6 +9,7 @@ import {
 import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
+import CarouselImages from "../home/calrouselImages";
 
 function SearchProduct({location}) {
     let dispatch = useDispatch();
@@ -77,19 +78,7 @@ function SearchProduct({location}) {
 
     return (
         <div style={{margin:'0 auto'}}>
-
-            <Jumbotron className="background">
-                <h1>20% Season OFF</h1><br/>
-                <p>
-                    <Button variant="primary">주문하러 가기</Button>
-                </p><br/>
-                <p>
-                    특별 가격은 해당 제품 첫 주문시 계정당 1개, 제품 당 1개, 주문 당 1개에만 적용됩니다.<br/>
-                    만약 한 주문에서 동일 특가 상품을 1개 이상 주문하면 장바구니에서 자동으로 1개만 세일가가 적용됩니다.<br/>
-                    중복 할인은 적용되지 않으며 체험특가 선택은 장바구니에서도 가능합니다.<br/>
-                </p>
-            </Jumbotron>
-
+            <CarouselImages/>
             <div style={{textAlign:'center'}}>
                 <h2>검색 결과</h2>
                 <hr/>

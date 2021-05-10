@@ -1,6 +1,7 @@
 import React, {useState, initialState} from "react";
 import FileUpload from '../../components/home/FileUpload';
 import axios from 'axios';
+import {Form} from "reactstrap";
 
 const Continents =[
     {key:1, value:"Africa"},
@@ -15,7 +16,7 @@ const Continents =[
 function UploadProduct(props){
 
     const [newProduct, setNewProduct] = useState({
-        pname: "", description: "", price : 0, continents: "Europe"
+        pname: "", description: "", price : 0, continents: "Europe", type: "두뇌"
     });
 
     let onTyping = (e)=> {
@@ -46,7 +47,8 @@ function UploadProduct(props){
             description : newProduct.description,
             price : newProduct.price,
             images : Images,
-            continents: newProduct.continents
+            continents: newProduct.continents,
+            type: newProduct.type
         }
 
         axios.post(url, body)
@@ -66,20 +68,29 @@ function UploadProduct(props){
             <div style={{textAlign:'center', marginBottom:'2rem'}}>
                 <h2>의약품 업로드</h2>
             </div>
-            <form onSubmit={submitHandler}>
+            <Form onSubmit={submitHandler}>
                 <FileUpload refreshfunction={updateImages} />
                 <br/>
                 <label>이름</label>
                 <input type="text" name="pname" value={newProduct.pname} onChange={onTyping}/>
                 <br/>
+                <label>종류</label>
+                <select name="type" value={newProduct.type} onChange={onTyping}>
+                    <option value="두뇌">두뇌</option>
+                    <option value="피부">피부</option>
+                    <option value="관절">관절</option>
+                    <option value="장 건강">장 건강</option>
+                </select>
+                <br/>
                 <br/>
                 <label>설명</label>
-                <textarea name="description" cols="30" rows="10" onChange={onTyping} value={newProduct.description}> </textarea>
+                <textarea name="description" cols="30" rows="5" onChange={onTyping} value={newProduct.description}> </textarea>
                 <br/>
                 <br/>
-                <label>가격(\)</label>
+                <label>가격</label>
                 <input type="number" name="price" value={newProduct.price} onChange={onTyping}/>
                 <br/>
+                <label>제조국</label>
                 <select name="continents" onChange={onTyping} value={newProduct.continents}>
                     {Continents.map((item,i) =>(
                         <option key={i} value={item.value}>{item.value}</option>
@@ -87,9 +98,8 @@ function UploadProduct(props){
                 </select>
                 <br/>
                 <br/>
-                <label>제조국</label>
                 <button type="submit" onClick={submitHandler}>상품 업로드</button>
-            </form>
+            </Form>
         </div>
 
     )

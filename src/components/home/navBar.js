@@ -9,17 +9,14 @@ function NavBar(){
     const [search, setSearch] = useState("");
     let history = useHistory();
     let basketCount = useSelector((store)=>store.basketReducer.count);
+    let loginCheck = useSelector((store)=>store.loginReducer.login);
+
     let userIconHandler = ()=>{
-        let url = "/customer/isNotLogin";
-        axios.get(url)
-            .then(res => {
-                if (res.data === "pptrue") {
-                    history.push("/customer/mypage");
-                }else {
-                    history.push("/customer/login");
-                }
-            })
-            .catch(err => alert(err))
+        if (loginCheck) {
+            history.push("/customer/mypage");
+        }else {
+            history.push("/customer/login");
+        }
     }
 
     let searchProduct = ()=>{
@@ -28,12 +25,13 @@ function NavBar(){
         let data = {search: s}
         axios.post(url, data)
             .then(res => {
-                console.log(res.data);
+                setSearch("");
                 history.push({
                     pathname: '/product/search',
                     product: res.data
                 });
             })
+            .catch(err => console.log(err))
     }
 
     return(
