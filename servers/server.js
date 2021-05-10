@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const port =process.env.PORT || 3001;
+// const path = require('path');
+// app.use(express.static('public'));
 /**********로거 출력용 logger, morgan**********/
 global.logger || (global.logger = require('./config/logger'));  // → 전역에서 사용
 const morganMiddleware = require('./config/morganMiddleware');
@@ -36,19 +38,6 @@ app.use(express.json()); // json으로 받아들인 정보를 분석함
 // 아래 옵션이 false면 노드의 querystring 모듈을 사용하여 쿼리스트링을 해석하고, true면 qs 모듈을 사용하여 쿼리스트링을 해석한다
 app.use(express.urlencoded({ extended: true }));
 
-// app.get('/', (req, res) => {
-//     let user;
-//     logger.info('그냥 / 요청')
-//     if(!req.user){
-//         user = [];
-//     }else{
-//         let cid = req.user.cid;
-//         let grade = req.user.grade;
-//         let name = req.user.name;
-//         user = {"cid": cid, "grade" : grade, "name": name};
-//     }
-//     res.json(user);
-// })
 
 app.use('/api', apiRoute);
 
@@ -62,10 +51,10 @@ app.use('/order', orderRoute);
 
 app.use('/management', managementRoute);
 
-
-
-
-
+// will serve index.html for every page refresh.
+// app.get("*", function(req, res) {
+//     res.sendFile(path.join(__dirname, "../public" ,"index.html"));
+// });
 app.listen(port, () => {
     logger.debug(`SERVER ON ... Express is running on http:localhost:${port}`);
 });

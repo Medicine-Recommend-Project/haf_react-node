@@ -2,19 +2,19 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Button, Col, Form} from "react-bootstrap";
 import {Input} from "reactstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {doLogin} from "../../store/actions/loginActions";
 
 function Login({history}) {
+    let loginCheck = useSelector((store)=>store.loginReducer.login);
+    let dispatch = useDispatch();
     const [user, setUser] = useState({ cid : "", cpw : "" });
 
-    useEffect(async () => {
-        axios.get("/customer/isNotLogin")
-            .then(res => {
-                if (res.data === "pptrue") {
-                    alert('이미 로그인 중입니다.');
-                    history.push("/");
-                }
-            })
-            .catch(err => alert(err))
+    useEffect(() => {
+        if (loginCheck) {
+            alert('이미 로그인 중입니다.');
+            history.push("/");
+        }
     },[])
 
     //input창 값 입력 시 useState에 반영
@@ -41,6 +41,7 @@ function Login({history}) {
                 if(res.data === 'false'){ alert('아이디/비밀번호가 틀렸습니다.'); }
                 else {
                     alert('로그인 성공');
+                    dispatch(doLogin());
                     history.goBack();
                 }
             }).catch(e => {
@@ -60,8 +61,8 @@ function Login({history}) {
                 <Col>
                     <Input type="password" name="cpw" value={user.cpw} onChange={onTyping} placeholder="PW" sm={2} bsSize="lg"/><br/>
                 </Col>
-                <Button type="submit">로그인</Button>
-                <Button onClick={()=>{history.push('/customer/join')}}>회원가입</Button>
+                <Button type="submit" size="lg">로그인</Button>{'   '}
+                <Button onClick={()=>{history.push('/customer/join')}} size="lg">회원가입</Button>
             </Form>
             </div>
         </>

@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
-import {Button, Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
+import {Button, Col, Form, FormGroup, Input, InputGroup, Label, Row} from "reactstrap";
 
 function Join({history}){
 
@@ -190,16 +190,17 @@ function Join({history}){
     }//end of submitForm()
 
     return(
-        <div>
+        <div  className="mx-auto mt-5 mb-3">
             <h3>회원 가입</h3>
-            <Form>
+            <hr/> <br/> <br/>
+            <Form style={{width:"80%", margin:"0 auto"}}>
                 <FormGroup row>
                     <Label sm={2}>아이디<strong style={{color:"red"}}>＊</strong></Label>
-                    <Col sm={3}>
-                        <Input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
-                    </Col>
-                    <Col sm={2}>
-                        <Button onClick={()=>{ checkId();}}>중복검사</Button>
+                    <Col sm={4}>
+                        <InputGroup>
+                            <Input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
+                            <Button color="success" onClick={()=>{ checkId();}}>중복검사</Button>
+                        </InputGroup>
                     </Col>
                     <Col sm={10} className={"text-left"}>
                         {checkRs.idRs}
@@ -242,24 +243,20 @@ function Join({history}){
                     </Col>
                 </FormGroup>{/*이메일 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 주소<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Label sm={2}>
+                        주소<strong style={{color:"red"}}>＊</strong> <br/>
+                        <Button color="success" onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
+                    </Label>
                     <FormGroup>
-                        <Col lg={12} className={"text-left"}>
-                            {inputs.zonecode}{'  '}{inputs.address}
+                        <Col lg={8} className={"text-left"}>
+                            {(inputs.zonecode === "" ? <span className="text-muted">주소를 찾아주세요.</span> : inputs.zonecode + inputs.address)}
                         </Col>
-                        <Row form>
-                            <Col lg={8}>
-                                <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} placeholder="상세 주소 입력"/>
-                            </Col>
-                            <Col lg={4}>
-                                <Button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
-                            </Col>
-                        </Row>
+                        <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
                     </FormGroup>
                     { open ? <DaumPostcodeAPI handler={daumHandler}/> : null } <br/>
                 </FormGroup>{/*주소 FormGroup*/}
                 <br/>
-                <Button onClick={()=>{ submitForm();}}>가입하기</Button>
+                <Button onClick={()=>{ submitForm();}} color="success" size="lg">가입하기</Button>
                 <br/>
             </Form>
         </div>

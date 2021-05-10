@@ -1,64 +1,60 @@
-import React from 'react';
-import {Navbar, Nav, NavDropdown, Button} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Navbar, Nav, Button, Image} from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import {useSelector} from "react-redux";
+import axios from "axios";
+import {Input, InputGroup} from "reactstrap";
 
 function NavBar(){
+    const [search, setSearch] = useState("");
+    let history = useHistory();
     let basketCount = useSelector((store)=>store.basketReducer.count);
-    
+    let userIconHandler = ()=>{
+        let url = "/customer/isNotLogin";
+        axios.get(url)
+            .then(res => {
+                if (res.data === "pptrue") {
+                    history.push("/customer/mypage");
+                }else {
+                    history.push("/customer/login");
+                }
+            })
+            .catch(err => alert(err))
+    }
+
+    let searchProduct = ()=>{
+        let url = "/product/search";
+        let s = ('%'+search+'%').toString()
+        let data = {search: s}
+        axios.post(url, data)
+            .then(res => {
+                console.log(res.data);
+                history.push({
+                    pathname: '/product/search',
+                    product: res.data
+                });
+            })
+    }
+
     return(
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" sticky={"top"}>
-                <Navbar.Brand href="/">HAF</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Link to="/">
-                            <button>Home</button>
-                        </Link>
-                        <Link to="/product">
-                            <button>product</button>
-                        </Link>
-                        <Link to="/customer">
-                            <button>customer</button>
-                        </Link>
-                        <Link to="/board">
-                            <button>board</button>
-                        </Link>
-                        <Link to="/order">
-                            <button>order</button>
-                        </Link>
-                        <Link to="/product/upload">
-                            <Button variant="outline-primary">upload</Button>
-                        </Link>
-                    {/*    <NavDropdown title="Shopping" id="collasible-nav-dropdown">*/}
-                    {/*        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Divider />*/}
-                    {/*        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>*/}
-                    {/*    </NavDropdown>*/}
+                <Navbar.Brand href="/"><img src="/navLogo.png" alt="로고" width={70} height={50}/></Navbar.Brand>
+                <Nav className="mr-auto">
+                    <InputGroup  style={{width:"80%"}}>
+                        <Input type="text" value={search} onChange={(e)=>{setSearch(e.target.value);}} placeholder="상품 명 검색"/>
+                        <Button onClick={()=>{searchProduct()}} size="sm" color="secondary">검색</Button>
+                    </InputGroup>
+                </Nav>
 
-                    {/*    <NavDropdown title="Brand" id="collasible-nav-dropdown">*/}
-                    {/*        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Divider />*/}
-                    {/*        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>*/}
-                    {/*    </NavDropdown>*/}
-
-                    {/*    <NavDropdown title="고민별 케어" id="collasible-nav-dropdown">*/}
-                    {/*        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>*/}
-                    {/*        <NavDropdown.Divider />*/}
-                    {/*        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>*/}
-                    {/*    </NavDropdown>*/}
-                    </Nav>
-                    <Nav>
-                        <Link to="/customer/login">Login</Link>
-                        <Link to="/order/basket">Cart</Link> <span style={{color:"red", backgroundColor:"#FFF"}}>{ basketCount }</span>
-                    </Nav>
-                </Navbar.Collapse>
+                <Nav style={{cursor:"pointer"}}>
+                    <Image src="/navUser_Icon.png" onClick={()=>{userIconHandler();}} style={{width:"40px",height:"40px", marginRight:"10px"}} alt="사용자 아이콘"/>
+                    <div onClick={()=>{history.push('/order/basket')}} style={{position:"relative"}} >
+                        <img src="/navBasket_Icon.png" style={{width:"40px",height:"40px"}} alt="장바구니 아이콘"/>
+                        <div style={{position:"absolute",top:"0",right:"0",padding:"3px", width:"20px", color:"#FFF", backgroundColor:"red", borderRadius:"100%"}}>
+                            { basketCount }
+                        </div>
+                    </div>
+                </Nav>
             </Navbar>
     );
 }

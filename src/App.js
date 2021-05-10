@@ -1,8 +1,6 @@
 /* eslint-disable */
 import './App.css';
-
-
-import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 /**********Route import**********/
 import Customer from './router/customerRouter';
@@ -12,23 +10,15 @@ import Order from "./router/orderRouter";
 import Product from "./router/productRouter";
 import Management from "./components/management/management";
 import NavBar from "./components/home/navBar";
+import NavBar2 from "./components/home/navBar2";
 
 function App(){
-    //로그인 시 session관리 위해 정보 저장
-    // const [user, setUser] = useState({cid:"", grade:"", cname:""});
-    // useEffect(async() => {
-    //     axios.get('/')
-    //         .then(res => {
-    //             setUser({...user, cid: res.data.cid, grade: res.data.grade, cname: res.data.cname});
-    //         })
-    //         .catch(err => console.log(err))
-    // },[])
 
     return(
         <div className="App">
             <Router>
                 <NavBar/>
-                {/*지금 로그인 정보 >> ID : {user.cid} , GRADE : {user.grade}, NAME : {user.cname}*/}
+                <NavBar2/>
                 <Switch>
                     <Route exact path="/" component={Main}/>
                     <Route path="/product" component={Product}/>
@@ -36,6 +26,7 @@ function App(){
                     <Route path="/board" component={Board} />
                     <Route path="/order" component={Order} />
                     <Route path="/management" component={Management} />
+                    <Route render={() => <div><h1>존재하지 않는 페이지입니다</h1></div>} />
                 </Switch>
             </Router>
         </div>

@@ -1,8 +1,9 @@
 import { combineReducers } from "redux";
 import basketReducer from "./basketReducer";
+import loginReducer from "./loginReducer";
 
 export default combineReducers({
-    basketReducer  // basketReducer : basketReducer 의 단축속성이다.
+    basketReducer, loginReducer  // basketReducer : basketReducer 의 단축속성이다.
 })
 
 /**
