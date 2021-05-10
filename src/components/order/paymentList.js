@@ -20,7 +20,7 @@ function PaymentList({history}){
                     history.push('/customer/login');
                     return;
                 }else{
-                    url = '/order/paymentDetail';
+                    url = '/order/paymentDetails';
                     let data = {
                         prevDate:  (''+year+'/'+month+'/'+day), //오늘로부터 한달 전
                         nowDate: (''+year+'/'+(month + 1)+'/'+(day+1)), //오늘 +1일...
@@ -47,7 +47,12 @@ function PaymentList({history}){
     const paymentDetails = orderTitles.length>0 && orderTitles.map((title, i)=> {
         //title의 주문코드와 동일한 detail만 골라서 반복문 돌리기 (이유: title과 detail은 1:N 관계)
         let details = orderDetails.length>0 && orderDetails.filter((detail)=> title.ocode === detail.ocode ).map((detail, j) => {
-            // let src = images.length>0 && images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
+            let src;
+            if(orderDetails.length > 1){
+                src = images.length>0 && images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
+            }else{
+                src = images.images
+            }
             return(
                 <tr key={i+"-"+j}>
                     <td style={{width:"10%"}}>{j}</td>
@@ -55,7 +60,11 @@ function PaymentList({history}){
                     <td>
                         <Row>
                             <Col sm={3}>
-                                {/*<img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/>*/}
+                                {(
+                                    images.length > 1 ?
+                                        <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/> :
+                                        <img src={ `/${src}` } width={70} height={70} alt="상품 미리보기"/>
+                                )}
                             </Col>
                             <Col className="text-left">
                                 {detail.pname}

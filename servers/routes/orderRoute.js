@@ -67,7 +67,6 @@ router.post('/buying', (req, res)=>{
 router.post('/paymentDetails',(req, res)=>{
 
     let sqlQuery2 = "";
-
     if(req.body.ocode === "%"){
         sqlQuery = "SELECT * FROM orderTitle WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
         sqlQuery2 = "SELECT * FROM orderDetail WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
@@ -105,9 +104,14 @@ router.post('/paymentDetails',(req, res)=>{
                 else{
                     logger.debug(sqlQuery3 +' → ' + row2.length);
 
-                    // 이렇게 안하면 모양이 [[{}}] 배열 내 배열 내 객체의 형태가 됨.
-                    // 꺼내려면 images[0].[0].images 이렇게 해야돼서... 보내주기 전에 2중 배열 제거!
-                    let img = row2.map((row) =>{ return row[0]; });
+                    let img;
+                    if(row2.length > 1){
+                        // 이렇게 안하면 모양이 [[{}}] 배열 내 배열 내 객체의 형태가 됨.
+                        // 꺼내려면 images[0].[0].images 이렇게 해야돼서... 보내주기 전에 2중 배열 제거!
+                        img = row2.map((row) =>{ return row[0]; });
+                    }else if(row2.length === 1){
+                        img = row2[0];
+                    }
 
                     res.json({
                         orderTitle: result1,

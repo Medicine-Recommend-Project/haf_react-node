@@ -44,7 +44,7 @@ function Payment({location}) {
                 }
                 let userData = {...res.data};
                 setUser(userData);
-                setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress})
+                setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress, method: "카드"})
             })
             .catch(err => console.log(err))
     },[]);
@@ -63,13 +63,18 @@ function Payment({location}) {
     }// end of onTyping()
 
     let pointHandler = (e)=>{
+        let max = totalPrice + delFee;
+        let value;
         if(e.target.name === 'usePoint'){
-            let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
+            value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
             if(point.usePoint === "0" && e.target.value === "00"){ value = "0" }
             if(value > user.point){ value = user.point }
+            if(value >= max ) { value = max }
             setPoint({ ...point, [e.target.name]: value, checked: false });
         }else if(e.target.checked){
-            setPoint({...point,  usePoint: user.point, checked: true});
+            if(user.point >= max) { value = max }
+            else value = user.point
+            setPoint({...point,  usePoint: value, checked: true});
         }else if(!e.target.checked){
             setPoint({...point,  usePoint: 0, checked: false})
         }
@@ -114,6 +119,13 @@ function Payment({location}) {
     ));
 
     let buyingProducts = async() =>{
+        for(let i in Object.keys(deliveryInfo)){
+            // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
+            if(deliveryInfo[Object.keys(deliveryInfo)[i]] === "" || deliveryInfo[Object.keys(deliveryInfo)[i]].length === 0){
+                alert('빈칸을 채워주세요!');
+                return;
+            }//end of if()
+        }//end of for()
         let totalQuantity = buyingList.reduce((tQuantity, product)=>{ tQuantity+=product.quantity; return tQuantity; },0)
         let url = '/order/buying';
         let data = {
@@ -166,17 +178,6 @@ function Payment({location}) {
                     </td>
                 </tr>
             </Table>
-            {/*<div id="sideNav"*/}
-            {/*     style={{position: "absolute" , right: "3px", border: "1px solid gray", backgroundColor: "skyblue", height: "30vh", zIndex:"1"}}*/}
-            {/*>*/}
-            {/*    결제 금액 {totalPrice}원<br/>*/}
-            {/*    <hr/>*/}
-            {/*    상품 할인 금액 0원 <br/>*/}
-            {/*    배송비 {(totalPrice >= 100000 ? 0 : 2500)}원<br/>*/}
-            {/*    적립금 사용 {point.usePoint} 원<br/>*/}
-            {/*    <hr/>*/}
-            {/*    최종 결제 금액 {(totalPrice >= 100000 ? totalPrice : totalPrice+2500)} 원*/}
-            {/*</div>*/}
             <div>
                 <div id="pointDiv">
                     <h3 className="text-left">쿠폰 및 적립금 사용</h3>
@@ -195,7 +196,7 @@ function Payment({location}) {
                                         <Input type="text" name="usePoint" value={point.usePoint} onChange={pointHandler} placeholder="0"/>
                                     </Col>
                                     <Col sm={5} className="text-left">
-                                        <input type="checkbox" onClick={pointHandler} checked={point.checked} /> 모두 사용
+                                        <input type="checkbox" onChange={pointHandler} checked={point.checked} /> 모두 사용
                                     </Col>
                                 </Row>
                                 보유 적립금 : {user.point}원 (사용 가능: {user.point - point.usePoint})
@@ -216,7 +217,7 @@ function Payment({location}) {
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
                                             <Input type="radio" name="addr"
-                                                   onClick={()=>{setAddr(0); setDeliveryInfo(user); }}
+                                                   onChange={()=>{setAddr(0); setDeliveryInfo(user); }}
                                                    checked={addr===0}
                                             />
                                             나의 배송지
@@ -225,7 +226,7 @@ function Payment({location}) {
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
                                             <Input type="radio" name="addr"
-                                                   onClick={()=>{
+                                                   onChange={()=>{
                                                        setAddr(1);
                                                        setDeliveryInfo({...deliveryInfo ,recipient: "", ph: "",zonecode: "", address: "", detailAddress: ""});
                                                    }}
@@ -256,12 +257,13 @@ function Payment({location}) {
                         <tr>
                             <th scope="row">
                                 배송지 주소 <br/> <br/>
-                                <Button onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
+                                <Button onClick={(event) => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
                             </th>
                             <td>
                                 <FormGroup>
                                     <Col lg={12} className="text-left mb-3">
-                                        {deliveryInfo.zonecode}{'  '}{deliveryInfo.address}
+                                        {(deliveryInfo.zonecode === "" ? <span className="text-muted">주소를 입력해주세요.</span> : deliveryInfo.zonecode +'   '+ deliveryInfo.address ) }
+
                                     </Col>
                                     <Row form>
                                         <Col sm={4}>
@@ -273,7 +275,6 @@ function Payment({location}) {
                                                 </Col> :
                                                 null
                                         )}
-
                                     </Row>
                                 </FormGroup>
                             </td>{/*주소 FormGroup*/}
@@ -317,7 +318,7 @@ function Payment({location}) {
                                 <FormGroup tag="fieldset" row >
                                     <FormGroup check style={{marginLeft:"15px"}}>
                                         <Label check>
-                                            <Input type="radio" name="pay" value="카드" onChange={(e)=>{methodHandler(e)}}/>
+                                            <Input type="radio" name="pay" value="카드" defaultChecked onChange={(e)=>{methodHandler(e)}}/>
                                             카드 결제
                                         </Label>
                                     </FormGroup>
@@ -349,7 +350,7 @@ function Payment({location}) {
                         <br/>
                         <br/>
                     </p>
-                    <input type="checkbox" onClick={agreement}/> 약관에 동의합니다.
+                    <input type="checkbox" onChange={agreement} defaultChecked={false}/> 약관에 동의합니다.
                 </div> {/*end of 개인정보 동의 div*/}
             </div>
             { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }

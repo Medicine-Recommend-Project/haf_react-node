@@ -50,6 +50,9 @@ const basketReducer = (state = INITIAL_STATE , action) => {
             break;
         // 상품 구매
         case BUY_ITEMS:
+            //장바구니에 담지 않고 바로 구매했을 시 장바구니 수정 x
+            if(action.payload.length === 1 && !newState.basket.includes(action.payload.pcode)) return newState;
+
             let pcodes = action.payload.reduce((pcodes, payload)=>{ pcodes.push(payload.pcode); return pcodes;},[])
             let bk = newState.basket.filter(list => !pcodes.includes(list.pcode));  //pcodes 배열에 list.pcode가 포함되지 않은 것만 배열로 반환
             newState = {

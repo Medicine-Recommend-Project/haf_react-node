@@ -1,8 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import {deleteAll, deleteIt, deleteThis} from "../../store/actions/basketActions";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {changeQuantity} from "../../store/actions/basketActions";
-import {Link} from "react-router-dom";
 import {Button, ButtonGroup, Col, Input, Row, Table} from "reactstrap";
 
 function Basket({history}) {
@@ -139,7 +138,12 @@ function Basket({history}) {
 
     return(
         <div style={{marginTop:"50px"}}>
-            {( baskets.length === 0 ? <strong>장바구니에 담긴 상품이 존재하지 않습니다.</strong> : (
+            {( baskets.length === 0 ? (
+                <>
+                    <h2>장바구니에 담긴 상품이 존재하지 않습니다.</h2> <br/><br/>
+                    <Button onClick={()=>{history.push('/')}}>구매하러 가기</Button>
+                </>
+            ) : (
                 <div id="basketTable" style={{margin:"0 auto", width:"90%"}}>
                     <Table hover striped >
                         <thead>

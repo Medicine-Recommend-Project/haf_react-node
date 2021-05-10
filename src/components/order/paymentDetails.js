@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import axios from "axios";
-import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import {Button, Col, Row, Table} from "reactstrap";
 
 function PaymentDetails({location}) {
     let history = useHistory();
@@ -42,30 +42,41 @@ function PaymentDetails({location}) {
             }); //end of outer axios
     },[]);
 
-    const details = orderDetails.length>0 && orderDetails.map((detail, j)=>{
-        // let src = images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
-        return(
-            <tr key={j}>
-                <td style={{width:"10%"}}>{j}</td>
-                {/*<td>{detail.pcode}</td>*/}
-                <td>
-                    <Row>
-                        <Col sm={3}>
-                            {/*<img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/>*/}
-                        </Col>
-                        <Col className="text-left">
-                            {detail.pname}
-                        </Col>
-                    </Row>
-                </td>
-                <td>
-                    {detail.quantity}
-                </td>
-                <td>
-                    <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원</td>
-            </tr>
-        ) ;
-    });
+
+    const paymentDetails = orderDetails.length>0 && orderDetails.map((detail, j) => {
+            let src;
+            if(orderDetails.length > 1){
+                src = images.length>0 && images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
+            }else{
+                src = images.images
+            }
+            return(
+                <tr key={"-"+j}>
+                    <td style={{width:"10%"}}>{j}</td>
+                    {/*<td>{detail.pcode}</td>*/}
+                    <td>
+                        <Row>
+                            <Col sm={3}>
+                                {(
+                                    orderDetails.length > 1 ?
+                                    <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/> :
+                                    <img src={ `/${src}` } width={70} height={70} alt="상품 미리보기"/>
+                                )}
+
+                            </Col>
+                            <Col className="text-left">
+                                {detail.pname}
+                            </Col>
+                        </Row>
+                    </td>
+                    <td>
+                        {detail.quantity}
+                    </td>
+                    <td>
+                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원</td>
+                </tr>
+            );  //return
+        }); // details
 
         const titles = (
             <div style={{marginBottom: "100px"}}>
@@ -92,7 +103,7 @@ function PaymentDetails({location}) {
                         <th>금액</th>
                     </thead>
                     <tbody>
-                        {details}
+                        {paymentDetails}
                     </tbody>
                 </Table>
                 <div id="pointDiv">
