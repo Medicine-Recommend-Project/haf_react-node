@@ -7,8 +7,7 @@ import {Image, Tab, Tabs} from "react-bootstrap";
 import {
     Badge, Button, ButtonGroup,
     Card, CardBody, CardTitle,
-    Col, Input, Row,
-    Table, UncontrolledTooltip
+    Col, Input, Row, Table
 } from "reactstrap";
 
 function ProductDetail({match, history}) {
@@ -201,9 +200,9 @@ function ProductDetail({match, history}) {
     );
 
     return (
-        <div className="container" style={{position: "relative"}}>
+        <div className="container" style={{position: "relative", margin: "0 auto"}}>
             <Row style={{marginBottom: "50px"}}>
-                <Col md={5} md={5}>
+                <Col md={7}>
                     <Image src={ `/${product.images}` } style={{width:'100%', height:'100%', minWidth:'250px', maxWidth:'400px'}} />
                 </Col>
                 <Col id="detailTop">

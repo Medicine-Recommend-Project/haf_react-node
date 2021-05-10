@@ -39,6 +39,32 @@ router.post('/detail', (req, res)=> {
     });
 });
 
+router.post('/search', (req, res)=> {
+    sqlQuery = "SELECT * FROM product WHERE pname LIKE ? ;";
+    data = [req.body.search];
+
+    sql = db.query (sqlQuery, data, (err, row) => {
+        result(JSON.stringify(row));
+        if(err) { logger.error(err); }
+        else { res.json(row); }
+    });
+});
+
+router.post('/type', (req, res)=> {
+    if(req.body.type === '랭킹'){
+        sqlQuery = "SELECT * FROM product ORDER BY sales DESC;";
+    }else{
+        data = [req.body.type];
+        sqlQuery = db.format("SELECT * FROM product WHERE type LIKE ? ;", data);
+    }
+
+    sql = db.query (sqlQuery, (err, row) => {
+        result(JSON.stringify(row));
+        if(err) { logger.error(err); }
+        else { res.json(row); }
+    });
+});
+
 
 
 
