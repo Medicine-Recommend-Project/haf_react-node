@@ -24,14 +24,15 @@ function ProductMain() {
                 })
     }, []);
 
-    let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[])
-    let goToBasket = useCallback((product) => {
+    let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[Products]);
+
+    let goToBasket = (product) => {
         addProduct(product);
         alert(product.pname + '상품을 장바구니에 담았습니다.');
-    } ,[])
+    }
 
     //상품코드, 상품명, 수량
-    let addProduct = useCallback((product) => {
+    let addProduct = (product) => {
         let item = {
             pcode : product.pcode,
             pname : product.pname,
@@ -40,7 +41,7 @@ function ProductMain() {
             quantity : 1,
         }
         dispatch(addBasket(item));
-    })
+    }
 
     let goingToBuy = useCallback((product)=>{
         history.push({
@@ -72,7 +73,7 @@ function ProductMain() {
     const Cards = Products.length > 0 && Products.map((product, i)=> {
         return(
                 <div key={i} style={{margin:"10px"}}>
-                    <Card style={{maxWidth: "230px"}}>
+                    <Card style={{width: "250px"}}>
                         {/*<img src={ `http://localhost:3001/${product.images}` } style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'150px'}} />*/}
                         <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                         <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>

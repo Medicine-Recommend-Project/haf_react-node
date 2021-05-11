@@ -46,7 +46,7 @@ function NavBar2(){
                         <div style={{fontSize:"150%", fontWeight:"bold", color: "#FFF", textAlign:"justify", cursor:"pointer"}}>
                             <ul className="list-inline d-inline-flex">
                                 <li onClick={()=>{searchType('랭킹');}} style={{color:"red"}}  className="mr-2 ml-2 p-2 ">랭킹</li>
-                                <li onClick={()=>{searchType('두뇌');}} className="mr-2 ml-2 p-2 ">두뇌</li>
+                                <li onClick={()=>{searchType('두뇌건강');}} className="mr-2 ml-2 p-2 ">두뇌건강</li>
                                 <li onClick={()=>{searchType('피부');}} className="mr-2 ml-2 p-2 ">피부</li>
                                 <li onClick={()=>{searchType('관절');}} className="mr-2 ml-2 p-2 ">관절</li>
                                 <li onClick={()=>{searchType('장건강');}} className="mr-2 ml-2 p-2 ">장건강</li>
@@ -59,6 +59,7 @@ function NavBar2(){
                             <NavDropdown.Item onClick={()=>{history.push("/customer/mypage");}}>내정보 관리</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=>{history.push("/order/paymentList");}}>결제 내역</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=>{history.push("/board/inquiry");}}>문의 하기</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=>{history.push("/board/myBoardList");}}>나의 게시글</NavDropdown.Item>
                         </NavDropdown>
                         {(
                             loginCheck ?

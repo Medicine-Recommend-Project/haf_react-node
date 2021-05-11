@@ -73,7 +73,8 @@ function PaymentDetails({location}) {
                         {detail.quantity}
                     </td>
                     <td>
-                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원</td>
+                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원
+                    </td>
                 </tr>
             );  //return
         }); // details

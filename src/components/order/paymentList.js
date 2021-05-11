@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import {Col, Row, Table} from "reactstrap";
+import {Button, Col, Row, Table} from "reactstrap";
 
 function PaymentList({history}){
     let year = new Date().getFullYear(); // 년도
@@ -44,6 +44,20 @@ function PaymentList({history}){
             }); //end of outer axios
     },[]);
 
+
+    let goReview = (ocode, pcode, pname)=>{
+        history.push({
+            pathname:"/board/review",
+            product:{
+                ocode: ocode,
+                pcode: pcode,
+                pname: pname
+            }
+        })
+    }
+
+    let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[]);
+
     const paymentDetails = orderTitles.length>0 && orderTitles.map((title, i)=> {
         //title의 주문코드와 동일한 detail만 골라서 반복문 돌리기 (이유: title과 detail은 1:N 관계)
         let details = orderDetails.length>0 && orderDetails.filter((detail)=> title.ocode === detail.ocode ).map((detail, j) => {
@@ -56,13 +70,13 @@ function PaymentList({history}){
             return(
                 <tr key={i+"-"+j}>
                     <td style={{width:"10%"}}>{j}</td>
-                    {/*<td>{detail.pcode}</td>*/}
                     <td>
-                        <Row>
+                        <Row onClick={()=>{productDetail(detail.pcode);}} style={{cursor:"pointer"}}>
                             <Col sm={3}>
                                 {(
                                     images.length > 1 ?
-                                        <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/> :
+                                        <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/>
+                                        :
                                         <img src={ `/${src}` } width={70} height={70} alt="상품 미리보기"/>
                                 )}
                             </Col>
@@ -75,7 +89,16 @@ function PaymentList({history}){
                         {detail.quantity}
                     </td>
                     <td>
-                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원</td>
+                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원
+                    </td>
+                    <td style={{width:"15%"}}>
+                        {(detail.addreview ?
+                            <Button color="danger" disabled>후기 작성완료</Button>
+                            :
+                            <Button color="outline-danger" onClick={()=>{goReview(detail.ocode, detail.pcode, detail.pname);}}>후기 작성하기</Button>
+                            )}
+                        
+                    </td>
                 </tr>
             );
         });
@@ -99,10 +122,13 @@ function PaymentList({history}){
                 </Row>
                 <Table bordered striped style={{margin: "30px 10px"}}>
                     <thead>
-                        <th>번호</th>
-                        <th>상품</th>
-                        <th>수량</th>
-                        <th>금액</th>
+                        <tr>
+                            <th>번호</th>
+                            <th>상품</th>
+                            <th>수량</th>
+                            <th>금액</th>
+                            <th>후기</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {details}
@@ -112,7 +138,7 @@ function PaymentList({history}){
                     <p>
                         <span style={{fontSize:"20px"}}> ▼ 배송지 정보 </span>
                     </p>
-                    <Table style={{width:"50%"}}>
+                    <Table style={{width:"80%"}}>
                         <tbody>
                             <tr>
                                 <th scope="row">주문자</th>

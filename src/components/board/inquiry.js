@@ -9,7 +9,7 @@ function Inquiry({location}) {
 
     const [user, setUser] = useState({cid:"", cname:""});
     const [inquiry, setInquiry] = useState({
-        pCode: "", category : "문의", DetailCategory: "상품문의",title: "", content: ""
+        pcode: "", category : "문의", DetailCategory: "상품문의",title: "", content: ""
     })
     const [products, setProducts] = useState({});
 
@@ -24,9 +24,9 @@ function Inquiry({location}) {
                 setProducts([res.data.row]);
                 setUser({...user, cid: res.data.cid, cname: res.data.cname})
                 if(location.pcode !== ""){
-                    setInquiry({...inquiry, pCode: location.pcode})
+                    setInquiry({...inquiry, pcode: location.pcode})
                 }else{
-                    setInquiry({...inquiry, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
+                    setInquiry({...inquiry, pcode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
                 }
             })
             .catch(err => console.log(err))
@@ -102,7 +102,7 @@ function Inquiry({location}) {
                             <Label>상품</Label>
                         </Col>
                         <Col lg={9}>
-                            <Input type="select" name="pCode" value={inquiry.pCode} onChange={onTyping} bssize="sm">
+                            <Input type="select" name="pcode" value={inquiry.pcode} onChange={onTyping} bssize="sm">
                                 {productsList}
                             </Input>
                         </Col>

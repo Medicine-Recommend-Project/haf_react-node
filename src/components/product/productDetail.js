@@ -9,6 +9,8 @@ import {
     Card, CardBody, CardTitle,
     Col, Input, Row, Table
 } from "reactstrap";
+import ReviewList from "../board/reviewList";
+import InquiryList from "../board/inquiryList";
 
 function ProductDetail({match, history}) {
     let dispatch = useDispatch();
@@ -121,30 +123,13 @@ function ProductDetail({match, history}) {
     }
 
     let changeStars = (rating) =>{
-        // let feeling = ['  별로에요','  나쁘지않아요','  괜찮아요','  좋아요','  최고에요'];
         let star = '⭐';
         let ratingStar = '';
         for(let i=1; i<=rating; i++){ ratingStar += star; }
-        // ratingStar += feeling[rating-1];
 
         return ratingStar;
     }
 
-    const reviewBoard = reviewBoards.length > 0 && reviewBoards.map((board, i)=>(
-        <Table key={i} striped>
-            <tbody>
-                <tr>
-                    <td colSpan="2" className="text-left"><strong>{board.title}</strong></td>
-                    <td className="text-left" >평점: {changeStars(board.rating)}</td>
-                    <td className="text-right" >작성자: {board.cid} 작성일: {board.bdate}</td>
-                </tr>
-                <tr>
-                    <td colSpan="3" className="text-left">{board.content}</td>
-                    <td className="text-right"><img src="http://placehold.it/70x70" alt=""/> </td>
-                </tr>
-            </tbody>
-        </Table>
-    ));
 
     const Review = (
         <div id="review" style={{marginTop: "20px"}}>
@@ -155,7 +140,7 @@ function ProductDetail({match, history}) {
                 </Col>
             </Row>
             <hr/>
-            {reviewBoards.length > 0 ? reviewBoard :  <strong>아직 후기가 없어요. 후기를 남겨주세요</strong>}
+            <ReviewList props={reviewBoards}/>
         </div>
     );
 
@@ -166,36 +151,13 @@ function ProductDetail({match, history}) {
         });
     }
 
-    const inquiryBoard = inquiryBoards.length > 0 && inquiryBoards.map((board,i)=>(
-        <tr key={i}>
-            <td>{board.detailCategory}</td>
-            <td>{board.title}</td>
-            <td colSpan={2}>{board.content}</td>
-            <td>{board.cid}</td>
-            <td>{board.bdate}</td>
-        </tr>
-    ))
-
     const Inquiry = (
         <div id="inquiry" style={{marginTop: "20px"}}>
             <Row>
                 <Col sm={9} style={{textAlign:"left", fontWeight:"bold", fontSize:"larger"}}> 문의 ({inquiryBoards.length})</Col>
                 <Col sm={3}> <Button onClick={()=>{ goInquiryPage(product.pcode); }}>문의하기</Button></Col>
             </Row>
-            <Table striped bordered>
-                <thead>
-                <tr>
-                    <th>분류</th>
-                    <th>제목</th>
-                    <th colSpan={2}>내용</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                </tr>
-                </thead>
-                <tbody>
-                {inquiryBoard.length > 0 ? inquiryBoard :  <tr><td colSpan={6}>문의글이 존재하지 않습니다.</td></tr>}
-                </tbody>
-            </Table>
+            <InquiryList props={inquiryBoards}/>
         </div>
     );
 

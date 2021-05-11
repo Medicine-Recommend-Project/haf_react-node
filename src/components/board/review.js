@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useHistory, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
+import { useHistory } from 'react-router-dom';
 import axios from "axios";
 import {Button, Col, Form, FormGroup, Input, Label} from "reactstrap";
 
@@ -6,14 +7,15 @@ function Review({location}) {
     let history = useHistory();
     const [user, setUser] = useState({cid:"", cname:""});
     const [review, setReview] = useState({
-        pCode: "", category : "후기", rating: 5, title: "", content: ""
+        ocode: "", pcode: "", category : "후기", rating: 5, title: "", content: ""
     })
-    const [products, setProducts] = useState({});
     const [stars, setStars] = useState(['★','★','★','★','★']);
 
     useCallback(useEffect(()=>{
-        console.log(location);
-    },[]));
+        if(location.pcode !== ""){
+            setReview({...review, ocode: location.product.ocode, pcode: location.product.pcode, pname: location.product.pname})
+        }
+    },[location]));
 
     useCallback(useEffect(async ()=>{
         let url = '/customer/isLogin' ;
@@ -23,40 +25,17 @@ function Review({location}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.push('/customer/login');
                 }
-                console.log('받아온 정보 :', res.data);
-                // setProducts([res.data.row]);
                 setUser({...user, cid: res.data.cid, cname: res.data.cname})
-                // setInquiry({...inquiry, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
             })
             .catch(err => console.log(err))
         // console.log(location);
     },[]));
-    //
-    // useCallback(useEffect(()=>{
-    //     let url = '/product/getPcode' ;
-    //     axios.get(url)
-    //         .then(res => {
-    //             if(res.data === 'ppfalse'){
-    //                 alert('로그인이 필요한 서비스입니다.');
-    //                 return history.push('/customer/login');
-    //             }
-    //             setProducts([res.data.row]);
-    //             setUser({...user, cid: res.data.cid, cname: res.data.cname})
-    //             setReview({...review, pCode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
-    //         })
-    //         .catch(err => console.log(err))
-    // },[]))
+
+
 
     let onTyping = (e)=> {
         setReview({...review, [e.target.name]: e.target.value});
     }
-
-    // products state가 초기화되기 전에 map을 쓰려고하니까 에러나서 &&으로 조건주기
-    const productsList = products[0] && products[0].map(product => (
-        <option key={product.pcode} value={product.pcode} >
-            {product.pname}
-        </option>
-    ));
 
     //평점 별 누르면 점수 및 별 색깔 바뀌게 함
     let starHandler = (i)=>{
@@ -96,7 +75,7 @@ function Review({location}) {
         // console.log('data : ',data);
         axios.post(url, data)
             .then(res => {
-                if(res.data > 0){
+                if(res.data > 1){
                     alert('글이 정상적으로 등록되었습니다.');
                     history.push('/');
                 }else{
@@ -119,9 +98,7 @@ function Review({location}) {
                             <Label>상품</Label>
                         </Col>
                         <Col lg={9}>
-                            <Input type="select" name="pCode" value={review.pCode} onChange={onTyping} bssize="sm">
-                                {productsList}
-                            </Input>
+                            <Input type="text" name="pcode" value={review.pname} bssize="sm" readOnly />
                         </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -155,7 +132,7 @@ function Review({location}) {
                             <Label>내용</Label>
                         </Col>
                         <Col lg={9}>
-                            <Input type="textarea" name="content" value={review.content} onChange={onTyping} id="content" cols="30" rows="10"> </Input>
+                            <Input type="textarea" name="content" value={review.content} onChange={onTyping} id="content" cols="30" rows="5"> </Input>
                         </Col>
                     </FormGroup>
                      <br/>

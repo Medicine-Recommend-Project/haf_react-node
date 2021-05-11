@@ -1,61 +1,40 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
+import React from "react";
 import {Table} from "reactstrap";
 
-function ReviewList({history}) {
+function ReviewList({props}) {
 
-    const [reviews, setReviews] = useState({});
+    if(props.length > 0){
 
-    useEffect(()=>{
-        let url = '/board/getBoards';
-        let data = { where : '후기', pcode : '%' }
-        axios.post(url, data)
-            .then(res => {
-                if(res.data === 'ppfalse'){
-                    alert('로그인이 필요한 서비스입니다.');
-                    history.push('/customer/login');
-                }
-                setReviews(res.data);
-                // console.log(res.data[0].pcode);
-            })
-            .catch(err => console.log(err))
-    },[]);
+        const reviewBoards = props;
 
-    const reviewList = reviews.length > 0 && reviews.map((review, i) => (
-        <tr key={i}>
-            <th scope="row">{review.bcode}</th>
-            <td>{review.category}</td>
-            <td>{review.pcode}</td>
-            <td>{review.rating}</td>
-            <td>{review.title}</td>
-            <td colSpan={2}>{review.content}</td>
-            <td>{review.cid}</td>
-            <td>{review.bdate}</td>
-        </tr>
-    ))
+        let changeStars = (rating) =>{
+            let feeling = ['  별로에요','  나쁘지않아요','  괜찮아요','  좋아요','  최고에요'];
+            let star = '⭐';
+            let ratingStar = '';
+            for(let i=1; i<=rating; i++){ ratingStar += star; }
+            ratingStar += feeling[rating-1];
 
-    return(
-        <div>
-            <h1>후기 게시판이오</h1>
-            <Table hover size="sm">
-                <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>카테고리</th>
-                        <th>상품 코드</th>
-                        <th>평점</th>
-                        <th>제목</th>
-                        <th colSpan={2}>내용</th>
-                        <th>작성자</th>
-                        <th>작성일자</th>
-                    </tr>
-                </thead>
+            return ratingStar;
+        }
+
+        return reviewBoards.length > 0 && reviewBoards.map((board, i)=>(
+            <Table key={i} striped>
                 <tbody>
-                    {reviewList}
+                <tr>
+                    <td colSpan="2" className="text-left"><strong>{board.title}</strong></td>
+                    <td className="text-left" >{changeStars(board.rating)}</td>
+                    <td className="text-right" >작성자: {board.cid} 작성일: {board.bdate}</td>
+                </tr>
+                <tr>
+                    <td colSpan="3" className="text-left">{board.content}</td>
+                    <td className="text-right"><img src="http://placehold.it/70x70" alt=""/> </td>
+                </tr>
                 </tbody>
             </Table>
-        </div>
-    );
+        ));
+    }else{
+        return <strong>아직 후기가 없어요. 후기를 남겨주세요</strong> ;
+    }
 }
 
 export default ReviewList;

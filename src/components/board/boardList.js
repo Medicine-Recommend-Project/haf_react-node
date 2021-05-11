@@ -4,6 +4,8 @@ import {Table} from "reactstrap";
 
 function BoardList({history}) {
     const [allBoards, setAllBoards] = useState({});
+    // const [reviewBoards, setReviewBoards] = useState({});
+    // const [inquiryBoards, setInquiryBoards] = useState({});
 
     useEffect(()=>{
         let url = '/board/getBoards';
@@ -14,6 +16,17 @@ function BoardList({history}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.push('/customer/login');
                 }
+                // else if(res.data.length > 0){
+                //     let boards = res.data;
+                //     let review = []; let inquiry = [];
+                //     for(let i = 0; i < boards.length; i++){
+                //         if(boards[i].category === '후기') review.push(boards[i]);
+                //         if(boards[i].category === '문의') inquiry.push(boards[i]);
+                //     }
+                //     setReviewBoards(review);
+                //     setInquiryBoards(inquiry);
+                // }
+                // else if(res.data.length === 0){ setReviewBoards({}); setInquiryBoards({}); }
                 setAllBoards(res.data);
             })
             .catch(err => console.log(err))

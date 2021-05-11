@@ -16,7 +16,7 @@ const Continents =[
 function UploadProduct(props){
 
     const [newProduct, setNewProduct] = useState({
-        pname: "", description: "", price : 0, continents: "Europe", type: "두뇌"
+        pname: "", description: "", price : 0, continents: "Europe", type: "두뇌건강"
     });
 
     let onTyping = (e)=> {
@@ -76,7 +76,7 @@ function UploadProduct(props){
                 <br/>
                 <label>종류</label>
                 <select name="type" value={newProduct.type} onChange={onTyping}>
-                    <option value="두뇌">두뇌</option>
+                    <option value="두뇌건강">두뇌건강</option>
                     <option value="피부">피부</option>
                     <option value="관절">관절</option>
                     <option value="장 건강">장 건강</option>
