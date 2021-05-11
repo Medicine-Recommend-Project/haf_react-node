@@ -74,8 +74,7 @@ function ProductMain() {
         return(
                 <div key={i} style={{margin:"10px"}}>
                     <Card style={{width: "250px"}}>
-                        {/*<img src={ `http://localhost:3001/${product.images}` } style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'150px'}} />*/}
-                        <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
+                        <CardImg src={ `${product.images}` } onClick={()=>{productDetail(product.pcode);}} top width="100%" className="mt-2" alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                         <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
                                 <Badge color="primary">{badge(Number(product.sales))}</Badge>
                             <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>

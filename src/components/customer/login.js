@@ -2,19 +2,26 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Button, Col, Form} from "react-bootstrap";
 import {Input} from "reactstrap";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {doLogin} from "../../store/actions/loginActions";
 
 function Login({history}) {
-    let loginCheck = useSelector((store)=>store.loginReducer.login);
     let dispatch = useDispatch();
     const [user, setUser] = useState({ cid : "", cpw : "" });
 
     useEffect(() => {
-        if (loginCheck) {
-            alert('이미 로그인 중입니다.');
-            history.push("/");
-        }
+        let url = '/customer/isLogin';
+        fetch(url,{ method:"get"})
+            .then(res => {
+                if(res.data === 'ppfalse'){
+                    alert('이미 로그인 중입니다.');
+                    dispatch(doLogin());
+                    history.push('/');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
     },[])
 
     //input창 값 입력 시 useState에 반영
@@ -42,7 +49,8 @@ function Login({history}) {
                 else {
                     alert('로그인 성공');
                     dispatch(doLogin());
-                    history.goBack();
+                    // history.goBack();
+                    history.push('/');
                 }
             }).catch(e => {
                 console.log(e);

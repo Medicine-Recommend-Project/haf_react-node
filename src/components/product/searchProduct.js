@@ -59,8 +59,7 @@ function SearchProduct({location}) {
         return(
                 <div key={i} style={{margin:"10px"}}>
                     <Card style={{maxWidth: "230px"}}>
-                        {/*<img src={ `http://localhost:3001/${product.images}` } style={{width:'15vw', height:'20vh', minWidth:'130px', maxHeight:'150px'}} />*/}
-                        <CardImg onClick={()=>{productDetail(product.pcode);}} top width="100%" src={ `/${product.images}` } alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
+                        <CardImg src={ `/${product.images}` } onClick={()=>{productDetail(product.pcode);}} top width="100%" className="mt-2" alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                         <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
                             <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>{ product.pname }</CardTitle>
                             <CardText className="mb-2 ">{ product.description } </CardText>
@@ -77,13 +76,13 @@ function SearchProduct({location}) {
     })
 
     return (
-        <div style={{margin:'0 auto'}}>
+        <div className="mx-auto">
             <CarouselImages/>
-            <div style={{textAlign:'center'}}>
+            <div className="text-center">
                 <h2>검색 결과</h2>
                 <hr/>
             </div>
-            <div className="container row" style={{margin:"0 auto"}}>
+            <div className="container row mx-auto">
                 { (Products.length > 0 ? Cards : <h3>검색 결과가 없어요.</h3>) }
             </div>
         </div>

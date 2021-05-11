@@ -1,80 +1,50 @@
 import React from 'react';
-import {Navbar, Nav, NavDropdown, Button, Image} from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
-import {useDispatch, useSelector} from "react-redux";
+import {Navbar, Nav, NavDropdown} from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import axios from "axios";
-import {Col, DropdownItem, Input, NavItem, NavLink, Row} from "reactstrap";
-import {doLogout} from "../../store/actions/loginActions";
 
 function NavBar2(){
     let history = useHistory();
-    let dispatch = useDispatch();
-    let loginCheck = useSelector((store)=>store.loginReducer.login);
+    const list = ['두뇌건강', '피부', '관절', '장건강', '안구', '유산균', '갱년기', '비타민', '다이어트', '어린이', '면역력'];
+
 
     let searchType = (type)=>{
         let url = "/product/type";
         let data = {type: type};
         axios.post(url, data)
             .then(res => {
-                console.log(res.data);
                 history.push({
                     pathname: '/product/search',
                     product: res.data
                 });
             })
-    }
-
-    let onLogout = ()=>{
-        let url = '/customer/logout';
-        fetch(url,{ method:"get"})
-            .then(res => {
-                alert('로그아웃 성공');
-                dispatch(doLogout());
-                history.push('/');
-            })
-            .catch(err => {
-                console.log('로그아웃 실패');
-                console.log(err);
-            })
+            .catch(err => alert('요청이 실패되었습니다.'))
     }
 
     return(
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="text-xl-center mx-auto" >
-                        <div style={{fontSize:"150%", fontWeight:"bold", color: "#FFF", textAlign:"justify", cursor:"pointer"}}>
-                            <ul className="list-inline d-inline-flex">
-                                <li onClick={()=>{searchType('랭킹');}} style={{color:"red"}}  className="mr-2 ml-2 p-2 ">랭킹</li>
-                                <li onClick={()=>{searchType('두뇌건강');}} className="mr-2 ml-2 p-2 ">두뇌건강</li>
-                                <li onClick={()=>{searchType('피부');}} className="mr-2 ml-2 p-2 ">피부</li>
-                                <li onClick={()=>{searchType('관절');}} className="mr-2 ml-2 p-2 ">관절</li>
-                                <li onClick={()=>{searchType('장건강');}} className="mr-2 ml-2 p-2 ">장건강</li>
-                            </ul>
-                        </div>
-                    </Nav>
-                    <Nav>
-                        <NavDropdown title="내 정보" id="collasible-nav-dropdown">
-                            <NavDropdown.Item onClick={()=>{history.push("/customer/join");}}>회원가입</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/customer/mypage");}}>내정보 관리</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/order/paymentList");}}>결제 내역</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/board/inquiry");}}>문의 하기</NavDropdown.Item>
-                            <NavDropdown.Item onClick={()=>{history.push("/board/myBoardList");}}>나의 게시글</NavDropdown.Item>
-                        </NavDropdown>
-                        {(
-                            loginCheck ?
-                                <Button variant="primary" onClick={()=>{onLogout();}}>로그아웃</Button>
-                                :
-                                <Link to="/customer/login">
-                                    <Button variant="primary">로그인</Button>
-                                </Link>
-                        )}
-                        <Link to="/product/upload">
-                            <Button variant="outline-primary">upload</Button>
-                        </Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="text-xl-center mx-auto" >
+                    <div style={{fontSize:"150%", fontWeight:"bold", color: "#FFF", textAlign:"justify", cursor:"pointer"}}>
+                        <ul className="list-inline d-inline-flex">
+                            <li onClick={()=>{searchType('랭킹');}} style={{color:"red"}}  className="mx-3">랭킹</li>
+                            {list.map(list => (
+                                <li onClick={()=>{searchType(list);}} className="mx-3">{list}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <NavDropdown title="내 정보" id="collasible-nav-dropdown">
+                        <NavDropdown.Item onClick={()=>{history.push("/customer/join");}}>회원가입</NavDropdown.Item>
+                        <NavDropdown.Item onClick={()=>{history.push("/customer/mypage");}}>내정보 관리</NavDropdown.Item>
+                        <NavDropdown.Item onClick={()=>{history.push("/order/paymentList");}}>결제 내역</NavDropdown.Item>
+                        <NavDropdown.Item onClick={()=>{history.push("/board/inquiry");}}>문의 하기</NavDropdown.Item>
+                        <NavDropdown.Item onClick={()=>{history.push("/board/myBoardList");}}>나의 게시글</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     );
 }
 

@@ -94,6 +94,14 @@ function Review({location}) {
             <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
                 <Form onSubmit={submitForm}>
                     <FormGroup row>
+                        <Col lg={4}>
+                            <Label>주문코드</Label>
+                        </Col>
+                        <Col lg={8}>
+                            <Input value={review.ocode} readOnly/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
                         <Col lg={3}>
                             <Label>상품</Label>
                         </Col>
@@ -136,7 +144,7 @@ function Review({location}) {
                         </Col>
                     </FormGroup>
                      <br/>
-                    <Button type="submit">작성하기</Button>
+                    <Button type="submit" size="lg">작성하기</Button>
                 </Form>
             </div>
         </div>

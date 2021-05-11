@@ -11,6 +11,7 @@ import Product from "./router/productRouter";
 import Management from "./components/management/management";
 import NavBar from "./components/home/navBar";
 import NavBar2 from "./components/home/navBar2";
+import Footer from "./components/home/footer";
 
 function App(){
 
@@ -29,6 +30,7 @@ function App(){
                     <Route render={() => <div><h1>존재하지 않는 페이지입니다</h1></div>} />
                 </Switch>
             </Router>
+            <Footer/>
         </div>
     );
 }
