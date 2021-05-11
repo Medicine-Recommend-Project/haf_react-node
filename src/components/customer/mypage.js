@@ -98,33 +98,36 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
         <div className="mx-auto mt-5 mb-3">
             <h2>정보 변경</h2>
             <hr/> <br/><br/>
-            <Form style={{width:"80%", margin:"0 auto"}}>
+            <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <Form>
                 <FormGroup row>
-                    <Label sm={2}>아이디</Label>
-                    <Col sm={3}>
+                    <Label sm={3}>아이디</Label>
+                    <Col sm={9}>
                         <Input name="cId" value={user.cid} readOnly/>
                     </Col>
                 </FormGroup>{/* 아이디 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}>이름</Label>
-                    <Col sm={3}>
+                    <Label sm={3}>이름</Label>
+                    <Col sm={9}>
                         <Input type="text" name="cname" onChange={onTyping} value={user.cname}/>
                     </Col>
                 </FormGroup>{/* 이름 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 비밀번호 </Label>
-                    <Button onClick={()=>{setOpen({...open, changeCpw: true});}} color="warning">비밀번호 변경</Button><br/>
+                    <Label sm={3}> 비밀번호 </Label>
+                    <Col>
+                        <Button onClick={()=>{setOpen({...open, changeCpw: true});}} color="warning">비밀번호 변경</Button><br/>
+                    </Col>
                     { open.changeCpw ? <ChangeCpw cid={user.cid} handler={cpwHandler}/> : null }
                 </FormGroup>{/* 비번 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 핸드폰 </Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 핸드폰 </Label>
+                    <Col sm={9}>
                         <Input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={user.ph}/>
                     </Col>
                 </FormGroup>{/*핸드폰 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 이메일 주소 </Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 이메일 주소 </Label>
+                    <Col sm={9}>
                         <Input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={user.email}/>
 
                     </Col>
@@ -133,22 +136,21 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
                     </Col>
                 </FormGroup>{/*이메일 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}>
+                    <Label sm={3}>
                         주소 <br/>
-                        <Button onClick={() =>{setOpen({...open, daum: true});} } color="warning">주소찾기</Button>
+                        <Button onClick={() =>{setOpen({...open, daum: true});} } size="sm" color="warning">주소찾기</Button>
                     </Label>
-                    <FormGroup>
-                        <Col lg={8} className={"text-left"}>
-                            {user.zonecode}{'  '}{user.address}
+                        <Col lg={9} className={"text-left"}>
+                            {user.zonecode} <br/> {user.address}
+                            <Input type="text" name="detailAddress" onChange={onTyping } value={user.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
                         </Col>
-                        <Input type="text" name="detailAddress" onChange={onTyping } value={user.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
-                    </FormGroup>
                     {
                         open.daum ? <DaumPostcodeAPI handler={daumHandler}/> : null
                     } <br/>
                 </FormGroup>{/*주소 FormGroup*/}
             </Form>
             <br/>
+            </div>
             <Button onClick={()=>{submitForm();}} color="warning" size="lg">수정하기</Button><br/>
         </div>
     );

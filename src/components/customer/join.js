@@ -193,10 +193,11 @@ function Join({history}){
         <div  className="mx-auto mt-5 mb-3">
             <h3>회원 가입</h3>
             <hr/> <br/> <br/>
-            <Form style={{width:"80%", margin:"0 auto"}}>
+            <div style={{ display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <Form>
                 <FormGroup row>
-                    <Label sm={2}>아이디<strong style={{color:"red"}}>＊</strong></Label>
-                    <Col sm={4}>
+                    <Label sm={3}>아이디<strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={9}>
                         <InputGroup>
                             <Input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
                             <Button color="success" onClick={()=>{ checkId();}}>중복검사</Button>
@@ -207,14 +208,14 @@ function Join({history}){
                     </Col>
                 </FormGroup>{/* 아이디 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}>이름<strong style={{color:"red"}}>＊</strong></Label>
-                    <Col sm={3}>
+                    <Label sm={3}>이름<strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={9}>
                         <Input type="text" name="cname" onChange={onTyping} value={inputs.cname}/>
                     </Col>
                 </FormGroup>{/* 이름 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 비밀번호<strong style={{color:"red"}}>＊</strong> </Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 비밀번호<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Col sm={9}>
                         <Input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
                     </Col>
                     <Col sm={10} className={"text-left"}>
@@ -222,20 +223,20 @@ function Join({history}){
                     </Col>
                 </FormGroup>{/* 비번 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 비밀번호 확인<strong style={{color:"red"}}>＊</strong> </Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 비밀번호 확인<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Col sm={9}>
                         <Input type="password" name="pwCheck" placeholder="비밀번호 재입력" onChange={ onTyping } value={inputs.pwCheck}/>
                     </Col>
                 </FormGroup>{/*비번확인 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 핸드폰 <strong style={{color:"red"}}>＊</strong></Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 핸드폰 <strong style={{color:"red"}}>＊</strong></Label>
+                    <Col sm={9}>
                         <Input type="text" name="ph" placeholder="숫자만 입력하세요"onChange={onTyping} value={inputs.ph}/>
                     </Col>
                 </FormGroup>{/*핸드폰 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}> 이메일 주소 </Label>
-                    <Col sm={3}>
+                    <Label sm={3}> 이메일 </Label>
+                    <Col sm={9}>
                         <Input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/>
                     </Col>
                     <Col sm={10} className={"text-left"}>
@@ -243,22 +244,21 @@ function Join({history}){
                     </Col>
                 </FormGroup>{/*이메일 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={2}>
+                    <Label sm={3}>
                         주소<strong style={{color:"red"}}>＊</strong> <br/>
-                        <Button color="success" onClick={event => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
+                        <Button color="success" onClick={event => {event.preventDefault(); setOpen(true);}} size="sm">주소찾기</Button>
                     </Label>
-                    <FormGroup>
-                        <Col lg={8} className={"text-left"}>
-                            {(inputs.zonecode === "" ? <span className="text-muted">주소를 찾아주세요.</span> : inputs.zonecode + inputs.address)}
+                        <Col lg={9} className={"text-left"}>
+                            {(inputs.zonecode === "" ? <span className="text-muted">주소를 찾아주세요.</span> : <>{inputs.zonecode} <br/> {inputs.address}</>)}
+                            <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
                         </Col>
-                        <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
-                    </FormGroup>
                     { open ? <DaumPostcodeAPI handler={daumHandler}/> : null } <br/>
                 </FormGroup>{/*주소 FormGroup*/}
                 <br/>
                 <Button onClick={()=>{ submitForm();}} color="success" size="lg">가입하기</Button>
                 <br/>
             </Form>
+            </div>
         </div>
     );
 }
