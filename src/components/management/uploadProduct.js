@@ -16,7 +16,7 @@ const Continents =[
 function UploadProduct(props){
 
     const [newProduct, setNewProduct] = useState({
-        pname: "", description: "", price : 0, continents: "Europe", type: "두뇌건강"
+        pname: "", description: "두뇌건강 증진에 좋은 의약식품입니다.", price : 0, continents: "Europe", type: "두뇌건강"
     });
 
     let onTyping = (e)=> {
@@ -55,7 +55,7 @@ function UploadProduct(props){
             .then(response => {
                 if(response.data > 0) {
                     alert('상품 업로드 성공')
-                    props.history.push('/');
+                    // props.history.push('/');
                 }else {
                     alert('상품업로드 실패')
                 }

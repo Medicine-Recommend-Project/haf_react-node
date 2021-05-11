@@ -44,7 +44,7 @@ router.post('/search', (req, res)=> {
     data = [req.body.search];
 
     sql = db.query (sqlQuery, data, (err, row) => {
-        result(JSON.stringify(row));
+        result(row.length);
         if(err) { logger.error(err); }
         else { res.json(row); }
     });
@@ -59,7 +59,7 @@ router.post('/type', (req, res)=> {
     }
 
     sql = db.query (sqlQuery, (err, row) => {
-        result(JSON.stringify(row));
+        result(row.length);
         if(err) { logger.error(err); }
         else { res.json(row); }
     });

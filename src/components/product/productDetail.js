@@ -73,20 +73,20 @@ function ProductDetail({match, history}) {
         dispatch(addBasket(item));
     }
 
-    let goingToBuy = useCallback((product)=>{
+    let goingToBuy = (product)=> {
         history.push({
-            pathname:`/order/payment`,
-            props:{
-                buyingList : [{
+            pathname: `/order/payment`,
+            props: {
+                buyingList: [{
                     pname: product.pname,
-                    quantity: 1,
+                    quantity: quantity,
                     price: product.price,
                     images: product.images
                 }],
-                totalPrice : product.price
+                totalPrice: (product.price * quantity)
             }
         });
-    },[]);
+    }
 
     const forBuying = (
         <Card body inverse style={{padding: 0, backgroundColor:"skyblue"}}>
@@ -109,7 +109,6 @@ function ProductDetail({match, history}) {
                 {/*<TooltipContent props={{text: "장바구니에 물건을 추가했습니다.", target:"goBasket"}}/>*/}
             </CardBody>
         </Card>
-
     )
 
     let badge = (sales) =>{
