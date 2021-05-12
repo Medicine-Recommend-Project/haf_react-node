@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import Terms from "../home/terms";
 
 function Payment({location}) {
     let dispatch = useDispatch();
@@ -118,7 +119,7 @@ function Payment({location}) {
         </tr>
     ));
 
-    let buyingProducts = async() =>{
+    let buyingProducts = () =>{
         for(let i in Object.keys(deliveryInfo)){
             // console.log(Object.keys(inputs)[i], ' : ', inputs[Object.keys(inputs)[i]]); // ← state의 key : value 값 console에 찍어줌
             if(deliveryInfo[Object.keys(deliveryInfo)[i]] === "" || deliveryInfo[Object.keys(deliveryInfo)[i]].length === 0){
@@ -169,6 +170,7 @@ function Payment({location}) {
                 </tbody>
             </Table>
             <Table style={{marginBottom:"30px"}}>
+                <tbody>
                 <tr style={{border:"3px solid black", fontSize:"150%", fontWeight:"bold"}}>
                     <td width={300} className="text-left">
                         결제 예정 금액
@@ -177,6 +179,7 @@ function Payment({location}) {
                         <span style={{color:"cornflowerblue", fontSize:"150%"}}>{(totalPrice >= 100000 ? totalPrice : totalPrice+2500)}</span> 원
                     </td>
                 </tr>
+                </tbody>
             </Table>
             <div>
                 <div id="pointDiv">
@@ -255,6 +258,7 @@ function Payment({location}) {
                             </td>
                         </tr>
                         <tr>
+                            { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
                             <th scope="row">
                                 배송지 주소 <br/> <br/>
                                 <Button onClick={(event) => {event.preventDefault(); setOpen(true);}}>주소찾기</Button>
@@ -343,18 +347,11 @@ function Payment({location}) {
                 <div id="agreement">
                     <h3 className="text-left">개인정보 약관 동의</h3>
                     <hr/>
-                    <p>
-                        약관...
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                    </p>
-                    <input type="checkbox" onChange={agreement} defaultChecked={false}/> 약관에 동의합니다.
+                    <Terms/>
+                    <input type="checkbox" onChange={agreement} defaultChecked={false} /> 약관에 동의합니다.
                 </div> {/*end of 개인정보 동의 div*/}
             </div>
-            { open ? <DaumPostcodeAPI handler={daumHandler}/> : null }
-            <Button onClick={()=>{ buyingProducts()}}
+            <Button onClick={()=>{ buyingProducts();}}
                     disabled={agree}
                     color="primary" size="lg" style={{width:"40%", margin:"40px"}}
             >

@@ -30,7 +30,7 @@ function NavBar2(){
                         <ul className="list-inline d-inline-flex">
                             <li onClick={()=>{searchType('랭킹');}} style={{color:"red"}}  className="mx-3">랭킹</li>
                             {list.map(list => (
-                                <li onClick={()=>{searchType(list);}} className="mx-3">{list}</li>
+                                <li key={list} onClick={()=>{searchType(list);}} className="mx-3">{list}</li>
                             ))}
                         </ul>
                     </div>

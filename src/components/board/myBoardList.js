@@ -36,19 +36,17 @@ function MyBoardList() {
 
 
     return(
-        <div className="m-3">
-            <div className="d-inline-block ml-3 mr-3 pr-4 border-right">
+        <div style={{width:"80%", margin:"0 auto"}}>
+            <div className="mx-auto my-5">
                 <h1>나의 후기</h1>
-                <div>
-                    {reviewBoards.ocode}
-                    <ReviewList props={reviewBoards}/>
-                </div>
+                {reviewBoards.ocode}
+                <ReviewList props={reviewBoards}/>
             </div>
-            <div className="d-inline-block ml-3 mr-3 pr-4">
+            <div className="mx-auto my-5">
                 <h1>나의 문의</h1>
                 <InquiryList props={inquiryBoards}/>
             </div>
-        </div>
+            </div>
     );
 }
 

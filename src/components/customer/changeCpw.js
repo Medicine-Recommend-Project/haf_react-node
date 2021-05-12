@@ -24,7 +24,7 @@ const ChangeCpw = (props)=> {
                 if (regEngNum6.test(e.target.value)) {
                     setCheckRs({...checkRs, pwRs: ''});
                 } else {
-                    setCheckRs({...checkRs, pwRs: '❌ 영문/숫자만 포함 6글자 이상이여야합니다.' , eq: "false"});
+                    setCheckRs({...checkRs, pwRs: '❌ 조건: 영문/숫자 포함 6글자 이상' , eq: "false"});
                 }
                 break;
 
@@ -42,7 +42,7 @@ const ChangeCpw = (props)=> {
 
     }
 
-    let width = 300;
+    let width = 400;
     let height = 400;
     const pwStyle = {
         backgroundColor: "#777" ,

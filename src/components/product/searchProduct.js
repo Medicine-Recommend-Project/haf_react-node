@@ -4,7 +4,7 @@ import axios from 'axios'
 import { Jumbotron } from 'react-bootstrap';
 import {
     Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, CardFooter, Button
+    CardTitle, CardSubtitle, CardFooter, Button, Badge
 } from 'reactstrap';
 import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
@@ -55,12 +55,22 @@ function SearchProduct({location}) {
         });
     },[]);
 
+    let badge = (sales) =>{
+        let text = "";
+        if(sales < 10) text = "신상품";
+        else if(sales < 50) text = "인기상품";
+        else if(sales < 100) text = "주문폭주";
+        else text = "품절대란";
+        return text;
+    }
+
     const Cards = Products.length > 0 && Products.map((product, i)=> {
         return(
                 <div key={i} style={{margin:"10px"}}>
                     <Card style={{maxWidth: "230px"}}>
                         <CardImg src={ `/${product.images}` } onClick={()=>{productDetail(product.pcode);}} top width="100%" className="mt-2" alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                         <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
+                            <Badge color="primary">{badge(Number(product.sales))}</Badge>
                             <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>{ product.pname }</CardTitle>
                             <CardText className="mb-2 ">{ product.description } </CardText>
                             <CardSubtitle className="mb-2 text-muted">⭐{product.rating} 구매: {product.sales}</CardSubtitle>

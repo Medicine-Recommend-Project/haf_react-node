@@ -1,37 +1,30 @@
-import React, { useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
     Carousel,
     CarouselItem,
     CarouselControl,
     CarouselIndicators,
-    CarouselCaption
 } from 'reactstrap';
 
-const items = [
-    {
-        src: '/banner/bannerMayEvent.png',
-    },
-    {
-        src: '/banner/bannerEnergy.png',
-    },
-    {
-        src: '/banner/bannerOrganic.png',
-    }
-];
 
-const CarouselImages = (props) => {
+const CarouselImages = () => {
+    const [img, setImg] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
+    let images = ['/banner/bannerMayEvent.png', '/banner/bannerEnergy.png', '/banner/bannerOrganic.png'];
+    useCallback(useEffect(()=>{
+        setImg(images);
+    },[]));
 
     const next = () => {
         if (animating) return;
-        const nextIndex = activeIndex === items.length - 1 ? 0 : activeIndex + 1;
+        const nextIndex = activeIndex === img.length - 1 ? 0 : activeIndex + 1;
         setActiveIndex(nextIndex);
     }
 
     const previous = () => {
         if (animating) return;
-        const nextIndex = activeIndex === 0 ? items.length - 1 : activeIndex - 1;
+        const nextIndex = activeIndex === 0 ? img.length - 1 : activeIndex - 1;
         setActiveIndex(nextIndex);
     }
 
@@ -40,15 +33,14 @@ const CarouselImages = (props) => {
         setActiveIndex(newIndex);
     }
 
-    const slides = items.map((item) => {
+    const slides = img.map((item,i) => {
         return (
             <CarouselItem
                 onExiting={() => setAnimating(true)}
                 onExited={() => setAnimating(false)}
-                key={item.src}
+                key={i}
             >
-                <img src={item.src} alt={item.altText} style={{width:"100%", height:"500px"}}/>
-                <CarouselCaption captionText={item.caption} captionHeader={item.caption} />
+                <img src={item} style={{width:"100%", height:"500px"}} alt="광고이미지"/>
             </CarouselItem>
         );
     });
@@ -59,7 +51,7 @@ const CarouselImages = (props) => {
             next={next}
             previous={previous}
         >
-            <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={goToIndex} />
+            <CarouselIndicators items={img} activeIndex={activeIndex} onClickHandler={goToIndex} />
             {slides}
             <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
             <CarouselControl direction="next" directionText="Next" onClickHandler={next} />

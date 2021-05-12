@@ -76,7 +76,7 @@ router.get('/logout', (req, res)=>{
     req.logout();
     // res.redirect('/');
     req.session.destroy();
-    res.send('true')
+    res.json('true')
 });
 
 // mypage 접속 시 해당하는 유저 정보 가져감

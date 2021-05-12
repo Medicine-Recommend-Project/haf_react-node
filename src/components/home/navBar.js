@@ -38,9 +38,9 @@ function NavBar(){
     }
 
 
-    let onLogout = ()=> {
+    let onLogout = async()=> {
         let url = '/customer/logout';
-        fetch(url, {method: "get"})
+        axios.get(url)
             .then(res => {
                 if (res.data === 'true') {
                     alert('로그아웃 했습니다.');

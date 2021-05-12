@@ -9,7 +9,7 @@ function PaymentDetails({location}) {
     const [orderTitles, setOrderTitles] = useState([]);
     const [orderDetails, setOrderDetails] = useState([]);
     const [images, setImages] = useState([]);
-    const delFee = (orderTitles.totalPrice >= 100000 ? 0 : 2500);
+    const delFee = orderTitles.length>0 ? (orderTitles.totalPrice >= 100000 ? 0 : 2500) : "0";
 
     useEffect(()=>{
         let url = '/customer/isLogin';
@@ -44,24 +44,24 @@ function PaymentDetails({location}) {
 
 
     const paymentDetails = orderDetails.length>0 && orderDetails.map((detail, j) => {
-            let src;
+            let src = "";
             if(orderDetails.length > 1){
-                src = images.length>0 && images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
+                for(let i in images){
+                    if(images[i].pcode===detail.pcode){
+                        src = images[i].images;
+                        break;
+                    }
+                }
             }else{
                 src = images.images
             }
             return(
                 <tr key={"-"+j}>
                     <td style={{width:"10%"}}>{j}</td>
-                    {/*<td>{detail.pcode}</td>*/}
                     <td>
                         <Row>
                             <Col sm={3}>
-                                {(
-                                    orderDetails.length > 1 ?
-                                    <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/> :
-                                    <img src={ `/${src}` } width={70} height={70} alt="상품 미리보기"/>
-                                )}
+                                     <img src={'/'+src} width={70} height={70} alt="상품 미리보기"/>
 
                             </Col>
                             <Col className="text-left">
@@ -98,10 +98,12 @@ function PaymentDetails({location}) {
                 </Row>
                 <Table bordered striped style={{margin: "30px 10px"}}>
                     <thead>
+                    <tr>
                         <th>번호</th>
                         <th>상품</th>
                         <th>수량</th>
                         <th>금액</th>
+                    </tr>
                     </thead>
                     <tbody>
                         {paymentDetails}

@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 import ReviewList from "../board/reviewList";
 import InquiryList from "../board/inquiryList";
+import DetailInfo from "../home/detailInfo";
 
 function ProductDetail({match, history}) {
     let dispatch = useDispatch();
@@ -164,7 +165,7 @@ function ProductDetail({match, history}) {
         <div className="container" style={{position: "relative", margin: "40px auto"}}>
             <Row style={{marginBottom: "50px"}}>
                 <Col md={7}>
-                    <Image src={ `/${product.images}` } style={{width:'100%', height:'100%', minWidth:'250px', maxWidth:'400px'}} />
+                    <Image src={ `/${product.images}` } style={{width:'80%', height:'100%', minWidth:'250px', maxWidth:'400px', margin:"0 auto"}} />
                 </Col>
                 <Col id="detailTop">
                     <div className="text-left" style={{fontWeight:"bold", marginLeft:"10px"}}>
@@ -214,13 +215,7 @@ function ProductDetail({match, history}) {
                 <Tabs fill justify defaultActiveKey={index} onSelect={(i) => setIndex(i)} id="uncontrolled-tab-example">
                     {/*****상세 설명 탭*****/}
                     <Tab eventKey="0" title="상세설명">
-                        <div id="productImages" className="col-xl-7" >
-                            <br/>
-                            <img src="http://placehold.it/800x1000" alt="상품설명사진예정"/>
-                            <br/>
-                            상품설명이 가득가득 <br/>
-                            사진도 있을걸...
-                        </div>
+                        <DetailInfo/>
                         <CommonPI product={product} />
                         {Review}
                         <hr/>

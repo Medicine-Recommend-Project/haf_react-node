@@ -39,8 +39,8 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
         setUser({...user, [e.target.name]: e.target.value});
         switch (e.target.name){
             case 'email':
-                if(regEmail.test(e.target.value)){ setCheckRs('🟢' ) }
-                else{ setCheckRs('❌ 이메일 형식에 맞지 않습니다. 근데 이건 형식 안맞아도 가입됨') }
+                if(regEmail.test(e.target.value)){ setCheckRs('' ) }
+                else{ setCheckRs('❌ 이메일 형식에 맞지 않습니다.') }
                 break;
 
             case 'ph':

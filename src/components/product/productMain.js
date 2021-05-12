@@ -65,7 +65,7 @@ function ProductMain() {
         if(sales < 10) text = "신상품";
         else if(sales < 50) text = "인기상품";
         else if(sales < 100) text = "주문폭주";
-        else if(sales < 200) text = "품절대란";
+        else text = "품절대란";
 
         return text;
     }

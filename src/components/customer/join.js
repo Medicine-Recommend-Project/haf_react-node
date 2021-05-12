@@ -56,7 +56,7 @@ function Join({history}){
                 if(regEng4.test(e.target.value)){
                     setCheckRs({...checkRs, idRs:'⭕ 중복검사를 완료해주세요.'});
                 }else {
-                    setCheckRs({...checkRs, idRs:'❌ 영문/숫자만 포함 된 4글자 이상이여야합니다.'});
+                    setCheckRs({...checkRs, idRs:'❌ 조건: 영문/숫자만 포함 4글자 이상'});
                 }
                 setCheck({ ...check, idCk: false });
                 break;
@@ -68,7 +68,7 @@ function Join({history}){
                 if(regEngNum6.test(e.target.value)){
                     setCheckRs({...checkRs, pwRs:''});
                 }else{
-                    setCheckRs({...checkRs, pwRs:'❌ 영문/숫자만 포함 6글자 이상이여야합니다.'});
+                    setCheckRs({...checkRs, pwRs:'❌ 조건: 영문/숫자 포함 6글자 이상'});
                     setCheck({ ...check, pwCk: "false"  });
                 }
                 break;
@@ -83,7 +83,7 @@ function Join({history}){
 
             case 'email':
                 if(regEmail.test(e.target.value)){ setCheckRs({...checkRs, emRs:''}); }
-                else{ setCheckRs({...checkRs, emRs:'❌ 이메일 형식에 맞지 않습니다. 근데 이건 형식 안맞아도 가입됨'}); }
+                else{ setCheckRs({...checkRs, emRs:'❌ 이메일 형식에 맞지 않습니다.'}); }
                 break;
 
             case 'ph':
@@ -199,11 +199,9 @@ function Join({history}){
                     <Label sm={3}>아이디<strong style={{color:"red"}}>＊</strong></Label>
                     <Col sm={9}>
                         <InputGroup>
-                            <Input type="text" name="cId" placeholder="영문/숫자 포함 5자리 이상" onChange={onTyping} value={inputs.cId}/>
+                            <Input type="text" name="cId" placeholder="영문/숫자 포함 4자리 이상" onChange={onTyping} value={inputs.cId}/>
                             <Button color="success" onClick={()=>{ checkId();}}>중복검사</Button>
                         </InputGroup>
-                    </Col>
-                    <Col sm={10} className={"text-left"}>
                         {checkRs.idRs}
                     </Col>
                 </FormGroup>{/* 아이디 FormGroup*/}
@@ -214,11 +212,9 @@ function Join({history}){
                     </Col>
                 </FormGroup>{/* 이름 FormGroup*/}
                 <FormGroup row>
-                    <Label sm={3}> 비밀번호<strong style={{color:"red"}}>＊</strong> </Label>
+                    <Label sm={3}> 비밀번호<strong style={{color:"red"}}>*</strong> </Label>
                     <Col sm={9}>
                         <Input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
-                    </Col>
-                    <Col sm={10} className={"text-left"}>
                         {checkRs.pwRs}
                     </Col>
                 </FormGroup>{/* 비번 FormGroup*/}
@@ -238,8 +234,6 @@ function Join({history}){
                     <Label sm={3}> 이메일 </Label>
                     <Col sm={9}>
                         <Input type="mail" name="email" placeholder="example@mail.com"onChange={onTyping} value={inputs.email}/>
-                    </Col>
-                    <Col sm={10} className={"text-left"}>
                         {checkRs.emRs}
                     </Col>
                 </FormGroup>{/*이메일 FormGroup*/}
@@ -252,13 +246,13 @@ function Join({history}){
                             {(inputs.zonecode === "" ? <span className="text-muted">주소를 찾아주세요.</span> : <>{inputs.zonecode} <br/> {inputs.address}</>)}
                             <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
                         </Col>
-                    { open ? <DaumPostcodeAPI handler={daumHandler}/> : null } <br/>
                 </FormGroup>{/*주소 FormGroup*/}
                 <br/>
                 <Button onClick={()=>{ submitForm();}} color="success" size="lg">가입하기</Button>
                 <br/>
             </Form>
             </div>
+                    { open ? <DaumPostcodeAPI handler={daumHandler}/> : null } <br/>
         </div>
     );
 }
