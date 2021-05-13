@@ -14,48 +14,40 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 
 ## 디렉토리 구조
 ├─public\
-│  │  favicon.ico\
+│  │  favicon.ico  알약모양의 홈페이지 파비콘\
 │  │  index.html\
 │  │  logo192.png\
 │  │  logo512.png\
 │  │  manifest.json\
-│  │  navBasket_Icon.png\
-│  │  navLogo.png\
-│  │  navUser_Icon.png\
+│  │  navBasket_Icon.png 장바구니 아이콘\
+│  │  navLogo.png 로고 이미지\
+│  │  navUser_Icon.png 유저 아이콘\
 │  │  robots.txt\
 │  │  \
-│  ├─banner\
-│  │      bannerEnergy.png\
-│  │      bannerMayEvent.png\
-│  │      bannerOrganic.png\
+│  ├─banner 메인페이지 상단 슬라이드 이미지\
 │  │      \
-│  └─detailInfo\
-│          buttercup-6225833_640.jpg\
-│          human-skeleton-163715_1280.jpg\
-│          landscape-78058_1280.jpg\
-│          nutrient-additives-505124_1280.jpg\
-│          pills-3673645_1920.jpg\
+│  └─detailInfo 상품 상세화면 내 상세정보\
 │          \
-├─servers\
-│  │  server.js\
+├─servers node.js 서버\
+│  │  server.js 서버 index파일\
 │  │  \
-│  ├─config\
-│  │      db.js\
-│  │      logger.js\
-│  │      morganMiddleware.js\
+│  ├─config 서버 설정\
+│  │      db.js mySQL과 연동위함. 보안상 gitignore되어있음\
+│  │      logger.js winston라이브러리를 통해 console 창과 폴더에 log기록을 남기기 위함\
+│  │      morganMiddleware.js morgan라이브러리를 통해 winston로그를 보기 좋게 출력해줌\
 │  │          \
-│  ├─passport\
+│  ├─passport 로그인 모듈\
 │  │      index.js\
-│  │      localStrategy.js\
+│  │      localStrategy.js 사용자 정보가 저장되는 저장소 관리\
 │  │      \
-│  └─routes\
-│          apiRoute.js\
-│          boardRoute.js\
-│          customerRoute.js\
-│          managementRoute.js\
-│          orderRoute.js\
-│          passportMw.js\
-│          productRoute.js\
+│  └─routes 서버 라우트 관리\
+│          apiRoute.js '/api'로 시작하는 요청\
+│          boardRoute.js '/board'로 시작하는 요청 (게시판 관련)\
+│          customerRoute.js /customer'로 시작하는 요청(회원 관련)\
+│          managementRoute.js /management'로 시작하는 요청(관리자모드 관련)\
+│          orderRoute.js /order'로 시작하는 요청(주문 관련)\
+│          passportMw.js passport모듈 활용 미들웨어\
+│          productRoute.js /product'로 시작하는 요청(상품 관련)\
 │          \
 ├─src\
 │  │  App.css\
