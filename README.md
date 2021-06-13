@@ -9,24 +9,11 @@ You will also see any lint errors in the console.
 
 ## 당건책
 
-당신의 건강을 책임진다는 의미로 쇼핑몰이름을 지었다.\
+- 당신의 건강을 책임진다는 의미로 쇼핑몰이름을 지었다.\
 HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품이다.
 
 ## 디렉토리 구조
 ├─public\
-│  │  favicon.ico  알약모양의 홈페이지 파비콘\
-│  │  index.html\
-│  │  logo192.png\
-│  │  logo512.png\
-│  │  manifest.json\
-│  │  navBasket_Icon.png 장바구니 아이콘\
-│  │  navLogo.png 로고 이미지\
-│  │  navUser_Icon.png 유저 아이콘\
-│  │  robots.txt\
-│  │  \
-│  ├─banner 메인페이지 상단 슬라이드 이미지\
-│  │      \
-│  └─detailInfo 상품 상세화면 내 상세정보\
 │          \
 ├─servers node.js 서버\
 │  │  server.js 서버 index파일\
@@ -50,19 +37,9 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 │          productRoute.js /product'로 시작하는 요청(상품 관련)\
 │          \
 ├─src\
-│  │  App.css\
-│  │  App.js\
-│  │  App.test.js\
-│  │  App2.js\
-│  │  index.css\
-│  │  index.js\
-│  │  logo.svg\
-│  │  reportWebVitals.js\
-│  │  setupProxy.js\
-│  │  setupTests.js\
 │  │  \
 │  ├─components\
-│  │  ├─board\
+│  │  ├─board 게시판 컴포넌트\
 │  │  │      boardList.js\
 │  │  │      inquiry.js\
 │  │  │      inquiryList.js\
@@ -72,13 +49,13 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 │  │  │      reviewList.js\
 │  │  │      reviewList2.js\
 │  │  │      \
-│  │  ├─customer\
+│  │  ├─customer 고객 컴포넌트\
 │  │  │      changeCpw.js\
 │  │  │      join.js\
 │  │  │      login.js\
 │  │  │      mypage.js\
 │  │  │      \
-│  │  ├─home\
+│  │  ├─home 공용 컴포넌트\
 │  │  │      calrouselImages.js\
 │  │  │      commonProductInformations.js\
 │  │  │      DaumPostcodeAPI.js\
@@ -90,28 +67,28 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 │  │  │      terms.js\
 │  │  │      tooltipContent.js\
 │  │  │      \
-│  │  ├─management\
+│  │  ├─management 관리자 컴포넌트\
 │  │  │      management.js\
 │  │  │      uploadProduct.js\
 │  │  │      \
-│  │  ├─order\
+│  │  ├─order 주문 컴포넌트\
 │  │  │      basket.js\
 │  │  │      payment.js\
 │  │  │      paymentDetails.js\
 │  │  │      paymentList.js\
 │  │  │      \
-│  │  └─product\
+│  │  └─product 상품 컴포넌트\
 │  │          productDetail.js\
 │  │          productMain.js\
 │  │          searchProduct.js\
 │  │          \
-│  ├─router\
+│  ├─router 라우터 관리\
 │  │      boardRouter.js\
 │  │      customerRouter.js\
 │  │      orderRouter.js\
 │  │      productRouter.js\
 │  │      \
-│  └─store\
+│  └─store 리덕스관리\
 │      │  store.js\
 │      │  \
 │      ├─actions\
@@ -123,11 +100,4 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 │              loginReducer.js\
 │              reducer.js\
 │              \
-└─uploads\
-        1620716389870_black.png\
-        1620716505812_purple.png\
-        1620716564576_blue.png\
-        1620716606264_green.png\
-        1620716678616_yellow.png\
-        1620716723890_orange.png\
-        1620716742261_red.png\
+└─uploads 상품 메인 사진\
