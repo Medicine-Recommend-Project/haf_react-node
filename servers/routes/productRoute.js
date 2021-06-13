@@ -5,6 +5,47 @@ const { isLogin, isNotLogin } = require('./passportMw');
 
 let data, sqlQuery, sql;
 
+let showDataCount = 5; // 한 화면에 보여줄 data 수
+let currentPage = 1;    // 현재 페이지 번호
+let startIdx;   // 조회 시 불러올 시작 idx
+let endPage;    // 마지막 페이지 번호
+
+router.post('/products', (req, res)=> {
+
+    if(req.body.currentPage) currentPage = req.body.currentPage;
+    if(req.body.showDataCount) showDataCount = req.body.showDataCount;
+
+    let sqlQuery1 = "SELECT COUNT(pcode) AS count FROM product ;";
+    sql = db.query(sqlQuery1, (err, row)=>{
+        if(err){
+            logger.error(err);
+            throw(err);
+        }else if(row[0]['count'] > 0){
+            result(row[0]['count']);
+            endPage = Math.ceil(row[0]['count'] / showDataCount);   // ceil = 올림
+
+            startIdx = (req.body.currentPage - 1) * showDataCount;
+            logger.info('startIdx: '+startIdx+' showDataCount: '+showDataCount+' currentPage: '+currentPage+ ' endPage: '+ endPage);
+            sqlQuery = "SELECT * FROM product ORDER BY pcode LIMIT ?, ? ;";
+            data = [startIdx, showDataCount];
+            sql = db.query (sqlQuery, data, (err, row) => {
+                result(row.length);
+                if(err) { logger.error(err); }
+                else if(row.length > 0) {
+                    let rs ={
+                        products: row,
+                        endPage: endPage
+                    }
+                    res.json(rs);
+                }else{
+                    res.json({result: "false", endPage: 1});
+                }
+            });
+        }
+    });
+});
+
+
 // 게시판작성 시 상품 고를 수 있게 해주는거 + 로딩되는 김에 로그인 유저 아이디랑 이름 가져가기
 router.get("/getPcode", isLogin, (req,res)=>{
     sqlQuery = " SELECT pcode, pname FROM product  ";
@@ -18,15 +59,6 @@ router.get("/getPcode", isLogin, (req,res)=>{
                 logger.error(err);
             }
         });
-});
-
-router.get('/products', (req, res)=> {
-    sqlQuery = "SELECT * FROM product ";
-    sql = db.query (sqlQuery, (err, row) => {
-            result(row.length);
-        if(err) { logger.error(err); }
-        else { res.json(row); }
-    });
 });
 
 router.post('/detail', (req, res)=> {

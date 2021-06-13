@@ -22,6 +22,7 @@ function SearchProduct({location}) {
 
     let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[]);
 
+
     let goToBasket = useCallback((product) => {
         addProduct(product);
         alert(product.pname + '상품을 장바구니에 담았습니다.');

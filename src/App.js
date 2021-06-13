@@ -1,6 +1,6 @@
 /* eslint-disable */
 import './App.css';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 
 /**********Route import**********/
 import Customer from './router/customerRouter';
@@ -20,6 +20,7 @@ function App(){
             <Router>
                 <NavBar/>
                 <NavBar2/>
+                <Link to='/'>home</Link>
                 <Switch>
                     <Route exact path="/" component={Main}/>
                     <Route path="/product" component={Product}/>
