@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
 const { isLogin, isNotLogin } = require('./passportMw');
+const { result} = require('../common/db_common');
 const multer = require("multer");
 
 let data, sqlQuery, sql;
@@ -43,7 +44,7 @@ router.post('/addProduct', (req, res) =>{
     sql = db.query(sqlQuery, data, (err, row) => {
         //insert 가 정상적으로 적용되었는지 판단하는 방법은 result.affectedRows를 활용합니다. (update, delete도 동일)
         if(!err) {
-            result(row.affectedRows);
+            result(sql,row.affectedRows);
             res.json(row.affectedRows.toString());
         } else {
             logger.error(err);
@@ -57,8 +58,8 @@ router.post('/addProduct', (req, res) =>{
 
 
 //console 창에 결과 출력하게 해주는 것
-let result = (result) =>{
-    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-}
+// let result = (result) =>{
+//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+// }
 
 module.exports = router;

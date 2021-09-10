@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import axios from "axios";
 import {Button, Col, Row, Table} from "reactstrap";
+import {changeDateFormatting} from "../../front_common/page_common";
 
 function PaymentDetails({location}) {
     let history = useHistory();
@@ -86,7 +87,7 @@ function PaymentDetails({location}) {
                         주문번호: {orderTitles.ocode}
                     </Col>
                     <Col className="text-right">
-                        주문 일자: {orderTitles.odate}
+                        주문 일자: {changeDateFormatting(orderTitles.odate)}
                     </Col>
                 </Row>
                 <hr/>

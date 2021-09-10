@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {Button, Col, Row, Table} from "reactstrap";
+import {changeDateFormatting} from "../../front_common/page_common";
 
 function PaymentList({history}){
     let year = new Date().getFullYear(); // 년도
@@ -110,7 +111,7 @@ function PaymentList({history}){
                         주문번호: {title.ocode}
                     </Col>
                     <Col className="text-right">
-                        주문 일자: {title.odate}
+                        주문 일자: {changeDateFormatting(title.odate)}
                     </Col>
                 </Row>
                 <hr/>

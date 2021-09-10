@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-
+const {result} = require("../common/db_common")
 let data, sqlQuery, sql;
 
 router.post('/buying', (req, res)=>{
@@ -11,7 +11,7 @@ router.post('/buying', (req, res)=>{
     sql = db.query(sqlQuery, (err, row)=>{
         if(err) logger.error(err);
         else{
-            result(JSON.stringify(row[0]));
+            result(sql,JSON.stringify(row[0]));
             
             let ocode = row[0].ocode;
             // 주문 title 테이블에 저장할 쿼리
@@ -125,8 +125,8 @@ router.post('/paymentDetails',(req, res)=>{
 })
 
 //console 창에 결과 출력하게 해주는 것
-let result = (result) =>{
-    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-}
+// let result = (result) =>{
+//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+// }
 
 module.exports = router;

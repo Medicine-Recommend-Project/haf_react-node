@@ -1,5 +1,6 @@
 import React from "react";
 import {Table} from "reactstrap";
+import {changeDateFormatting} from "../../front_common/page_common";
 
 function InquiryList({props}) {
     const inquiryBoards = props;
@@ -10,7 +11,7 @@ function InquiryList({props}) {
             <td>{board.title}</td>
             <td style={{width:"250px",wordBreak:"break-all"}}>{board.content}</td>
             <td>{board.cid}</td>
-            <td>{board.bdate}</td>
+            <td>{changeDateFormatting(board.bdate)}</td>
         </tr>
     ));
 

@@ -1,6 +1,6 @@
 import React from "react";
 import {Table} from "reactstrap";
-
+import {changeDateFormatting} from "../../front_common/page_common"
 function ReviewList({props}) {
 
     if(props.length > 0){
@@ -23,7 +23,7 @@ function ReviewList({props}) {
                 <tr>
                     <td colSpan="2" className="text-left"><strong>{board.title}</strong></td>
                     <td className="text-left" >{changeStars(board.rating)}</td>
-                    <td className="text-right" >작성자: {board.cid} 작성일: {board.bdate}</td>
+                    <td className="text-right" >작성자: {board.cid} 작성일: {changeDateFormatting(board.bdate, 5)}</td>
                 </tr>
                 <tr>
                     <td colSpan="3" className="text-left">{board.content}</td>

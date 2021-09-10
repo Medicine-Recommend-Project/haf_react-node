@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import {Route, Switch} from "react-router-dom"
 /************Routes************/
 import Join from "../components/customer/join";

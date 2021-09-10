@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
 const { isLogin, isNotLogin } = require('./passportMw');
+const {result} = require("../common/db_common")
 
 let data, sqlQuery, sql;
 
@@ -13,7 +14,7 @@ router.post("/getBoards", (req,res)=>{
         if(err) {
             logger.error(err);
         } else {
-            result(row.length);
+            result(sql,row.length);
             res.json(row);
         }
     });
@@ -27,7 +28,7 @@ router.post("/getMyBoards", isLogin, (req,res)=>{
         if(err) {
             logger.error(err);
         } else {
-            result(row.length);
+            result(sql,row.length);
             res.json(row);
         }
     });
@@ -40,7 +41,7 @@ router.post("/inquiry", isLogin, (req,res)=>{
 
     sql = db.query(sqlQuery, data, (err, row) => {
             if(!err) {
-                result(JSON.stringify(row.affectedRows));
+                result(sql,JSON.stringify(row.affectedRows));
                 res.json(row.affectedRows.toString());
             } else {
                 logger.error(err);
@@ -63,7 +64,7 @@ router.post("/review", isLogin, (req,res)=>{
     sql = db.query(query1 + query2, (err, row) => {
         if(!err) {
             let rs = row[0].affectedRows + row[1].affectedRows; //2이상이 되어야 정상
-            result(rs);
+            result(sql,rs);
             res.json(rs.toString());
         } else {
             logger.error(err);
@@ -76,8 +77,8 @@ router.post("/review", isLogin, (req,res)=>{
 
 
 //console 창에 결과 출력하게 해주는 것
-let result = (result) =>{
-    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-}
+// let result = (result) =>{
+//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+// }
 
 module.exports = router;

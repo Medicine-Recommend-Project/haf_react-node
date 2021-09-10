@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
 const { isLogin, isNotLogin } = require('./passportMw');
+const {result} = require("../common/db_common")
 
 let data, sqlQuery, sql;
 
@@ -11,7 +12,6 @@ let startIdx;   // 조회 시 불러올 시작 idx
 let endPage;    // 마지막 페이지 번호
 
 router.post('/products', (req, res)=> {
-
     if(req.body.currentPage) currentPage = req.body.currentPage;
     if(req.body.showDataCount) showDataCount = req.body.showDataCount;
 
@@ -21,7 +21,7 @@ router.post('/products', (req, res)=> {
             logger.error(err);
             throw(err);
         }else if(row[0]['count'] > 0){
-            result(row[0]['count']);
+            result(sql, row[0]['count']);
             endPage = Math.ceil(row[0]['count'] / showDataCount);   // ceil = 올림
 
             startIdx = (req.body.currentPage - 1) * showDataCount;
@@ -29,7 +29,8 @@ router.post('/products', (req, res)=> {
             sqlQuery = "SELECT * FROM product ORDER BY pcode LIMIT ?, ? ;";
             data = [startIdx, showDataCount];
             sql = db.query (sqlQuery, data, (err, row) => {
-                result(row.length);
+                result(sql, row.length);
+                // result(row.length);
                 if(err) { logger.error(err); }
                 else if(row.length > 0) {
                     let rs ={
@@ -51,7 +52,7 @@ router.get("/getPcode", isLogin, (req,res)=>{
     sqlQuery = " SELECT pcode, pname FROM product  ";
     sql = db.query(sqlQuery, (err, row) => {
             if(!err) {
-                result(row.length);
+                result(sql ,row.length);
                 let data = {row: row, cid: req.user.cid, cname: req.user.cname}
                 res.json(data);
                 // res.json(row);
@@ -65,7 +66,7 @@ router.post('/detail', (req, res)=> {
     sqlQuery = "SELECT * FROM product WHERE pcode = ?";
     data = [req.body.pcode];
     sql = db.query (sqlQuery, data, (err, row) => {
-        result(JSON.stringify(row[0]));
+        result(sql, JSON.stringify(row[0]));
         if(err) { logger.error(err); }
         else { res.json(row[0]); }
     });
@@ -76,7 +77,7 @@ router.post('/search', (req, res)=> {
     data = [req.body.search];
 
     sql = db.query (sqlQuery, data, (err, row) => {
-        result(row.length);
+        result(sql, row.length);
         if(err) { logger.error(err); }
         else { res.json(row); }
     });
@@ -91,7 +92,7 @@ router.post('/type', (req, res)=> {
     }
 
     sql = db.query (sqlQuery, (err, row) => {
-        result(row.length);
+        result(sql, row.length);
         if(err) { logger.error(err); }
         else { res.json(row); }
     });
@@ -101,8 +102,8 @@ router.post('/type', (req, res)=> {
 
 
 //console 창에 결과 출력하게 해주는 것
-let result = (result) =>{
-    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-}
+// let result = (result) =>{
+//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+// }
 
 module.exports = router;

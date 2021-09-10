@@ -1,5 +1,5 @@
-import React from "react"
-import {Route, Switch} from "react-router-dom"
+import React from "react";
+import {Route, Switch} from "react-router-dom";
 
 import Payment from "../components/order/payment";
 import Basket from "../components/order/basket";

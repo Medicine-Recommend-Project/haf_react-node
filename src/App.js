@@ -13,14 +13,13 @@ import NavBar from "./components/home/navBar";
 import NavBar2 from "./components/home/navBar2";
 import Footer from "./components/home/footer";
 
-function App(){
 
+function App(){
     return(
         <div className="App">
+            <NavBar/>
+            <NavBar2/>
             <Router>
-                <NavBar/>
-                <NavBar2/>
-                <Link to='/'>home</Link>
                 <Switch>
                     <Route exact path="/" component={Main}/>
                     <Route path="/product" component={Product}/>

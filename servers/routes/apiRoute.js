@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
+const {result} = require("../common/db_common")
 
 let sql;
 
@@ -79,7 +80,7 @@ router.post('/product/products', (req, res)=> {
 
         if (!err) {
 
-            result(row.length);
+            result(sql,row.length);
             res.json(row);
 
         } else {
@@ -91,8 +92,8 @@ router.post('/product/products', (req, res)=> {
 
 
 //console 창에 결과 출력하게 해주는 것
-let result = (result) =>{
-    logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-}
+// let result = (result) =>{
+//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
+// }
 
 module.exports = router;

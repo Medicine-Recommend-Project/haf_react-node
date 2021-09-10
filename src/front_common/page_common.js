@@ -1,0 +1,69 @@
+/* YYYY-MM-DD 형식의 문자열로 반환
+* getDate: 날짜
+* symbol: 사용할 기호
+* */
+export function getDateContainingZero(getDate, symbol= "-") {
+    // console.log(`지금 getDate 형식은 ?? >> ${ typeof getDate}`)
+    let date = typeof getDate === Object ?  getDate : new Date(getDate);
+    if(typeof symbol !== String) symbol = symbol.toString();
+
+    //년,월,일,시,분,초
+    let year , month , day , hours , minutes , seconds;
+     year = date.getFullYear();
+     month = date.getMonth() + 1;
+     day = date.getDate();
+     hours = date.getHours();
+     minutes = date.getMinutes();
+     seconds = date.getSeconds();
+    let timeArr = [year, month , day , hours , minutes , seconds];
+
+    let stringDate = timeArr.reduce((addString, time)=>{
+       if(time === year) addString += time;
+       else addString += (time < 10 ? symbol + "0" : symbol) + time;
+
+        return addString;
+    },"" );
+
+    return {stringDate, symbol};
+}
+
+
+/* 날짜의 기호 및 출력 길이를 받아 반환해주는 함수
+* getDate: 날짜
+* length: 출력할 길이(앞에서 부터 1~6)
+* symbol: 사용할 기호( 1. y-m-d 2. h:m:s 날짜와 시간으로 분리)
+* */
+export function changeDateFormatting (getDate, length= 6, firstSymbol = "-", secondSymbol = ":") {
+    //6이상의 숫자 입력 방지
+    if(6 < length) length = 6;
+    if(typeof firstSymbol !== String) firstSymbol = firstSymbol.toString();
+    if(typeof secondSymbol !== String) secondSymbol = secondSymbol.toString();
+
+    //입력 받은 날짜를 문자열로 바꾸어준 다음 "-"를 기준으로 배열로 쪼개준다.
+    let StringDateObject = getDateContainingZero(getDate);
+    let StringDateToArray = StringDateObject.stringDate.split(StringDateObject.symbol);
+
+    let completeChangeDate = StringDateToArray.reduce((newDate, time, index)=>{
+        if(index === length-1){
+            // 마지막 날짜 뒤에는 아무 문자도 포함되면 안되므로
+            newDate += time;
+        }else if(index < length){
+            switch (index) {
+                case 0: case 1: //년,월
+                    newDate += time + firstSymbol;
+                    break;
+                case 3: case 4: //시,분
+                    newDate += time + secondSymbol;
+                    break;
+                case 2: case 5: //일,초
+                    newDate += time + " ";
+                    break;
+                default:
+                    break;
+            }
+        }
+        return newDate;
+    },"");
+
+    return completeChangeDate;
+}

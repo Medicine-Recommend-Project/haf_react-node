@@ -1,4 +1,5 @@
 import React from "react";
+import {changeDateFormatting} from "../../front_common/page_common";
 
 function CommonPI({product}) {
     return(
@@ -8,7 +9,7 @@ function CommonPI({product}) {
             <p>
                 포함 성분 : 아주 좋은 영양 성분들 <br/>
                 제조 국가 : {product.continents} <br/>
-                등록 일 : {product.pdate} <br/>
+                등록 일 : {changeDateFormatting(product.pdate)} <br/>
             </p>
             <hr/>
                 <h3>주의사항</h3>

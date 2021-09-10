@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Table} from "reactstrap";
+import {changeDateFormatting} from "../../front_common/page_common";
 
 function BoardList({history}) {
     const [allBoards, setAllBoards] = useState({});
@@ -42,7 +43,7 @@ function BoardList({history}) {
             <td>{board.title}</td>
             <td>{board.content}</td>
             <td>{board.cid}</td>
-            <td>{board.bdate}</td>
+            <td>{changeDateFormatting(board.bdate)}</td>
         </tr>
     ))
 
