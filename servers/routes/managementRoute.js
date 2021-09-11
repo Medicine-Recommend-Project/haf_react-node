@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-const { isLogin, isNotLogin } = require('./passportMw');
-const { result} = require('../common/db_common');
+const { result, formatQuery} = require('../common/db_common');
 const multer = require("multer");
 
 let data, sqlQuery, sql;
+let resData;
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -19,47 +19,54 @@ let storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage }).single("file");
+// const upload = multer({ storage: storage }).single("file");
+const upload = multer({ storage: storage });
 
-router.post('/image', (req, res) =>{
+router.post('/image', upload.single("file"), (req, res) =>{
+    resData = { result: 0, filePath: "", fileName: "" }
     //가져온 이미지를 저장을 해주면 된다요
-    upload(req, res, err => {
-        if(err) {
-            logger.error(err);
-            return req.json( {success:false, err} )
-        }
-        return res.json({
-            success: true, filePath: res.req.file.path, fileName: res.req.file.filename,
-        });
-    })
+    if(req.file) {
+        resData.result = 1;
+        resData.filePath = req.file.path;
+        resData.fileName = req.file.filename;
+    }else{
+        logger.error("사진 저장 실패");
+    }
+    res.json(resData);
 })
 
 // 상품 추가
 router.post('/addProduct', (req, res) =>{
+    resData = { result: 0 }
+    db.getConnection((err, connection)=>{
+        try{
 
-// 받아온 정보들을 DB에 넣어준다
-    sqlQuery = " INSERT INTO product(pcode, type, pname, description, price, continents, images) VALUES (CREATE_PCODE_FC(), ?, ?, ?, ?, ?, ?) ";
-    data = [req.body.type, req.body.pname, req.body.description, req.body.price ,req.body.continents, req.body.images ];
-    // logger.info('여기서 이미지 값 내용은? ' + req.body.images);
-    sql = db.query(sqlQuery, data, (err, row) => {
-        //insert 가 정상적으로 적용되었는지 판단하는 방법은 result.affectedRows를 활용합니다. (update, delete도 동일)
-        if(!err) {
-            result(sql,row.affectedRows);
-            res.json(row.affectedRows.toString());
-        } else {
-            logger.error(err);
+            let column = [ "pcode", "type", "pname", "description", "price", "continents", "images" ]
+            let makeQuestionMark = column.reduce((array, column) =>{
+               if(column === "pcode") array.push("CREATE_PCODE_FC()");
+               else array.push("?");
+
+               return array;
+            },[])
+            sqlQuery = ` INSERT INTO product( ${column} ) VALUES (${makeQuestionMark}) `;
+            data = [req.body.type, req.body.pname, req.body.description, req.body.price ,req.body.continents, req.body.images ];
+            // logger.info('여기서 이미지 값 내용은? ' + req.body.images);
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
+                //insert 가 정상적으로 적용되었는지 판단하는 방법은 result.affectedRows를 활용합니다. (update, delete도 동일)
+                result(sql,row.affectedRows);
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                if(row.affectedRows > 0) resData.result = 1;
+                res.json(resData);
+            })
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
         }
-    })
+    });//end of getConnection()
 })
-
-
-
-
-
-
-//console 창에 결과 출력하게 해주는 것
-// let result = (result) =>{
-//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-// }
 
 module.exports = router;

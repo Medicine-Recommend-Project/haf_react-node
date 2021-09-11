@@ -12,14 +12,16 @@ import Management from "./components/management/management";
 import NavBar from "./components/home/navBar";
 import NavBar2 from "./components/home/navBar2";
 import Footer from "./components/home/footer";
+import React from "react";
 
 
 function App(){
     return(
         <div className="App">
-            <NavBar/>
-            <NavBar2/>
             <Router>
+                <Link to={`/product/upload`}>IRIRRIRI</Link>
+                <NavBar/>
+                <NavBar2/>
                 <Switch>
                     <Route exact path="/" component={Main}/>
                     <Route path="/product" component={Product}/>

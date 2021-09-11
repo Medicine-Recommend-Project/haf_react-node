@@ -14,7 +14,7 @@ function Inquiry({location}) {
     const [products, setProducts] = useState({});
 
     useEffect(()=>{
-        let url = '/product/getPcode' ;
+        let url = '/api/product/getPcode' ;
         axios.get(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
@@ -53,7 +53,7 @@ function Inquiry({location}) {
             }//end of if()
         }//end of for()
 
-        let url = '/board/inquiry' ;
+        let url = '/api/board/inquiry' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가

@@ -2,14 +2,8 @@
 exports.result = (sql, result = "-") =>{
     return logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
 }
-//예외 처리 한번에 하려고 하는건데 되려나...
-exports.exceptionHandling = (codes) =>{
-    return
-    try{
-        codes()
-    }catch (e) {
-        logger.error(e)
-    }finally {
 
-    }
+//Query문과 data를 합쳐주는 함수
+exports.formatQuery = (connection, query, data = null) =>{
+    return connection.format(query, data);
 }

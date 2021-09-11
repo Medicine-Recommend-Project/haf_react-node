@@ -67,3 +67,14 @@ export function changeDateFormatting (getDate, length= 6, firstSymbol = "-", sec
 
     return completeChangeDate;
 }
+
+//상품 badge 멘트 반환
+export function badgeText (sales){
+    let text = "";
+    if(sales < 10) text = "신상품";
+    else if(sales < 50) text = "인기상품";
+    else if(sales < 100) text = "주문폭주";
+    else if(sales < 200) text = "품절대란";
+
+    return text;
+}

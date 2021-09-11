@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import CommonPI from "../home/commonProductInformations";
 import {useDispatch} from "react-redux";
@@ -12,55 +12,68 @@ import {
 import ReviewList from "../board/reviewList";
 import InquiryList from "../board/inquiryList";
 import DetailInfo from "../home/detailInfo";
+import {useRouteMatch} from "react-router-dom";
+import {badgeText} from "../../front_common/page_common";
 
-function ProductDetail({match, history}) {
-    let dispatch = useDispatch();
+function ProductDetail({history}) {
+    const dispatch = useDispatch();
+    const match = useRouteMatch();
+
+    const pcode = match.params.pcode;
     const [product, setProduct] = useState({});
     const [quantity, setQuantity] = useState(1);
     const [reviewBoards, setReviewBoards] = useState({});
     const [inquiryBoards, setInquiryBoards] = useState({});
     const [index, setIndex] = useState("0");
 
-    useCallback(useEffect(()=>{
-        if(match.params.pcode !== ""){
-            let data = {"pcode" : match.params.pcode};
-            let url = '/product/detail' ;
-            axios.post(url, data)
-                .then(res =>{
-                    if(res.data !== null) setProduct(res.data);
-                    else alert("상품 데이터를 가져오지 못했습니다! 다시 시도해주세요");
-                })
-                .catch(err => { console.log(err); })
+    useEffect(()=>{
+        if(pcode){
+            axios.all([getProductDetail(), getBoardList()])
+                .then(axios.spread((productDetailResult, boardListResult)=>{
+                    console.log(productDetailResult, boardListResult)
+                    if(productDetailResult.data.result && productDetailResult.data.product) {
+                        setProduct(productDetailResult.data.product);
+                    }else {
+                        alert("상품 데이터를 가져오지 못했습니다! 다시 시도해주세요");
+                    }
+
+                    if(boardListResult.data.result) {
+                        if(boardListResult.data.length > 0) {
+                            let boards = boardListResult.data;
+                            let review = [];
+                            let inquiry = [];
+                            for (let i = 0; i < boards.length; i++) {
+                                if (boards[i].category === '후기') review.push(boards[i]);
+                                if (boards[i].category === '문의') inquiry.push(boards[i]);
+                            }
+                            setReviewBoards(review);
+                            setInquiryBoards(inquiry);
+                        }else if(boardListResult.data.length === 0){
+                            setReviewBoards({}); setInquiryBoards({});
+                        }
+                    }
+                }))
+                .catch(err => console.log(err))
+
         }else{
             alert('상품 정보를 가져오지 못했습니다. 메인으로 돌아갑니다.');
             history.push('/');
         }//end of if()
-    },[]));
+    },[])
 
-    //문의,후기게시글 가져오기
-    useCallback(useEffect(()=>{
-        let url = '/board/getBoards';
-        let data = { where : '%' , pcode : match.params.pcode}
-        axios.post(url, data)
-            .then(res => {
-                if(res.data === 'ppfalse'){
-                    alert('로그인이 필요한 서비스입니다.');
-                    history.push('/customer/login');
-                }
-                if(res.data.length > 0){
-                    let boards = res.data;
-                    let review = []; let inquiry = [];
-                    for(let i = 0; i < boards.length; i++){
-                        if(boards[i].category === '후기') review.push(boards[i]);
-                        if(boards[i].category === '문의') inquiry.push(boards[i]);
-                    }
-                    setReviewBoards(review);
-                    setInquiryBoards(inquiry);
-                }
-                else if(res.data.length === 0){ setReviewBoards({}); setInquiryBoards({}); }
-            })
-            .catch(err => console.log(err))
-    },[]));
+    //상세정보 가져오기
+    const getProductDetail = () =>{
+        let url = '/api/product/detail' ;
+        let data = {pcode : pcode};
+        return axios.post(url, data);
+    }
+
+    //후기, 문의 글 가져오기
+    const getBoardList = () =>{
+        let url = '/api/board/getBoards';
+        let data = { where : '%' , pcode : pcode};
+        return axios.post(url, data);
+    }
 
     //상품코드, 상품명, 수량
     let addProduct = () => {
@@ -112,16 +125,6 @@ function ProductDetail({match, history}) {
         </Card>
     )
 
-    let badge = (sales) =>{
-        let text = "";
-        if(sales < 10) text = "신상품";
-        else if(sales < 50) text = "인기상품";
-        else if(sales < 100) text = "주문폭주";
-        else if(sales < 200) text = "품절대란";
-
-        return text;
-    }
-
     let changeStars = (rating) =>{
         let star = '⭐';
         let ratingStar = '';
@@ -129,7 +132,6 @@ function ProductDetail({match, history}) {
 
         return ratingStar;
     }
-
 
     const Review = (
         <div id="review" style={{marginTop: "20px"}}>
@@ -169,7 +171,7 @@ function ProductDetail({match, history}) {
                 </Col>
                 <Col id="detailTop">
                     <div className="text-left" style={{fontWeight:"bold", marginLeft:"10px"}}>
-                        <h2 className="pt-5"> <Badge color="primary">{badge(Number(product.sales))}</Badge> {product.pname}</h2>
+                        <h2 className="pt-5"> <Badge color="primary">{badgeText(Number(product.sales))}</Badge> {product.pname}</h2>
                         <hr/>
                         <h3 >{ product.price }원</h3>
                         <p>{product.description}</p>

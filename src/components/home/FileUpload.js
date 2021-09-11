@@ -9,7 +9,7 @@ function FileUpload(props) {
   const [Images, setImages] = useState([]);
 
   const dropHandler =(files) => {
-    let url = '/management/image';
+    let url = '/api/management/image';
     let formData = new FormData();
     let config ={ header:{'content-type': 'multipart/form-data'} }
     formData.append("file", files[0]);
@@ -18,8 +18,7 @@ function FileUpload(props) {
 
     axios.post(url, formData , config)
       .then(response => {
-          // console.log(response.data)
-        if(response.data.success) {
+        if(response.data.result) {
             setImages([...Images, response.data.filePath ]); // 서버에 최종 데이터를 전달하기 위해 저장
             props.refreshfunction([...Images, response.data.filePath]);   //상위컴포넌트한테  filepath 값을 보내줌
         }else {

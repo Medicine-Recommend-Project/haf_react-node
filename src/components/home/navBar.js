@@ -23,7 +23,7 @@ function NavBar(){
     }
 
     let searchProduct = ()=>{
-        let url = "/product/search";
+        let url = "/api/product/search";
         let s = ('%'+search+'%').toString()
         let data = {search: s}
         axios.post(url, data)
@@ -39,7 +39,7 @@ function NavBar(){
 
 
     let onLogout = async()=> {
-        let url = '/customer/logout';
+        let url = '/api/customer/logout';
         axios.get(url)
             .then(res => {
                 if (res.data === 'true') {

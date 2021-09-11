@@ -1,14 +1,11 @@
 const express = require('express');
 const app = express();
 const port =process.env.PORT || 3001;
-// const path = require('path');
-// app.use(express.static('public'));
 /**********로거 출력용 logger, morgan**********/
 global.logger || (global.logger = require('./config/logger'));  // → 전역에서 사용
 const morganMiddleware = require('./config/morganMiddleware');
 app.use(morganMiddleware);  // 콘솔창에 통신결과 나오게 해주는 것
 /**********로그인 세션 관리**********/
-// const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const passportConfig = require('./passport');
@@ -19,6 +16,7 @@ const productRoute = require('.././servers/routes/productRoute');
 const boardRoute = require('.././servers/routes/boardRoute');
 const orderRoute = require('.././servers/routes/orderRoute');
 const managementRoute = require('.././servers/routes/managementRoute');
+const path = require("path");
 
 // 반드시 session이후에 passport.initialize()와 passport.session()이 위치해야 합니다.
 app.use(session({
@@ -41,20 +39,20 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', apiRoute);
 
-app.use('/customer', customerRoute);
+app.use('/api/customer', customerRoute);
 
-app.use('/product', productRoute);
+app.use('/api/product', productRoute);
 
-app.use('/board', boardRoute);
+app.use('/api/board', boardRoute);
 
-app.use('/order', orderRoute);
+app.use('/api/order', orderRoute);
 
-app.use('/management', managementRoute);
+app.use('/api/management', managementRoute);
 
 // will serve index.html for every page refresh.
-// app.get("*", function(req, res) {
-//     res.sendFile(path.join(__dirname, "../public" ,"index.html"));
-// });
+app.get("*", function(req, res) {
+    res.sendFile(path.join("C:\\workspace\\intelliJ\\hafProject\\haf\\public\\index.html"));
+});
 app.listen(port, () => {
     logger.debug(`SERVER ON ... Express is running on http:localhost:${port}`);
 });

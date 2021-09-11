@@ -36,7 +36,7 @@ function Payment({location}) {
 
     //로그인 된 아이디로 유저정보 검색해오기
     useEffect( ()=>{
-        let url = '/customer/userinfo';
+        let url = '/api/customer/userinfo';
         axios.post(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
@@ -128,7 +128,7 @@ function Payment({location}) {
             }//end of if()
         }//end of for()
         let totalQuantity = buyingList.reduce((tQuantity, product)=>{ tQuantity+=product.quantity; return tQuantity; },0)
-        let url = '/order/buying';
+        let url = '/api/order/buying';
         let data = {
             buyingList: buyingList,
             totalQuantity: totalQuantity,

@@ -1,4 +1,4 @@
-import React, {useState, initialState} from "react";
+import React, {useState} from "react";
 import FileUpload from '../../components/home/FileUpload';
 import axios from 'axios';
 import {Form} from "reactstrap";
@@ -13,7 +13,7 @@ const Continents =[
     {key:7, value:"Antarctica"}
 ]
 
-function UploadProduct(props){
+function UploadProduct(){
 
     const [newProduct, setNewProduct] = useState({
         pname: "", description: "두뇌건강 증진에 좋은 의약식품입니다.", price : 0, continents: "Europe", type: "두뇌건강"
@@ -24,7 +24,6 @@ function UploadProduct(props){
     }// end of onTyping()
 
     const[Images, setImages] =useState(1)
-    const[Image, setImage] =useState(initialState);
 
     const updateImages =(newImages) =>{
         // console.log('newImage : ', newImages)
@@ -40,7 +39,7 @@ function UploadProduct(props){
             }
         }
 
-        let url = '/management/addProduct';
+        let url = '/api/management/addProduct';
         //서버에 채운값을을 request에 보낸다
         const body ={
             pname: newProduct.pname,
@@ -52,8 +51,8 @@ function UploadProduct(props){
         }
 
         axios.post(url, body)
-            .then(response => {
-                if(response.data > 0) {
+            .then(res => {
+                if(res.data.result) {
                     alert('상품 업로드 성공')
                     // props.history.push('/');
                 }else {

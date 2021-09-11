@@ -1,7 +1,5 @@
 /* eslint-disable */
 import React, {useCallback, useEffect, useState} from 'react'
-import axios from 'axios'
-import { Jumbotron } from 'react-bootstrap';
 import {
     Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, CardFooter, Button, Badge
@@ -40,7 +38,7 @@ function SearchProduct({location}) {
         dispatch(addBasket(item));
     })
 
-    let goingToBuy = useCallback((product)=>{
+    let goingToBuy = (product)=>{
         history.push({
             pathname:`/order/payment`,
             props:{
@@ -54,7 +52,7 @@ function SearchProduct({location}) {
                 totalPrice : product.price
             }
         });
-    },[]);
+    };
 
     let badge = (sales) =>{
         let text = "";

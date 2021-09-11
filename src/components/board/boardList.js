@@ -9,7 +9,7 @@ function BoardList({history}) {
     // const [inquiryBoards, setInquiryBoards] = useState({});
 
     useEffect(()=>{
-        let url = '/board/getBoards';
+        let url = '/api/board/getBoards';
         let data = { where : '%' , pcode : '%' }
         axios.post(url, data)
             .then(res => {

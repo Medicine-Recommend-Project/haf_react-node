@@ -72,7 +72,7 @@ const ChangeCpw = (props)=> {
             return;
         }
 
-        let url = '/customer/changeCpw' ;
+        let url = '/api/customer/changeCpw' ;
         let data = {cid: props.cid, cpw: changeCpw.cpw, oldCpw: changeCpw.oldCpw};
 
         axios.post(url, data)

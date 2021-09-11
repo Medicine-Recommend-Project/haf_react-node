@@ -18,8 +18,8 @@ function Join({history}){
 
     // 밑에 useEffect로 setOpen관리하는 이유 : https://velog.io/@ohgoodkim/-%EC%97%90%EB%9F%AC%EB%85%B8%ED%8A%B8-Cant-perform-a-React-state-update-on-an-unmounted-component
     useEffect(async () => {
-            axios.get("/customer/isNotLogin")
-                .then(res => {
+        let url = "/api/customer/isNotLogin"
+            axios.get(url).then(res => {
                     if(res.data === "pptrue") {
                         alert('이미 로그인 중입니다.');
                         history.push("/");
@@ -111,7 +111,7 @@ function Join({history}){
             return;
         }
 
-        let url = '/customer/checkId';
+        let url = '/api/customer/checkId';
         let data = {"cId": inputs.cId};
 
         fetch(url,{
@@ -166,7 +166,7 @@ function Join({history}){
 
         if(validationCheck() > 0) return;
 
-        let url = '/customer/join' ;
+        let url = '/api/customer/join' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가

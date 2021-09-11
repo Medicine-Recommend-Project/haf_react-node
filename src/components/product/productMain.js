@@ -9,16 +9,17 @@ import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import CarouselImages from "../home/calrouselImages";
+import {badgeText} from "../../front_common/page_common";
 
 function ProductMain() {
     let dispatch = useDispatch();
     let history = useHistory();
-    const [Products, setProducts] = useState({});
+    const [Products, setProducts] = useState([]);
     const [pageNum, setPageNum] = useState([]);
     const [page, setPage] = useState({
         currentPage : 1,
         endPage : 1,
-        showDataCount : 5
+        showDataCount : 10
     });
 
     useEffect(()=>{
@@ -27,25 +28,26 @@ function ProductMain() {
 
     //페이지 이동
     let movePage = (currentPage, showDataCount) =>{
-        let url = '/product/products' ;
+        let url = '/api/product/products' ;
         let data = {
             currentPage: currentPage,
             showDataCount: showDataCount
         }
         axios.post(url, data)
-            .then(res =>{
-                if(res.data.products.length > 0) {
-                    let pn = [];
-                    setProducts(res.data.products);
-                    setPage({...page, endPage: res.data.endPage});
-
-                    for(let i = 0; i < res.data.endPage; i++){
-                        pn.push(i+1);
-                    }
-                    setPageNum(pn);
+            .then(res => {
+                let pn = [];
+                for(let i = 0; i < res.data.endPage; i++){
+                    pn.push(i+1);
                 }
-                else alert("상품 데이터 가져오기 실패!")
-            })
+                setPageNum(pn);
+                setPage({...page, endPage: res.data.endPage});
+
+                if(res.data.result){
+                    if(res.data.products.length > 0) setProducts(res.data.products);
+                }else{
+                    alert("상품 데이터 가져오기 실패!")
+                }
+            });
     }
 
     // 상세페이지 이동
@@ -85,17 +87,6 @@ function ProductMain() {
         });
     },[]);
 
-    // 뱃지 달기
-    let badge = (sales) =>{
-        let text = "";
-        if(sales < 10) text = "신상품";
-        else if(sales < 50) text = "인기상품";
-        else if(sales < 100) text = "주문폭주";
-        else text = "품절대란";
-
-        return text;
-    }
-
     // 상품 카드
     const Cards = Products.length > 0 && Products.map((product, i)=> {
         return(
@@ -104,7 +95,7 @@ function ProductMain() {
                 <Card style={{width: "250px"}}>
                     <CardImg src={ `${product.images}` } onClick={()=>{productDetail(product.pcode);}} top width="100%" className="mt-2" alt="Card image cap"  style={{ height:'20vh', minWidth:'130px', maxHeight:'200px'}} />
                     <CardBody onClick={()=>{productDetail(product.pcode);}} style={{padding:"10px"}}>
-                            <Badge color="primary">{badge(Number(product.sales))}</Badge>
+                            <Badge color="primary">{badgeText(Number(product.sales))}</Badge>
                         <CardTitle style={{fontSize:"140%", fontWeight:"bold"}}>
                             {product.pname }
                         </CardTitle>

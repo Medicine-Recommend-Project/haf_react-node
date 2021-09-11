@@ -13,7 +13,7 @@ function PaymentList({history}){
     const [images, setImages] = useState([]);
 
     useEffect(()=>{
-        let url = '/customer/isLogin';
+        let url = '/api/customer/isLogin';
         axios.get(url)
             .then(res =>{
                 if(res.data==="ppfalse"){
@@ -21,7 +21,7 @@ function PaymentList({history}){
                     history.push('/customer/login');
                     return;
                 }else{
-                    url = '/order/paymentDetails';
+                    url = '/api/order/paymentDetails';
                     let data = {
                         prevDate:  (''+year+'/'+month+'/'+day), //오늘로부터 한달 전
                         nowDate: (''+year+'/'+(month + 1)+'/'+(day+1)), //오늘 +1일...
