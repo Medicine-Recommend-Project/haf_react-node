@@ -9,14 +9,19 @@ function NavBar2(){
 
 
     let searchType = (type)=>{
-        let url = "/api/product/type";
+        let url = "/api/product/products";
         let data = {type: type};
         axios.post(url, data)
             .then(res => {
-                history.push({
-                    pathname: '/product/search',
-                    product: res.data
-                });
+                if(res.data.result){
+                    history.push({
+                        pathname: '/product/search',
+                        product: res.data.products
+                    });
+                }else{
+                    alert("상품을 가져오지 못했어요.");
+                }
+
             })
             .catch(err => alert('요청이 실패되었습니다.'))
     }

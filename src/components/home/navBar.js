@@ -23,16 +23,19 @@ function NavBar(){
     }
 
     let searchProduct = ()=>{
-        let url = "/api/product/search";
-        let s = ('%'+search+'%').toString()
-        let data = {search: s}
+        let url = "/api/product/products";
+        let data = {search: `%${search}%`};
         axios.post(url, data)
             .then(res => {
                 setSearch("");
-                history.push({
-                    pathname: '/product/search',
-                    product: res.data
-                });
+                if(res.data.result){
+                    history.push({
+                        pathname: '/product/search',
+                        product: res.data.products
+                    });
+                }else{
+                    alert("검색 실패. 다시 시도해주세요.");
+                }
             })
             .catch(err => console.log(err))
     }
