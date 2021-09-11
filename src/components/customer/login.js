@@ -45,12 +45,13 @@ function Login({history}) {
 
         axios.post(url, JSON.stringify(data), { headers: {"Content-Type": "application/json"} })
             .then(res => {
-                if(res.data === 'false'){ alert('아이디/비밀번호가 틀렸습니다.'); }
-                else {
+                if(res.data.result){
                     alert('로그인 성공');
                     dispatch(doLogin());
                     // history.goBack();
                     history.push('/');
+                }else {
+                    alert('아이디/비밀번호가 틀렸습니다.');
                 }
             }).catch(e => {
                 console.log(e);

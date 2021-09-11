@@ -77,11 +77,11 @@ const ChangeCpw = (props)=> {
 
         axios.post(url, data)
             .then(res => {
-                if(res.data > 0){
+                if(res.data.result){
                     alert('수정되었습니다.');
                     props.handler('close');
-                }else if(res.data === 0){
-                    alert('기존의 비밀번호가 틀렸습니다.');
+                // }else if(res.data === 0){
+                //     alert('기존의 비밀번호가 틀렸습니다.');
                 } else{
                     alert('수정에 실패하였습니다. 다시 시도해주세요.');
                 }

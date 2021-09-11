@@ -120,13 +120,17 @@ function Join({history}){
             body: JSON.stringify(data),	// json화 해버리기
         })
             .then(res => res.json())
-            .then(json => {
-                if(json === 0){
-                    setCheck({ ...check, idCk: true });
-                    setCheckRs({...checkRs, idRs:''});
+            .then(data => {
+                if(data.result){
+                    if(data.count === 0){
+                        setCheck({ ...check, idCk: true });
+                        setCheckRs({...checkRs, idRs:''});
+                    }else{
+                        setCheck({ ...check, idCk: false });
+                        setCheckRs({...checkRs, idRs:'❌ 이미 사용중인 아이디입니다!'});
+                    }
                 }else{
-                    setCheck({ ...check, idCk: false });
-                    setCheckRs({...checkRs, idRs:'❌ 이미 사용중인 아이디입니다!'});
+                    alert("중복 검사에 실패하였습니다.")
                 }
             })
             .catch(error => { console.log(error); });
@@ -176,9 +180,9 @@ function Join({history}){
 
         axios.post(url, JSON.stringify(data), { headers: {"Content-Type": "application/json"} })
             .then(res => {
-                if(res.data > 0){
+                if(res.data.result){
                     alert('가입 성공. 환영합니다!');
-                    setInputs({...inputs, cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
+                    setInputs({ cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/customer/login');
                 }else{
                     alert('가입에 실패하였습니다. 다시 시도해주세요.');

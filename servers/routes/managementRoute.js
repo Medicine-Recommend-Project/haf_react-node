@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-const { result, formatQuery} = require('../common/db_common');
+const { result, formatQuery, makingInsertQuestionMark} = require('../common/db_common');
 const multer = require("multer");
 
 let data, sqlQuery, sql;
@@ -41,14 +41,11 @@ router.post('/addProduct', (req, res) =>{
     db.getConnection((err, connection)=>{
         try{
 
-            let column = [ "pcode", "type", "pname", "description", "price", "continents", "images" ]
-            let makeQuestionMark = column.reduce((array, column) =>{
-               if(column === "pcode") array.push("CREATE_PCODE_FC()");
-               else array.push("?");
+            let column = [ "pcode", "type", "pname", "description", "price", "continents", "images" ];
 
-               return array;
-            },[])
-            sqlQuery = ` INSERT INTO product( ${column} ) VALUES (${makeQuestionMark}) `;
+            let questionMark = makingInsertQuestionMark(column, {column: "pcode", value: "CREATE_PCODE_FC()"})
+
+            sqlQuery = ` INSERT INTO product( ${column} ) VALUES (${questionMark}) ;`;
             data = [req.body.type, req.body.pname, req.body.description, req.body.price ,req.body.continents, req.body.images ];
             // logger.info('여기서 이미지 값 내용은? ' + req.body.images);
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {

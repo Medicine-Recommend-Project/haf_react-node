@@ -22,14 +22,19 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
 
     //로그인 된 아이디로 유저정보 검색해오기
     useEffect( ()=>{
-        let url = '/api/api/customer/userinfo';
+        let url = '/api/customer/userinfo';
         axios.post(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
                     alert('로그인이 필요한 서비스입니다.');
                     history.replace('/customer/login');
                 }
-                setUser(res.data);
+                if(res.data.result || res.data.user){
+                    setUser(res.data.user);
+                }else{
+                    alert("정보를 가져오지 못했습니다.");
+                }
+
             })
             .catch(err => console.log(err))
     },[]);
@@ -81,7 +86,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
 
         axios.post(url, JSON.stringify(data), { headers: {"Content-Type": "application/json"} })
             .then(res => {
-                if(res.data > 0){
+                if(res.data.result){
                     alert('수정되었습니다.');
                     setUser({...user, cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/');

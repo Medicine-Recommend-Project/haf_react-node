@@ -45,7 +45,7 @@ function NavBar(){
         let url = '/api/customer/logout';
         axios.get(url)
             .then(res => {
-                if (res.data === 'true') {
+                if (res.data.result) {
                     alert('로그아웃 했습니다.');
                     dispatch(doLogout());
                     history.push('/');

@@ -3,9 +3,10 @@ const router = express.Router();
 const db = require('../../servers/config/db');
 const passport = require('passport');
 const { isLogin, isNotLogin } = require('./passportMw');
-const { result } = require('../common/db_common');
+const { result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark} = require('../common/db_common');
 
 let data, sqlQuery, sql;
+let resData;
 
 router.get("/isLogin", isLogin, (req,res)=>{
     // 로그인 되어있는지 판별
@@ -19,110 +20,170 @@ router.get("/isNotLogin", isNotLogin, (req,res)=>{
 
 // 아이디 중복 체크
 router.post("/checkId", (req,res)=>{
-    sqlQuery = " SELECT COUNT(*) FROM customer WHERE cid = ? ";
-    data = req.body.cId;     //req는 데이터를 받은건데 join.js에서 cID라는 key의 data를 보내줌
+    resData = { result: 0, count: 1 }
+    db.getConnection((err, connection)=>{
+        try{
+            sqlQuery = " SELECT COUNT(*) FROM customer WHERE cid = ? ";
+            data = req.body.cId;
 
-    sql = db.query(sqlQuery, data, (err, row) => {
-            if(!err) {
-                // https://pythonq.com/so/mysql/280172
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row[0]['COUNT(*)']);
-                //res.send([body])의 인자값으론 Buffer object, String, object, Array만 가능한데 위의 코드에선 인자값으로 Integer 값이 들어갔기 대문에 오류 발생.
-                res.send(row[0]['COUNT(*)'].toString());
-            } else {
-                logger.error(err);
-            }
-        });
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                if(row[0]['COUNT(*)'] === 0) {
+                    resData.result = 1;
+                    resData.count = row[0]['COUNT(*)'];
+                }
+                res.json(resData);
+            });
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
+        }
+    });//end of getConnection()
 });
 
 // 회원가입
 router.post('/join', isNotLogin, (req, res) => {
-    sqlQuery = " INSERT INTO customer(cid, cname, cpw, ph, email, zonecode, address, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
-    data = [
-        req.body.cId, req.body.cname, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
-    ];
+    resData = { result: 0 }
+    db.getConnection((err, connection)=>{
+        try{
+            let column = ["cid", "cname", "cpw", "ph", "email", "zonecode", "address", "detailAddress"]
+            let questionMark = makingInsertQuestionMark(column);
+            sqlQuery = ` INSERT INTO customer(${column}) VALUES (${questionMark}) ;`;
+            data = [
+                req.body.cId, req.body.cname, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
+            ];
 
-    sql = db.query(sqlQuery, data, (err, row) => {
-            //insert 가 정상적으로 적용되었는지 판단하는 방법은 result.affectedRows를 활용합니다. (update, delete도 동일)
-            if(!err) {
-                result(sql,row.affectedRows);
-                res.json(row.affectedRows.toString());
-            } else {
-                logger.error(err);
-            }
-    })
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
+                result(sql, row.affectedRows);
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                if(row.affectedRows > 0) resData.result = 1;
+                res.json(resData);
+            });
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
+        }
+    });//end of getConnection()
 });
 
 // 로그인
 router.post('/login', (req, res, next)=>{
-    // logger.info(' login router로 잘 왔음');
+    resData = { result: 0 }
     passport.authenticate('local', (err, user, info)=>{
         if(err){ return next(err); }
         if(user){   // 로그인 성공
-            // logger.info('req.user : ' + JSON.stringify(user));
             req.logIn(user, err =>{ // customCallback 사용시 req.logIn()메서드 필수
                 if(err){ return next(err); }
                 logger.info('req.login : ' + JSON.stringify(user))
-                return res.json('true');
+                resData.result = 1;
             }); // end of req.login()
         } else{
             logger.error('login 실패!!!');
-            return res.json('false');
         }
+        res.json(resData);
     })(req, res, next);  // 미들웨어 내 미들웨어에는 (req, res, next) 붙여줘야함
     //end of authenticate();
 });
 
 // 로그아웃
 router.get('/logout', (req, res)=>{
+    resData = { result: 0 }
     req.logout();
-    // res.redirect('/');
     req.session.destroy();
-    res.json('true')
+    resData.result = 1;
+    res.json(resData);
 });
 
 // mypage 접속 시 해당하는 유저 정보 가져감
 router.post('/userinfo', isLogin, (req, res)=>{
-    sqlQuery = "SELECT * FROM customer WHERE cid = ? " ;
-    data = req.user.cid ;
-    sql = db.query(sqlQuery, data, (err, row)=>{
-        if(err) {
-            logger.error(err);
-        }else{
-            result(sql,JSON.stringify(row[0]));
-            res.json(row[0]);
+    resData = { result: 0, user: {} }
+    db.getConnection((err, connection)=>{
+        try{
+            sqlQuery = "SELECT * FROM customer WHERE cid = ? " ;
+            data = req.user.cid ;
+
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row)=>{
+                result(sql, JSON.stringify(row[0]));
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                resData.result = 1;
+                if(row.length > 0) resData.user = row[0];
+                res.json(resData);
+            })// end of query()
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
         }
-    })// end of query()
+    });//end of getConnection()
+
 })
 
 // mypage에서 회원 정보 수정하기
 router.post('/mypage', (req, res)=>{
-    sqlQuery = "UPDATE customer SET cname = ?, email= ?, ph= ?, zonecode= ?, address= ?, detailAddress= ? WHERE cid = ?" ;
-    data = [req.body.cname, req.body.email , req.body.ph ,req.body.zonecode ,req.body.address ,req.body.detailAddress, req.body.cid];
+    resData = { result: 0 }
+    db.getConnection((err, connection)=>{
+        try{
+            let column = ["cname", "email", "ph", "zonecode", "address", "detailAddress"]
+            let updatePart = makingUpdateQuestionMark(column);
+            sqlQuery = `UPDATE customer SET ${updatePart} WHERE cid = ?` ;
+            data = [req.body.cname, req.body.email , req.body.ph ,req.body.zonecode ,req.body.address ,req.body.detailAddress, req.body.cid];
 
-    sql = db.query(sqlQuery, data, (err, row)=>{
-        result(sql,row.affectedRows);
-        if(err){ logger.error(err); }
-        else{ res.send(row.affectedRows.toString()); }
-    })
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row)=>{
+                result(sql,row.affectedRows);
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                if(row.affectedRows > 0) resData.result = 1;
+
+                res.json(resData);
+            });
+       }catch (err) {
+            logger.error(err)
+       }finally {
+            connection.release();
+       }
+    });//end of getConnection()
 })
 
 // mypage에서 비밀번호 수정하기
 router.post('/changeCpw', (req, res)=>{
-    sqlQuery = "UPDATE customer SET cpw = ? WHERE cid = ? AND cpw = ?" ;
-    data = [req.body.cpw, req.body.cid, req.body.oldCpw];
+    resData = { result: 0 }
+    db.getConnection((err, connection)=>{
+        try{
+            let column = ["cpw"];
+            let updatePart = makingUpdateQuestionMark(column);
+            sqlQuery = `UPDATE customer SET ${updatePart} WHERE cid = ? AND cpw = ? ;` ;
+            data = [req.body.cpw, req.body.cid, req.body.oldCpw];
 
-    sql = db.query(sqlQuery, data, (err, row)=>{
-        result(sql,row.affectedRows);
-        if(err){ logger.error(err); }
-        else{ res.send(row.affectedRows.toString()); }
-    })
+            sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row)=>{
+                result(sql,row.affectedRows);
+                if(err) {
+                    logger.error(err);
+                    throw err;
+                }
+                if(row.affectedRows > 0) resData.result = 1;
+
+                res.json(resData);
+            });
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
+        }
+    });//end of getConnection()
 })
-
-
-
-//console 창에 결과 출력하게 해주는 것
-// let result = (result) =>{
-//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-// }
 
 module.exports = router;
