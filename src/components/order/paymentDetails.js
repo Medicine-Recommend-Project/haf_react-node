@@ -7,10 +7,10 @@ import {changeDateFormatting} from "../../front_common/page_common";
 function PaymentDetails({location}) {
     let history = useHistory();
 
+    const ocode = location.ocode;
     const [orderTitles, setOrderTitles] = useState([]);
     const [orderDetails, setOrderDetails] = useState([]);
-    const [images, setImages] = useState([]);
-    const delFee = orderTitles.length>0 ? (orderTitles.totalPrice >= 100000 ? 0 : 2500) : "0";
+    const delFee = orderTitles.length > 0 ? (orderTitles.totalPrice >= 100000 ? 0 : 2500) : "0";
 
     useEffect(()=>{
         let url = '/api/customer/isLogin';
@@ -22,14 +22,16 @@ function PaymentDetails({location}) {
                     return;
                 }else{
                     url = '/api/order/paymentDetails';
-                    let ocode = location.ocode;
+                    // let data = { ocode: "%" }
                     let data = { ocode: ocode }
 
                     axios.post(url, data)
                         .then(res => {
-                            setOrderTitles(res.data.orderTitle[0]);
-                            setOrderDetails(res.data.orderDetail);
-                            setImages(res.data.images);
+                            console.log(res.data);
+                            if(res.data.result){
+                                setOrderTitles(res.data.orderTitle[0]);
+                                setOrderDetails(res.data.orderDetail);
+                            }
                         })
                         .catch(err => {
                             alert('결제내역 가져오기 에러발생');
@@ -45,40 +47,29 @@ function PaymentDetails({location}) {
 
 
     const paymentDetails = orderDetails.length>0 && orderDetails.map((detail, j) => {
-            let src = "";
-            if(orderDetails.length > 1){
-                for(let i in images){
-                    if(images[i].pcode===detail.pcode){
-                        src = images[i].images;
-                        break;
-                    }
-                }
-            }else{
-                src = images.images
-            }
-            return(
-                <tr key={"-"+j}>
-                    <td style={{width:"10%"}}>{j}</td>
-                    <td>
-                        <Row>
-                            <Col sm={3}>
-                                     <img src={'/'+src} width={70} height={70} alt="상품 미리보기"/>
+        return (
+            <tr key={"-" + j}>
+                <td style={{width: "10%"}}>{j}</td>
+                <td>
+                    <Row>
+                        <Col sm={3}>
+                            <img src={`/${detail.images}`} width={70} height={70} alt="상품 미리보기"/>
 
-                            </Col>
-                            <Col className="text-left">
-                                {detail.pname}
-                            </Col>
-                        </Row>
-                    </td>
-                    <td>
-                        {detail.quantity}
-                    </td>
-                    <td>
-                        <span style={{fontWeight:"bold", fontSize:"120%"}}>{detail.price}</span>원
-                    </td>
-                </tr>
-            );  //return
-        }); // details
+                        </Col>
+                        <Col className="text-left">
+                            {detail.pname}
+                        </Col>
+                    </Row>
+                </td>
+                <td>
+                    {detail.quantity}
+                </td>
+                <td>
+                    <span style={{fontWeight: "bold", fontSize: "120%"}}>{detail.price}</span>원
+                </td>
+            </tr>
+        );  //return
+    });
 
         const titles = (
             <div style={{marginBottom: "100px"}}>

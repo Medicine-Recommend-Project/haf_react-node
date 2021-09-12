@@ -39,6 +39,7 @@ router.post('/products', (req, res)=> {
                     logger.error(err);
                     throw(err);
                 }
+                resData.result = 1;
                 if(row1[0]['count'] > 0){
                     data = [];
                     endPage = Math.ceil(row1[0]['count'] / showDataCount);   // ceil = 올림
@@ -70,7 +71,6 @@ router.post('/products', (req, res)=> {
                             throw(err);
                         }
                         if(row2.length > 0) {
-                            resData.result = 1;
                             resData.products = row2;
                             resData.endPage = endPage;
                         }

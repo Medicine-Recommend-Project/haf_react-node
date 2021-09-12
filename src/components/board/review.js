@@ -4,6 +4,7 @@ import axios from "axios";
 import {Button, Col, Form, FormGroup, Input, Label} from "reactstrap";
 
 function Review({location}) {
+    console.log(location)
     let history = useHistory();
     const [user, setUser] = useState({cid:"", cname:""});
     const [review, setReview] = useState({
@@ -11,13 +12,13 @@ function Review({location}) {
     })
     const [stars, setStars] = useState(['★','★','★','★','★']);
 
-    useCallback(useEffect(()=>{
+    useEffect(()=>{
         if(location.pcode !== ""){
             setReview({...review, ocode: location.product.ocode, pcode: location.product.pcode, pname: location.product.pname})
         }
-    },[location]));
+    },[location])
 
-    useCallback(useEffect(async ()=>{
+    useEffect(async ()=>{
         let url = '/api/customer/isLogin' ;
         axios.get(url)
             .then(res => {
@@ -29,9 +30,7 @@ function Review({location}) {
             })
             .catch(err => console.log(err))
         // console.log(location);
-    },[]));
-
-
+    },[]);
 
     let onTyping = (e)=> {
         setReview({...review, [e.target.name]: e.target.value});

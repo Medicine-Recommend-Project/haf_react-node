@@ -1,132 +1,126 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
-const {result} = require("../common/db_common")
+const {result, makingInsertQuestionMark, makingUpdateQuestionMark, formatArrayQueryArrayData} = require("../common/db_common")
 let data, sqlQuery, sql;
+let resData;
 
 router.post('/buying', (req, res)=>{
-    let buyingList = req.body.buyingList;
+    resData = { result: 0, ocode: "" }
+    db.getConnection((err, connection)=>{
+        try{
+            let buyingList = req.body.buyingList;
+            //이렇게 안하면 ocode가 증가했었나....
+            sqlQuery = "SELECT CREATE_OCODE_FC() AS ocode;";
+            sql = connection.query(sqlQuery, (err, row)=>{
+                result(sql,JSON.stringify(row[0]));
+                if(err){
+                    logger.error(err);
+                    throw(err);
+                }
+                const ocode = row[0].ocode;
 
-    sqlQuery = "SELECT CREATE_OCODE_FC() AS ocode;";
-    sql = db.query(sqlQuery, (err, row)=>{
-        if(err) logger.error(err);
-        else{
-            result(sql,JSON.stringify(row[0]));
-            
-            let ocode = row[0].ocode;
-            // 주문 title 테이블에 저장할 쿼리
-            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid, ph, recipient, zonecode, address, detailAddress, usePoint, method) VALUES (?,?,?,?,?,?,?,?,?,?,?) ;";
-            let query1Param = [
-                ocode, req.body.totalQuantity, req.body.totalPrice, req.user.cid,
-                req.body.deliveryInfo.ph, req.body.deliveryInfo.recipient,
-                req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress,
-                Number(req.body.usePoint), req.body.deliveryInfo.method
-            ]
+                let column1 = ["ocode", "totalQuantity", "totalPrice", "cid", "ph", "recipient", "zonecode", "address", "detailAddress", "usePoint", "method"];
+                let questionMark1 = makingInsertQuestionMark(column1);
+                // 주문 title 테이블에 저장할 쿼리
+                let sqlQuery1 = [`INSERT INTO orderTitle( ${column1} ) VALUES ( ${questionMark1} ) ;`];
+                let data = [
+                    [
+                        ocode, req.body.totalQuantity, req.body.totalPrice, req.user.cid,
+                        req.body.deliveryInfo.ph, req.body.deliveryInfo.recipient,
+                        req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress,
+                        Number(req.body.usePoint), req.body.deliveryInfo.method
+                    ]
+                ]
 
-            let query1 = db.format(sqlQuery1, query1Param)
+                let column2 = ["ocode", "cid", "pcode", "pname", "quantity", "price"];
+                let questionMark2 = makingInsertQuestionMark(column2);
 
-            // 주문 detail 테이블에 저장할 쿼리
-            let sqlQuery2 = " INSERT INTO orderDetail(ocode, cid, pcode, pname, quantity, price) VALUES (?,?,?,?,?,?) ; ";
-            let query2 = "";
-            buyingList.map(product =>{
-                let query2Param = [ocode, req.user.cid, product.pcode, product.pname, product.quantity, (product.price * product.quantity) ];
-                return query2 += db.format(sqlQuery2, query2Param);
-            });
+                //주문 Detail용 쿼리랑 data 추가해주기
+                buyingList.map( product =>{
+                    sqlQuery1.push(` INSERT INTO orderDetail( ${column2} ) VALUES ( ${questionMark2} ) ; `);
+                    data.push([ocode, req.user.cid, product.pcode, product.pname, product.quantity, (product.price * product.quantity)]);
+                });
 
-            let sqlQuery3, query3Param;
-            if(req.body.saveAddr){  //만약 새로운 배송지 정보를 기본 배송지로 저장한다면
-                // 기본 주소지 변경 + 포인트 차감
-                sqlQuery3 = " UPDATE customer SET point = point-?, zonecode = ?, address = ?, detailAddress = ? WHERE cid = ? ;" ;
-                query3Param = [Number(req.body.usePoint), req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress, req.user.cid];
-            }else{
-                // 고객 테이블 point 차감
-                 sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
-                 query3Param = [Number(req.body.usePoint), req.user.cid];
-            }
-            let query3 = db.format(sqlQuery3, query3Param);
+                //만약 새로운 배송지 정보를 기본 배송지로 저장한다면
+                let column3 = ["point"];    //기본 적으로 사용하는 point
+                if(req.body.saveAddr){
+                    // 기본 주소지 변경 + 포인트 차감
+                    column3.push("zonecode", "address", "detailAddress")
+                    data.push([Number(req.body.usePoint), req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress, req.user.cid])
+                }else{
+                    // 고객 테이블 point 차감
+                    data.push([Number(req.body.usePoint), req.user.cid]);
+                }
+                let updateQuery3 = makingUpdateQuestionMark(column3, {column: "point", value: "point - ?"})
+                sqlQuery1.push(` UPDATE customer SET ${updateQuery3} WHERE cid = ? ; `);
 
-            let sql2 = db.query(query1 + query2 + query3,(err, row)=>{
-                if(err) logger.error('에러다 : '+err);
-                else {
+                let sql2 = connection.query( formatArrayQueryArrayData(connection, sqlQuery1, data) ,(err, row)=>{
                     let result1 = row[0].affectedRows;
                     let result2 = row[1].affectedRows;
                     let result3 = row[2].affectedRows;
+                    result(sql2, `title: ${result1}, detail: ${result2}, customer: ${result3}`);
+                    if(err){
+                        logger.error(err);
+                        throw(err);
+                    }
+                    if( result1 > 0 && result2 > 0 && result3 >= 0) {
+                        resData.result = 1;
+                        resData.ocode =ocode;
+                    }
+                    res.json(resData);
+                }); // end of sql2
+            }); // end of sql1
+        }catch (err) {
+            logger.error(err)
+        }finally {
+            connection.release();
+        }
+    });//end of getConnection()
 
-                    logger.debug(sql2.sql +' → title: '+ result1 +', detail: '+ result2 +', customer: '+ result3);
-                    if( result1 > 0 && result2 > 0 && result3 >= 0) res.json({
-                        result: 'success',
-                        ocode: ocode
-                    });
-                    else res.json({ result: 'false' });
-                }
-            }); // end of sql2
-        }// end of if else
-    }); // end of sql1
+
 });// end of router.post('/buying');
 
-router.post('/paymentDetails',(req, res)=>{
+router.post('/paymentDetails',(req, res)=> {
+    resData = {result: 0, orderTitle: [], orderDetail: []}
+    db.getConnection((err, connection) => {
+        try {
+            let joinQuery = ` LEFT JOIN product product ON detail.pcode = product.pcode `;
+            if (req.body.ocode === "%") {
+                sqlQuery = [`SELECT * FROM orderTitle WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC;`];
+                sqlQuery.push(`SELECT detail.*, product.images
+                               FROM orderDetail detail ${joinQuery}
+                               WHERE cid = ? AND odate BETWEEN ? AND ?
+                               ORDER BY odate DESC;`);
+                data = [req.user.cid, req.body.prevDate, req.body.nowDate];
+            } else {
+                sqlQuery = [`SELECT * FROM orderTitle WHERE ocode LIKE ?;`];
+                sqlQuery.push(`SELECT detail.*, product.images
+                               FROM orderDetail detail ${joinQuery}
+                               WHERE ocode LIKE ?;`);
+                data = [req.body.ocode];
+            }
 
-    let sqlQuery2 = "";
-    if(req.body.ocode === "%"){
-        sqlQuery = "SELECT * FROM orderTitle WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
-        sqlQuery2 = "SELECT * FROM orderDetail WHERE cid = ? AND odate BETWEEN ? AND ? ORDER BY odate DESC ;";
-        data = [req.user.cid, req.body.prevDate, req.body.nowDate];
-    }else{
-        sqlQuery = "SELECT * FROM orderTitle WHERE ocode LIKE ? ;";
-        sqlQuery2 = "SELECT * FROM orderDetail WHERE ocode LIKE ? ;";
-        data = [req.body.ocode];
-    }
+            sql = connection.query(formatArrayQueryArrayData(connection, sqlQuery, data, true), (err, row) => {
+                let result1 = row[0];
+                let result2 = row[1];
+                result(sql, `title: ${result1.length} , detail: ${result2.length}`);
+                if (err) {
+                    logger.error(err);
+                    throw(err);
+                }
+                resData.result = 1;
+                if(result1.length > 0) resData.orderTitle = result1;
+                if(result2.length > 0) resData.orderDetail = result2;
 
-    let sqlQuery3 = "SELECT pcode, images FROM product WHERE pcode = ? ;";
-
-    let query1 = db.format(sqlQuery, data);
-    let query2 = db.format(sqlQuery2, data);
-
-    sql = db.query(query1 + query2, (err, row)=>{
-        if(err) logger.error(err);
-        else {
-            let result1 = row[0];
-            let result2 = row[1]
-            logger.debug('SQL 결과1 : '+ query1 + ' ☞ ' + result1.length);
-            logger.debug('SQL 결과2 : '+ query2 + ' ☞ ' + result2.length);
-
-            //중복되는 pcode를 제외하기 위함
-            let pcodes = result2.reduce((pcode, row) => {
-                if(!pcode.includes(row.pcode)) pcode.push(row.pcode);
-                return pcode;
-            },[]);
-
-            let query3 = "";
-            pcodes.map((pcode) => { return query3 += db.format(sqlQuery3, pcode);});
-
-            let sql2 = db.query(query3, (err, row2)=>{
-                if(err) logger.error('sql2 에러 : ' + err);
-                else{
-                    logger.debug(sqlQuery3 +' → ' + row2.length);
-
-                    let img;
-                    if(row2.length > 1){
-                        // 이렇게 안하면 모양이 [[{}}] 배열 내 배열 내 객체의 형태가 됨.
-                        // 꺼내려면 images[0].[0].images 이렇게 해야돼서... 보내주기 전에 2중 배열 제거!
-                        img = row2.map((row) =>{ return row[0]; });
-                    }else if(row2.length === 1){
-                        img = row2[0];
-                    }
-
-                    res.json({
-                        orderTitle: result1,
-                        orderDetail: result2,
-                        images: img
-                    });
-                }// end of if()
-            }); // end of sql2
+                res.json(resData);
+            }); // end of sql()
+        } catch (err) {
+            logger.error(err)
+        } finally {
+            connection.release();
         }
-    }); // end of sql()
+    });//end of getConnection()
 })
-
-//console 창에 결과 출력하게 해주는 것
-// let result = (result) =>{
-//     logger.debug('SQL 결과 : ' + sql.sql + ' ☞ ' + result);
-// }
 
 module.exports = router;

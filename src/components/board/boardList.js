@@ -4,7 +4,7 @@ import {Table} from "reactstrap";
 import {changeDateFormatting} from "../../front_common/page_common";
 
 function BoardList({history}) {
-    const [allBoards, setAllBoards] = useState({});
+    const [allBoards, setAllBoards] = useState([]);
     // const [reviewBoards, setReviewBoards] = useState({});
     // const [inquiryBoards, setInquiryBoards] = useState({});
 
@@ -17,6 +17,12 @@ function BoardList({history}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.push('/customer/login');
                 }
+                console.log(res.data)
+                if(res.data.result){
+                    if(res.data.boards.length > 0) setAllBoards(res.data.boards);
+                }else{
+                    alert("게시물을 가져오지 못하였습니다.");
+                }
                 // else if(res.data.length > 0){
                 //     let boards = res.data;
                 //     let review = []; let inquiry = [];
@@ -28,7 +34,6 @@ function BoardList({history}) {
                 //     setInquiryBoards(inquiry);
                 // }
                 // else if(res.data.length === 0){ setReviewBoards({}); setInquiryBoards({}); }
-                setAllBoards(res.data);
             })
             .catch(err => console.log(err))
     },[]);

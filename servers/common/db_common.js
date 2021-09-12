@@ -8,6 +8,38 @@ exports.formatQuery = (connection, query, data = null) =>{
     return connection.format(query, data);
 }
 
+//multi Query문과 data를 합쳐주는 함수
+// exports.formatMultipleQuerySingleData = (connection, query, data = null) =>{
+//     let formatString = "";
+//     if(typeof query === Array){
+//         query.map((singleQuery)=>{
+//             formatString += connection.format(singleQuery, data);
+//             return formatString;
+//         });
+//     }else{
+//         formatString = connection.format(query, data);
+//     }
+//     return formatString;
+// }
+
+//배열 Query문과 2차원 배열 data를 합쳐주는 함수
+exports.formatArrayQueryArrayData = (connection, query, data, singleIndex = false) =>{
+    //배열을 받아왔는지 체크할 것
+    if(!Array.isArray(query) || !Array.isArray(data)) return "typeError";
+    logger.debug("받아 온 query / length" + query + "/" + query.length);
+    logger.debug("받아 온 data / length" + data + "/" + data.length);
+
+    let formatString = query.reduce((addString, singleQuery, index)=>{
+
+        if(singleIndex) addString += connection.format(singleQuery, data);
+        else addString += connection.format(singleQuery, data[index]);
+
+        return addString;
+    }, "");
+logger.debug(formatString)
+    return formatString;
+}
+
 //INSERT 쿼리문의 ?를 필요한 column의 수만큼 배열로 돌려주는 함수
 exports.makingInsertQuestionMark = (column, options = null) =>{
     let makeQuestionMark = column.reduce((array, column) =>{
@@ -19,9 +51,10 @@ exports.makingInsertQuestionMark = (column, options = null) =>{
     return makeQuestionMark;
 }
 //UPDATE 쿼리문의 ?를 필요한 column의 수만큼 배열로 돌려주는 함수
-exports.makingUpdateQuestionMark = (column) =>{
+exports.makingUpdateQuestionMark = (column, options = null) =>{
     let makeQuestionMark = column.reduce((array, column) =>{
-        array.push(column + " = ? ");
+        if(options &&  options.column === column) array.push(column + "=" + options.value);
+        else array.push(column + " = ? ");
         return array;
     },[]);
 

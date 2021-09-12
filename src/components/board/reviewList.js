@@ -1,6 +1,7 @@
 import React from "react";
 import {Table} from "reactstrap";
-import {changeDateFormatting} from "../../front_common/page_common"
+import {changeDateFormatting} from "../../front_common/page_common";
+
 function ReviewList({props}) {
 
     if(props.length > 0){

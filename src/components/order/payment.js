@@ -14,8 +14,8 @@ function Payment({location}) {
     const regPh1 = /^(\d{3})(\d)/;
     const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
-    const [buyingList, setBuyingList] = useState({});
-    const [user, setUser] = useState({});
+    const [buyingList, setBuyingList] = useState([]);
+    const [user, setUser] = useState({ point: 0 });
     const [point, setPoint] = useState({ usePoint: 0, checked: false });
     const [agree, setAgree] = useState(true)
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
@@ -43,9 +43,13 @@ function Payment({location}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.replace('/customer/login'); //로그인하고나면 장바구니 화면으로 가야돼서 history에 기록을 남기지 않기 위해서 replace()사용!
                 }
-                let userData = {...res.data};
-                setUser(userData);
-                setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress, method: "카드"})
+                if(res.data.result && res.data.user){
+                    let userData = {...res.data.user};
+                    setUser(userData);
+                    setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress, method: "카드"})
+                }else{
+                    alert("정보를 가져오지 못했습니다.")
+                }
             })
             .catch(err => console.log(err))
     },[]);
@@ -139,7 +143,7 @@ function Payment({location}) {
         };
         axios.post(url, data)
             .then(res => {
-                if(res.data.result === 'success'){
+                if(res.data.result){
                     alert('구매가 완료되었습니다.');
                     // console.log('구매 시 보내는 리스트 : ', buyingList)
                     dispatch(buyProduct([buyingList]));
@@ -147,10 +151,8 @@ function Payment({location}) {
                         pathname: '/order/paymentDetails',
                         ocode: res.data.ocode
                     });
-                }else if(res.data.result === 'false'){
+                }else{
                     alert('결제 실패. 다시 시도해주세요.');
-                }else {
-                    alert('문제가 발생했습니다.');
                 }
             })
             .catch(err => console.log(err))

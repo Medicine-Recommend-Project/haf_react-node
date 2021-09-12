@@ -20,6 +20,14 @@ function App(){
         <div className="App">
             <Router>
                 <Link to={`/product/upload`}>IRIRRIRI</Link>
+                <br/>
+                <Link to={`/board`}>board</Link>
+                <br/>
+                <Link to={`/board/review`}>review</Link><br/>
+                <Link to={`/board/inquiry`}>inquiry</Link><br/>
+                <Link to={`/board/reviewList`}>reviewList</Link><br/>
+                <Link to={`/board/inquiryList`}>inquiryList</Link><br/>
+                <Link to={`/board/myBoardList`}>myBoardList</Link><br/>
                 <NavBar/>
                 <NavBar2/>
                 <Switch>

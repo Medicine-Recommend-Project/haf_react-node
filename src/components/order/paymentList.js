@@ -10,7 +10,6 @@ function PaymentList({history}){
 
     const [orderTitles, setOrderTitles] = useState([]);
     const [orderDetails, setOrderDetails] = useState([]);
-    const [images, setImages] = useState([]);
 
     useEffect(()=>{
         let url = '/api/customer/isLogin';
@@ -29,9 +28,12 @@ function PaymentList({history}){
                     }
                     axios.post(url, data)
                         .then(res =>{
-                            setOrderTitles(res.data.orderTitle);
-                            setOrderDetails(res.data.orderDetail);
-                            setImages(res.data.images);
+                            if(res.data.result){
+                                setOrderTitles(res.data.orderTitle);
+                                setOrderDetails(res.data.orderDetail);
+                            }else{
+                                alert("결제내역을 가져오지 못했습니다.")
+                            }
                         })
                         .catch(err => {
                             alert('결제내역 가져오기 에러발생');
@@ -62,24 +64,13 @@ function PaymentList({history}){
     const paymentDetails = orderTitles.length>0 && orderTitles.map((title, i)=> {
         //title의 주문코드와 동일한 detail만 골라서 반복문 돌리기 (이유: title과 detail은 1:N 관계)
         let details = orderDetails.length>0 && orderDetails.filter((detail)=> title.ocode === detail.ocode ).map((detail, j) => {
-            let src;
-            if(orderDetails.length > 1){
-                src = images.length>0 && images.filter((img) => img.pcode === detail.pcode );  //지금 pcode와 동일한 image 정보만 들고오게끔
-            }else{
-                src = images.images
-            }
             return(
                 <tr key={i+"-"+j}>
                     <td style={{width:"10%"}}>{j}</td>
                     <td>
                         <Row onClick={()=>{productDetail(detail.pcode);}} style={{cursor:"pointer"}}>
                             <Col sm={3}>
-                                {(
-                                    images.length > 1 ?
-                                        <img src={ `/${src[0].images}` } width={70} height={70} alt="상품 미리보기"/>
-                                        :
-                                        <img src={ `/${src}` } width={70} height={70} alt="상품 미리보기"/>
-                                )}
+                                <img src={ `/${detail.images}` } width={70} height={70} alt="상품 미리보기"/>
                             </Col>
                             <Col className="text-left">
                                 {detail.pname}
