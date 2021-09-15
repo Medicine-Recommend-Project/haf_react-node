@@ -26,17 +26,12 @@ exports.formatQuery = (connection, query, data = null) =>{
 exports.formatArrayQueryArrayData = (connection, query, data, singleIndex = false) =>{
     //배열을 받아왔는지 체크할 것
     if(!Array.isArray(query) || !Array.isArray(data)) return "typeError";
-    logger.debug("받아 온 query / length" + query + "/" + query.length);
-    logger.debug("받아 온 data / length" + data + "/" + data.length);
-
     let formatString = query.reduce((addString, singleQuery, index)=>{
-
         if(singleIndex) addString += connection.format(singleQuery, data);
         else addString += connection.format(singleQuery, data[index]);
 
         return addString;
     }, "");
-logger.debug(formatString)
     return formatString;
 }
 

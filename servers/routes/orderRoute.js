@@ -54,8 +54,7 @@ router.post('/buying', (req, res)=>{
                 }
                 let updateQuery3 = makingUpdateQuestionMark(column3, {column: "point", value: "point - ?"})
                 sqlQuery1.push(` UPDATE customer SET ${updateQuery3} WHERE cid = ? ; `);
-
-                let sql2 = connection.query( formatArrayQueryArrayData(connection, sqlQuery1, data) ,(err, row)=>{
+                let sql2 = connection.query( formatArrayQueryArrayData(connection, sqlQuery1, data), (err, row)=>{
                     let result1 = row[0].affectedRows;
                     let result2 = row[1].affectedRows;
                     let result3 = row[2].affectedRows;
