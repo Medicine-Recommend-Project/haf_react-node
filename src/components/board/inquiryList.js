@@ -5,13 +5,13 @@ import {changeDateFormatting} from "../../front_common/page_common";
 function InquiryList({props}) {
     const inquiryBoards = props;
 
-    const inquiryBoard =  inquiryBoards.length > 0 && inquiryBoards.map((board,i)=>(
+    const inquiryBoard =  inquiryBoards && inquiryBoards.map((board,i)=>(
         <tr key={i}>
             <td>{board.detailCategory}</td>
             <td>{board.title}</td>
             <td style={{width:"250px",wordBreak:"break-all"}}>{board.content}</td>
             <td>{board.cid}</td>
-            <td>{changeDateFormatting(board.bdate)}</td>
+            <td>{changeDateFormatting(board.bdate, 5)}</td>
         </tr>
     ));
 
@@ -27,7 +27,7 @@ function InquiryList({props}) {
             </tr>
             </thead>
             <tbody>
-            {inquiryBoard.length > 0 ? inquiryBoard :  <tr><td colSpan={6}>문의글이 존재하지 않습니다.</td></tr>}
+            {inquiryBoard ? inquiryBoard :  <tr><td colSpan={6}>문의글이 존재하지 않습니다.</td></tr>}
             </tbody>
         </Table>
     );

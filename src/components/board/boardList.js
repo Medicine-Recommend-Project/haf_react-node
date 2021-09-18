@@ -17,7 +17,6 @@ function BoardList({history}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.push('/customer/login');
                 }
-                console.log(res.data)
                 if(res.data.result){
                     if(res.data.boards.length > 0) setAllBoards(res.data.boards);
                 }else{

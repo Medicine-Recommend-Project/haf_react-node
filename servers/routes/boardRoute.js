@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../servers/config/db');
 const { isLogin, isNotLogin } = require('./passportMw');
-const {result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark} = require("../common/db_common")
+const {result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark, matchingBodyNColumnData} = require("../common/db_common")
 
 let data, sqlQuery, sql;
 let resData;
@@ -12,7 +12,7 @@ router.post("/getBoards", (req,res)=>{
     resData = { result: 0, boards: []}
     db.getConnection((err, connection)=>{
         try{
-            sqlQuery = "SELECT * FROM board WHERE category LIKE ? AND pcode LIKE ? ;";
+            sqlQuery = "SELECT * FROM board WHERE category LIKE ? AND pcode LIKE ? ORDER BY bdate DESC;";
             data = [ req.body.where, req.body.pcode];
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row.length);
@@ -45,6 +45,7 @@ router.post("/getMyBoards", isLogin, (req,res)=>{
                     logger.error(err);
                     throw(err);
                 }
+                resData.result = 1;
                 if(row.length > 0) resData.boards = row;
                 res.json(resData);
             });
@@ -65,7 +66,7 @@ router.post("/inquiry", isLogin, (req,res)=>{
             let questionMark = makingInsertQuestionMark(column);
 
             sqlQuery = `INSERT INTO board( ${column} ) VALUES( ${questionMark} ) ;`;
-            data = [req.body.cid , req.body.pcode ,req.body.category ,req.body.DetailCategory ,req.body.title ,req.body.content];
+            data = matchingBodyNColumnData(column, req.body);
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row.affectedRows);
@@ -93,7 +94,7 @@ router.post("/review", isLogin, (req,res)=>{
             let questionMark = makingInsertQuestionMark(column);
 
             sqlQuery = ` INSERT INTO board( ${column} ) VALUES( ${questionMark} ) ; `;
-            data = [req.body.cid , req.body.pcode, req.body.pcode ,req.body.category ,req.body.rating ,req.body.title ,req.body.content];
+            data = matchingBodyNColumnData(column, req.body);
 
             let column2 = ["addreview"];
             let updateQuery = makingUpdateQuestionMark(column2);

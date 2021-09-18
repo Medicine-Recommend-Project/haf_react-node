@@ -20,11 +20,12 @@ router.post('/products', (req, res)=> {
 
     db.getConnection((err, connection)=>{
         try{
+            logger.debug(req.body);
             data = []
             //전체 상품의 수 구하기
             sqlQuery = "SELECT COUNT(pcode) AS count FROM product ";
             //상품명 검색
-            if(req.body.search) {
+            if(req.body.search && req.body.search !== "랭킹") {
                 sqlQuery += " WHERE pname LIKE ? ";
                 data.push(req.body.search)
             }
@@ -91,7 +92,7 @@ router.post('/products', (req, res)=> {
 
 // 게시판작성 시 상품 고를 수 있게 해주는거 + 로딩되는 김에 로그인 유저 아이디랑 이름 가져가기
 router.get("/getPcode", isLogin, (req,res)=>{
-    resData = { result: 0, row: [], cid: req.user.cid, cname: req.user.cname}
+    resData = { result: 0, panmeList: [], cid: req.user.cid, cname: req.user.cname}
     db.getConnection((err, connection)=>{
         try{
             sqlQuery = " SELECT pcode, pname FROM product ;";
@@ -103,7 +104,7 @@ router.get("/getPcode", isLogin, (req,res)=>{
                 }
                 if(row.length > 0){
                     resData.result = 1
-                    resData.row = row;
+                    resData.panmeList = row;
                 }
                 res.json(resData);
             });

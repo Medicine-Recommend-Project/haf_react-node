@@ -7,6 +7,7 @@ import {FormLabel} from "react-bootstrap";
 function Inquiry({location}) {
     let history = useHistory();
 
+    const pcode = location.pcode;
     const [user, setUser] = useState({cid:"", cname:""});
     const [inquiry, setInquiry] = useState({
         pcode: "", category : "문의", DetailCategory: "상품문의",title: "", content: ""
@@ -21,12 +22,13 @@ function Inquiry({location}) {
                     alert('로그인이 필요한 서비스입니다.');
                     history.push('/customer/login');
                 }
-                setProducts([res.data.row]);
-                setUser({...user, cid: res.data.cid, cname: res.data.cname})
-                if(location.pcode !== ""){
-                    setInquiry({...inquiry, pcode: location.pcode})
+                if(res.data.panmeList.length > 0) setProducts([res.data.panmeList]);
+                if(res.data.cid && res.data.cname) setUser({cid: res.data.cid, cname: res.data.cname});
+                //여기 대충 다 한거 같긴한데, 재 확인할 것
+                if(pcode){
+                    setInquiry({...inquiry, pcode: pcode})
                 }else{
-                    setInquiry({...inquiry, pcode: res.data.row[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
+                    setInquiry({...inquiry, pcode: res.data.panmeList[0].pcode}); // select 안바꾸면 기본 선택값은 첫번째 pcode...
                 }
             })
             .catch(err => console.log(err))
@@ -54,19 +56,15 @@ function Inquiry({location}) {
         }//end of for()
 
         let url = '/api/board/inquiry' ;
-        let data = {};
+        let data = {...inquiry};
 
-        //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
-        for(let i in Object.keys(inquiry)){
-            data[Object.keys(inquiry)[i]] = inquiry[Object.keys(inquiry)[i]];
-        }//end of for
         data["cid"] = user.cid;
         data["cname"] = user.cname;
 
         // console.log('data : ',data);
         axios.post(url, data)
             .then(res => {
-                if(res.data > 0){
+                if(res.data.result){
                     alert('글이 정상적으로 등록되었습니다.');
                     history.push('/');
                 }else{

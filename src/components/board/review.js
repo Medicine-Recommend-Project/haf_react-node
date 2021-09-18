@@ -4,8 +4,9 @@ import axios from "axios";
 import {Button, Col, Form, FormGroup, Input, Label} from "reactstrap";
 
 function Review({location}) {
-    console.log(location)
     let history = useHistory();
+
+    const pcode = location.pcode;
     const [user, setUser] = useState({cid:"", cname:""});
     const [review, setReview] = useState({
         ocode: "", pcode: "", category : "후기", rating: 5, title: "", content: ""
@@ -13,7 +14,7 @@ function Review({location}) {
     const [stars, setStars] = useState(['★','★','★','★','★']);
 
     useEffect(()=>{
-        if(location.pcode !== ""){
+        if(pcode){
             setReview({...review, ocode: location.product.ocode, pcode: location.product.pcode, pname: location.product.pname})
         }
     },[location])
@@ -62,19 +63,14 @@ function Review({location}) {
         }//end of for()
 
         let url = '/api/board/review' ;
-        let data = {};
+        let data = { ...review };
 
-        //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
-        for(let i in Object.keys(review)){
-            data[Object.keys(review)[i]] = review[Object.keys(review)[i]];
-        }//end of for
         data["cid"] = user.cid;
         data["cname"] = user.cname;
 
-        // console.log('data : ',data);
         axios.post(url, data)
             .then(res => {
-                if(res.data > 1){
+                if(res.data.result){
                     alert('글이 정상적으로 등록되었습니다.');
                     history.push('/');
                 }else{
