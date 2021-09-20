@@ -88,7 +88,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
             .then(res => {
                 if(res.data.result){
                     alert('수정되었습니다.');
-                    setUser({...user, cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
+                    setUser({...user, cid: "", cname: "", cpw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/');
                 }else{
                     alert('수정에 실패하였습니다. 다시 시도해주세요.');
@@ -108,7 +108,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
                 <FormGroup row>
                     <Label sm={3}>아이디</Label>
                     <Col sm={9}>
-                        <Input name="cId" value={user.cid} readOnly/>
+                        <Input name="cid" value={user.cid} readOnly/>
                     </Col>
                 </FormGroup>{/* 아이디 FormGroup*/}
                 <FormGroup row>

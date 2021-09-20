@@ -6,6 +6,7 @@ import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
 import Terms from "../home/terms";
+import {addingObjectToObject} from "../../front_common/page_common";
 
 function Payment({location}) {
     let dispatch = useDispatch();
@@ -75,7 +76,7 @@ function Payment({location}) {
             if(point.usePoint === "0" && e.target.value === "00"){ value = "0" }
             if(value > user.point){ value = user.point }
             if(value >= max ) { value = max }
-            setPoint({ ...point, [e.target.name]: value, checked: false });
+            setPoint({ ...point, [e.target.name]: Number(value), checked: false });
         }else if(e.target.checked){
             if(user.point >= max) { value = max }
             else value = user.point
@@ -131,16 +132,22 @@ function Payment({location}) {
                 return;
             }//end of if()
         }//end of for()
-        let totalQuantity = buyingList.reduce((tQuantity, product)=>{ tQuantity+=product.quantity; return tQuantity; },0)
+        let totalQuantity = buyingList.reduce((tQuantity, product)=>{
+            tQuantity+=product.quantity;
+            return tQuantity;
+            }, 0);
         let url = '/api/order/buying';
-        let data = {
+
+        let data = addingObjectToObject(deliveryInfo);
+        data = {
+            ...data,
             buyingList: buyingList,
             totalQuantity: totalQuantity,
             totalPrice: totalPrice,
-            deliveryInfo: deliveryInfo,
             usePoint: point.usePoint,
             saveAddr: saveAddr
         };
+
         axios.post(url, data)
             .then(res => {
                 if(res.data.result){

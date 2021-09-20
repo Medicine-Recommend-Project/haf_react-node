@@ -8,20 +8,6 @@ exports.formatQuery = (connection, query, data = null) =>{
     return connection.format(query, data);
 }
 
-//multi Query문과 data를 합쳐주는 함수
-// exports.formatMultipleQuerySingleData = (connection, query, data = null) =>{
-//     let formatString = "";
-//     if(typeof query === Array){
-//         query.map((singleQuery)=>{
-//             formatString += connection.format(singleQuery, data);
-//             return formatString;
-//         });
-//     }else{
-//         formatString = connection.format(query, data);
-//     }
-//     return formatString;
-// }
-
 //배열 Query문과 2차원 배열 data를 합쳐주는 함수
 exports.formatArrayQueryArrayData = (connection, query, data, singleIndex = false) =>{
     //배열을 받아왔는지 체크할 것
@@ -52,6 +38,33 @@ exports.makingUpdateQuestionMark = (column, options = null) =>{
         else array.push(column + " = ? ");
         return array;
     },[]);
-
     return makeQuestionMark;
+}
+
+exports.matchingBodyNColumnData = (dataList, body, options = null, otherData = null) => {
+    if(!Array.isArray(dataList)) return "typeError";
+    let dataArray = dataList.reduce((array, dataName)=>{
+        // options 있는데 배열인데다가 options 안에 dataName이 있으면
+        if(options && Array.isArray(options.dataName) && options.dataName.includes(dataName)){
+            //해당하는 값을 array에 넣어준다.
+            options.dataName.forEach((optionDataName, index) =>{
+                optionDataName === dataName && array.push(options.value[index]);
+            })
+        }else if(options && options.dataName === dataName){
+            //options가 있는데 배열이 아니면 단일 데이터
+            array.push(options.value);
+        }else if(body[dataName] !== undefined || body.dataName !== undefined){
+            //options가 아닌 칭구들... 숫자 0일때도 if()문에서 걸러져서 undefined 일 때만 거르도록
+            array.push( body[dataName] ?? body.dataName );
+        }
+        return array;
+    },[]);
+
+    if(otherData) {
+        if(Array.isArray(otherData)) dataArray = dataArray.concat(otherData);
+        else dataArray.push(otherData);
+    }
+
+    logger.error("최종 데이터 >>> "+dataArray);
+    return dataArray;
 }

@@ -13,7 +13,7 @@ router.post("/getBoards", (req,res)=>{
     db.getConnection((err, connection)=>{
         try{
             sqlQuery = "SELECT * FROM board WHERE category LIKE ? AND pcode LIKE ? ORDER BY bdate DESC;";
-            data = [ req.body.where, req.body.pcode];
+            data = [ req.body.where, req.body.pcode ];
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row.length);
                 if(err){
@@ -37,7 +37,7 @@ router.post("/getMyBoards", isLogin, (req,res)=>{
     db.getConnection((err, connection)=>{
         try{
             sqlQuery = "SELECT * FROM board WHERE cid = ? AND category LIKE ? AND pcode LIKE ? ORDER BY bdate DESC ;";
-            data = [ req.user.cid, req.body.where, req.body.pcode];
+            data = [ req.user.cid, req.body.where, req.body.pcode ];
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row.length);

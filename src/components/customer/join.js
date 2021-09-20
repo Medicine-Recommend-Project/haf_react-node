@@ -12,7 +12,7 @@ function Join({history}){
     const[checkRs, setCheckRs] = useState({idRs : "", pwRs : "", emRs : "", phRs : ""});
     // input들을 관리하기 위함
     const [inputs, setInputs] = useState({
-        cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""
+        cid: "", cname: "", cpw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""
     });
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
 
@@ -52,7 +52,7 @@ function Join({history}){
         // 비밀번호 일치 여부, 정규식 만족 여부
         switch (e.target.name){
 
-            case 'cId':
+            case 'cid':
                 if(regEng4.test(e.target.value)){
                     setCheckRs({...checkRs, idRs:'⭕ 중복검사를 완료해주세요.'});
                 }else {
@@ -61,7 +61,7 @@ function Join({history}){
                 setCheck({ ...check, idCk: false });
                 break;
 
-            case 'cPw':
+            case 'cpw':
                 if(e.target.value === inputs.pwCheck) { setCheck({ ...check, pwCk: true  }); }
                 else { setCheck({ ...check, pwCk: false }); }
 
@@ -74,7 +74,7 @@ function Join({history}){
                 break;
 
             case 'pwCheck':
-                if(e.target.value === inputs.cPw){ setCheck({ ...check, pwCk: true  }); }
+                if(e.target.value === inputs.cpw){ setCheck({ ...check, pwCk: true  }); }
                 else{ setCheck({ ...check, pwCk: "false" }); }
 
                 //정규식을 만족하지 못하면 pwCk는 false
@@ -105,14 +105,14 @@ function Join({history}){
     let checkId = async() => {
 
         // 아이디 유효성 검사(페이지 로딩 후 빈 값일때도 통신이 되어서)
-        if(!regEng4.test(inputs.cId)){
+        if(!regEng4.test(inputs.cid)){
             setCheckRs({...checkRs, idRs:'❌ 영문/숫자만 포함 된 4글자 이상이여야합니다'});
             setCheck({ ...check, idCk: false });
             return;
         }
 
         let url = '/api/customer/checkId';
-        let data = {"cId": inputs.cId};
+        let data = {"cid": inputs.cid};
 
         fetch(url,{
             method:"post",
@@ -182,7 +182,7 @@ function Join({history}){
             .then(res => {
                 if(res.data.result){
                     alert('가입 성공. 환영합니다!');
-                    setInputs({ cId: "", cname: "", cPw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
+                    setInputs({ cid: "", cname: "", cpw: "", pwCheck: "", ph: "", email: "", zonecode : "", address: "", detailAddress: ""})
                     history.push('/customer/login');
                 }else{
                     alert('가입에 실패하였습니다. 다시 시도해주세요.');
@@ -203,7 +203,7 @@ function Join({history}){
                     <Label sm={3}>아이디<strong style={{color:"red"}}>＊</strong></Label>
                     <Col sm={9}>
                         <InputGroup>
-                            <Input type="text" name="cId" placeholder="영문/숫자 포함 4자리 이상" onChange={onTyping} value={inputs.cId}/>
+                            <Input type="text" name="cid" placeholder="영문/숫자 포함 4자리 이상" onChange={onTyping} value={inputs.cid}/>
                             <Button color="success" onClick={()=>{ checkId();}}>중복검사</Button>
                         </InputGroup>
                         {checkRs.idRs}
@@ -218,7 +218,7 @@ function Join({history}){
                 <FormGroup row>
                     <Label sm={3}> 비밀번호<strong style={{color:"red"}}>*</strong> </Label>
                     <Col sm={9}>
-                        <Input type="password" name="cPw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cPw}/>
+                        <Input type="password" name="cpw" placeholder="비밀번호 입력" onChange={ onTyping } value={inputs.cpw}/>
                         {checkRs.pwRs}
                     </Col>
                 </FormGroup>{/* 비번 FormGroup*/}

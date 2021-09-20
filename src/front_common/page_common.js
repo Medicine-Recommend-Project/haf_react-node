@@ -78,3 +78,10 @@ export function badgeText (sales){
 
     return text;
 }
+//객체에 다른 객체 추가
+export function addingObjectToObject (originObject, returnObject = {}){
+    for(let i in Object.keys(originObject)){
+        returnObject[Object.keys(originObject)[i]] = originObject[Object.keys(originObject)[i]];
+    }
+    return returnObject;
+}

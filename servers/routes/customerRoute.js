@@ -3,9 +3,9 @@ const router = express.Router();
 const db = require('../../servers/config/db');
 const passport = require('passport');
 const { isLogin, isNotLogin } = require('./passportMw');
-const { result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark} = require('../common/db_common');
+const { result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark, matchingBodyNColumnData} = require('../common/db_common');
 
-let data, sqlQuery, sql;
+let data = [], sqlQuery, sql;
 let resData;
 
 router.get("/isLogin", isLogin, (req,res)=>{
@@ -24,7 +24,7 @@ router.post("/checkId", (req,res)=>{
     db.getConnection((err, connection)=>{
         try{
             sqlQuery = " SELECT COUNT(*) FROM customer WHERE cid = ? ";
-            data = req.body.cId;
+            data = req.body.cid;
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql,row[0]['COUNT(*)']);
@@ -54,9 +54,7 @@ router.post('/join', isNotLogin, (req, res) => {
             let column = ["cid", "cname", "cpw", "ph", "email", "zonecode", "address", "detailAddress"]
             let questionMark = makingInsertQuestionMark(column);
             sqlQuery = ` INSERT INTO customer(${column}) VALUES (${questionMark}) ;`;
-            data = [
-                req.body.cId, req.body.cname, req.body.cPw, req.body.ph, req.body.email, req.body.zonecode, req.body.address, req.body.detailAddress
-            ];
+            data = matchingBodyNColumnData(column, req.body);
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row) => {
                 result(sql, row.affectedRows);
@@ -138,10 +136,11 @@ router.post('/mypage', (req, res)=>{
             let column = ["cname", "email", "ph", "zonecode", "address", "detailAddress"]
             let updatePart = makingUpdateQuestionMark(column);
             sqlQuery = `UPDATE customer SET ${updatePart} WHERE cid = ?` ;
-            data = [req.body.cname, req.body.email , req.body.ph ,req.body.zonecode ,req.body.address ,req.body.detailAddress, req.body.cid];
+            data = matchingBodyNColumnData(column, req.body);
+            data.push(req.body.cid);
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row)=>{
-                result(sql,row.affectedRows);
+                result(sql, row.affectedRows);
                 if(err) {
                     logger.error(err);
                     throw err;
