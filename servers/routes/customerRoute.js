@@ -81,6 +81,7 @@ router.post('/login', (req, res, next)=>{
         if(user){   // 로그인 성공
             req.logIn(user, err =>{ // customCallback 사용시 req.logIn()메서드 필수
                 if(err){ return next(err); }
+                res.cookie("c_auth", user.cid);
                 logger.info('req.login : ' + JSON.stringify(user))
                 resData.result = 1;
             }); // end of req.login()
@@ -97,6 +98,7 @@ router.get('/logout', (req, res)=>{
     resData = { result: 0 }
     req.logout();
     req.session.destroy();
+    res.clearCookie('c_auth');
     resData.result = 1;
     res.json(resData);
 });

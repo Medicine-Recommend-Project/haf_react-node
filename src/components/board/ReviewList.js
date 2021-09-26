@@ -15,7 +15,7 @@ function ReviewList({props}) {
         return ratingStar;
     }
 
-     const reviewTable =  reviewBoards && reviewBoards.map((board)=>{
+     const reviewTable =  reviewBoards.length > 0 && reviewBoards.map((board)=>{
         return (
             <>
                 <tr>

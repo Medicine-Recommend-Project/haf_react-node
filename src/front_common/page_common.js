@@ -85,3 +85,48 @@ export function addingObjectToObject (originObject, returnObject = {}){
     }
     return returnObject;
 }
+
+// 쿠키 가져오기 함수
+export function getCookie(cName) {
+    cName = cName + "=";
+    let cookieData = document.cookie;
+    let start = cookieData.indexOf(cName);
+    let cValue = "";
+    if (start !== -1) {
+        start += cName.length;
+        let end = cookieData.indexOf(";", start);
+        if (end === -1) end = cookieData.length;
+        cValue = cookieData.substring(start, end);
+    }
+    return unescape(cValue);
+}
+
+// 쿠키 삭제하기 함수 window.location.host
+export function deleteCookie(name, path = "/", domain = "") {
+    let date = new Date();
+    date.setDate(date.getDate() - 1);
+    let cookieValue =
+        name +
+        "=" +
+        (path && ";path=" + path) +
+        (domain && ";domain=" + domain) +
+        ";expires=" +
+        date.toUTCString();
+
+    if (getCookie(name)) {
+        document.cookie = cookieValue;
+    }
+    return;
+}
+
+// 쿠키 저장하기 함수
+export function setCookie(name, value = "", days = "") {
+    let expires = "";
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    return;
+}
