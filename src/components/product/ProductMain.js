@@ -8,7 +8,7 @@ import {
 import {addBasket} from "../../store/actions/basketActions";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
-import CarouselImages from "../home/calrouselImages";
+import CarouselImages from "../home/CalrouselImages";
 import {badgeText} from "../../front_common/page_common";
 
 function ProductMain() {

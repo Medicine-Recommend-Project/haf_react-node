@@ -5,7 +5,7 @@ const passport = require('passport');
 const { isLogin, isNotLogin } = require('./passportMw');
 const { result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark, matchingBodyNColumnData} = require('../common/db_common');
 
-let data = [], sqlQuery, sql;
+let data , sqlQuery, sql;
 let resData;
 
 router.get("/isLogin", isLogin, (req,res)=>{
@@ -136,8 +136,7 @@ router.post('/mypage', (req, res)=>{
             let column = ["cname", "email", "ph", "zonecode", "address", "detailAddress"]
             let updatePart = makingUpdateQuestionMark(column);
             sqlQuery = `UPDATE customer SET ${updatePart} WHERE cid = ?` ;
-            data = matchingBodyNColumnData(column, req.body);
-            data.push(req.body.cid);
+            data = matchingBodyNColumnData(column, req.body, null, req.body.cid);
 
             sql = connection.query(formatQuery(connection, sqlQuery, data), (err, row)=>{
                 result(sql, row.affectedRows);

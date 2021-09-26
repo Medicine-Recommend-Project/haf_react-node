@@ -1,9 +1,9 @@
 import React from "react";
-import {Link, Route, Switch} from "react-router-dom"
-import UploadProduct from "../components/management/uploadProduct";
-import ProductDetail from "../components/product/productDetail";
-import SearchProduct from "../components/product/searchProduct";
-import Main from "../components/product/productMain";
+import { Route, Switch} from "react-router-dom"
+import UploadProduct from "../components/management/UploadProduct";
+import ProductDetail from "../components/product/ProductDetail";
+import SearchProduct from "../components/product/SearchProduct";
+import Main from "../components/product/ProductMain";
 
 function Product({ match }) {
 

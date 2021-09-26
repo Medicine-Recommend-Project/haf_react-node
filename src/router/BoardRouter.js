@@ -1,11 +1,11 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom"
-import Inquiry from "../components/board/inquiry";
-import Review from "../components/board/review";
-import BoardList from "../components/board/boardList";
-import InquiryList from "../components/board/inquiryList";
-import ReviewList from "../components/board/reviewList";
-import MyBoardList from "../components/board/myBoardList";
+import Inquiry from "../components/board/Inquiry";
+import Review from "../components/board/Review";
+import BoardList from "../components/board/BoardList";
+import InquiryList from "../components/board/InquiryList";
+import ReviewList from "../components/board/ReviewList";
+import MyBoardList from "../components/board/MyBoardList";
 
 function Board({ match }) {
 

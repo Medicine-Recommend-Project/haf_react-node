@@ -3,15 +3,15 @@ import './App.css';
 import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 
 /**********Route import**********/
-import Customer from './router/customerRouter';
-import Main from "./components/product/productMain";
-import Board from "./router/boardRouter";
-import Order from "./router/orderRouter";
-import Product from "./router/productRouter";
-import Management from "./components/management/management";
-import NavBar from "./components/home/navBar";
-import NavBar2 from "./components/home/navBar2";
-import Footer from "./components/home/footer";
+import Customer from './router/CustomerRouter';
+import Main from "./components/product/ProductMain";
+import Board from "./router/BoardRouter";
+import Order from "./router/OrderRouter";
+import Product from "./router/ProductRouter";
+import Management from "./components/management/Management";
+import NavBar from "./components/home/NavBar";
+import NavBar2 from "./components/home/NavBar2";
+import Footer from "./components/home/Footer";
 import React from "react";
 
 
@@ -19,8 +19,6 @@ function App(){
     return(
         <div className="App">
             <Router>
-                <Link to={`/product/upload`}>IRIRRIRI</Link>
-                <br/>
                 <NavBar/>
                 <NavBar2/>
                 <Switch>

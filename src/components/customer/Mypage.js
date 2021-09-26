@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
-import ChangeCpw from "./changeCpw";
+import ChangeCpw from "./ChangeCpw";
 import {Button, Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
 
 function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오는 애라... history를 따로 선언해줘야 먹히네

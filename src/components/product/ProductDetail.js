@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import CommonPI from "../home/commonProductInformations";
+import CommonPI from "../home/CommonProductInformations";
 import {useDispatch} from "react-redux";
 import {addBasket} from "../../store/actions/basketActions";
 import {Image, Tab, Tabs} from "react-bootstrap";
@@ -9,9 +9,9 @@ import {
     Card, CardBody, CardTitle,
     Col, Input, Row, Table
 } from "reactstrap";
-import ReviewList from "../board/reviewList";
-import InquiryList from "../board/inquiryList";
-import DetailInfo from "../home/detailInfo";
+import ReviewList from "../board/ReviewList";
+import InquiryList from "../board/InquiryList";
+import DetailInfo from "../home/DetailInfo";
 import {useRouteMatch} from "react-router-dom";
 import {badgeText} from "../../front_common/page_common";
 

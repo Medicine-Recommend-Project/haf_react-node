@@ -22,8 +22,12 @@ const path = require("path");
 app.use(session({
     secret: 'hafProject',   //세션 암호화
     resave: false,  //세션을 항상 저장할지 여부를 정하는 값. (false 권장)
-    saveUninitialized: true ,   //초기화되지 않은채 스토어에 저장되는 세션
-    // cookie: { secure: false, maxAge: 60000  },
+    saveUninitialized: false ,   //초기화되지 않은채 스토어에 저장되는 세션
+    cookie: {
+        httpOnly: true,
+        secure: true,
+        maxAge: 60000
+    },
 }));
 
 app.use('/uploads', express.static('uploads')); //uploads 폴더로 이동

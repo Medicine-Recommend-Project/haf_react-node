@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
-import Terms from "../home/terms";
+import Terms from "../home/Terms";
 import {addingObjectToObject} from "../../front_common/page_common";
 
 function Payment({location}) {

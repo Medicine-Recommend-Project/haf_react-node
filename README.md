@@ -63,53 +63,53 @@ HAF는 Health Assistance Food의 약자로 의미 그대로 건강보조식품�
 │  │  \
 │  ├─components\
 │  │  ├─board\
-│  │  │      boardList.js\
-│  │  │      inquiry.js\
-│  │  │      inquiryList.js\
+│  │  │      BoardList.js\
+│  │  │      Inquiry.js\
+│  │  │      InquiryList.js\
 │  │  │      inquiryList2.js\
-│  │  │      myBoardList.js\
-│  │  │      review.js\
-│  │  │      reviewList.js\
+│  │  │      MyBoardList.js\
+│  │  │      Review.js\
+│  │  │      ReviewList.js\
 │  │  │      reviewList2.js\
 │  │  │      \
 │  │  ├─customer\
-│  │  │      changeCpw.js\
-│  │  │      join.js\
-│  │  │      login.js\
-│  │  │      mypage.js\
+│  │  │      ChangeCpw.js\
+│  │  │      Join.js\
+│  │  │      Login.js\
+│  │  │      Mypage.js\
 │  │  │      \
 │  │  ├─home\
-│  │  │      calrouselImages.js\
-│  │  │      commonProductInformations.js\
+│  │  │      CalrouselImages.js\
+│  │  │      CommonProductInformations.js\
 │  │  │      DaumPostcodeAPI.js\
-│  │  │      detailInfo.js\
+│  │  │      DetailInfo.js\
 │  │  │      FileUpload.js\
-│  │  │      footer.js\
-│  │  │      navBar.js\
-│  │  │      navBar2.js\
-│  │  │      terms.js\
+│  │  │      Footer.js\
+│  │  │      NavBar.js\
+│  │  │      NavBar2.js\
+│  │  │      Terms.js\
 │  │  │      tooltipContent.js\
 │  │  │      \
 │  │  ├─management\
-│  │  │      management.js\
-│  │  │      uploadProduct.js\
+│  │  │      Management.js\
+│  │  │      UploadProduct.js\
 │  │  │      \
 │  │  ├─order\
-│  │  │      basket.js\
-│  │  │      payment.js\
-│  │  │      paymentDetails.js\
-│  │  │      paymentList.js\
+│  │  │      Basket.js\
+│  │  │      Payment.js\
+│  │  │      PaymentDetails.js\
+│  │  │      PaymentList.js\
 │  │  │      \
 │  │  └─product\
-│  │          productDetail.js\
-│  │          productMain.js\
-│  │          searchProduct.js\
+│  │          ProductDetail.js\
+│  │          ProductMain.js\
+│  │          SearchProduct.js\
 │  │          \
 │  ├─router\
-│  │      boardRouter.js\
-│  │      customerRouter.js\
-│  │      orderRouter.js\
-│  │      productRouter.js\
+│  │      BoardRouter.js\
+│  │      CustomerRouter.js\
+│  │      OrderRouter.js\
+│  │      ProductRouter.js\
 │  │      \
 │  └─store\
 │      │  store.js\

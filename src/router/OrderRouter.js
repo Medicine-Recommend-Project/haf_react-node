@@ -1,10 +1,10 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom";
 
-import Payment from "../components/order/payment";
-import Basket from "../components/order/basket";
-import PaymentDetails from "../components/order/paymentDetails";
-import PaymentList from "../components/order/paymentList";
+import Payment from "../components/order/Payment";
+import Basket from "../components/order/Basket";
+import PaymentDetails from "../components/order/PaymentDetails";
+import PaymentList from "../components/order/PaymentList";
 
 
 function Order({ match }) {

@@ -1,9 +1,9 @@
 import React from "react";
 import {Route, Switch} from "react-router-dom"
 /************Routes************/
-import Join from "../components/customer/join";
-import Login from "../components/customer/login";
-import Mypage from "../components/customer/mypage";
+import Join from "../components/customer/Join";
+import Login from "../components/customer/Login";
+import Mypage from "../components/customer/Mypage";
 
 function Customer({ match }) {
 

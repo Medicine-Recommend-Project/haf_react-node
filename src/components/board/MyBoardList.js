@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useHistory} from "react-router-dom";
-import InquiryList from "./inquiryList";
-import ReviewList from "./reviewList";
+import InquiryList from "./InquiryList";
+import ReviewList from "./ReviewList";
 
 function MyBoardList() {
     let history = useHistory();
