@@ -55,7 +55,13 @@ exports.matchingBodyNColumnData = (dataList, body, options = null, otherData = n
             array.push(options.value);
         }else if(body[dataName] !== undefined || body.dataName !== undefined){
             //options가 아닌 칭구들... 숫자 0일때도 if()문에서 걸러져서 undefined 일 때만 거르도록
-            array.push( body[dataName] ?? body.dataName );
+            //array.push( body[dataName] ?? body.dataName );
+//            원래 위에꺼 썼는데 회사 컴터에서는 못알아듣네? js버전 업그레이드 해줘야하나....급한대로 하드코딩 ㅠㅠ
+            if(body[dataName]){
+                array.push( body[dataName]);
+            }else if(body.dataName){
+                array.push( body.dataName );
+            }
         }
         return array;
     },[]);

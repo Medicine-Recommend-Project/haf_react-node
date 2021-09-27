@@ -2,6 +2,7 @@
 // 로그인이 되어있다면 req.isAuthenticated()가 true일 것이고, 그렇지 않다면 false
 
 exports.isLogin = (req, res, next) => {
+logger.debug(req.isAuthenticated())
     if (req.isAuthenticated()) {
         next();
     } else {

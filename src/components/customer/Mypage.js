@@ -4,6 +4,7 @@ import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import ChangeCpw from "./ChangeCpw";
 import {Button, Col, Form, FormGroup, Input, Label, Row} from "reactstrap";
+import {changePhoneFormatting} from "../../front_common/regularExpressions";
 
 function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오는 애라... history를 따로 선언해줘야 먹히네
     //정규식...
@@ -25,6 +26,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
         let url = '/api/customer/userinfo';
         axios.post(url)
             .then(res => {
+            console.log(res.data)
                 if(res.data === 'ppfalse'){
                     alert('로그인이 필요한 서비스입니다.');
                     history.replace('/customer/login');
@@ -49,11 +51,12 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
                 break;
 
             case 'ph':
-                let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
-                //핸드폰 번호 중간에 - 넣어주기
-                if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
-                if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
-                // - 들어간 번호를 다시 useState의 ph에 넣어주기
+                let value = changePhoneFormatting(e.target.value);
+//                let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
+//                //핸드폰 번호 중간에 - 넣어주기
+//                if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
+//                if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
+//                // - 들어간 번호를 다시 useState의 ph에 넣어주기
                 setUser({ ...user, ph: value });
                 break;
 

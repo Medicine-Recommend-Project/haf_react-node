@@ -8,6 +8,12 @@ const { result, formatQuery, makingInsertQuestionMark, makingUpdateQuestionMark,
 let data, sqlQuery, sql;
 let resData;
 
+/*
+//세션 스토어가 이루어진 후 redirect를 해야함.
+            req.session.save(function(){                               (2)
+                rsp.redirect('/');
+            });
+*/
 router.get("/isLogin", isLogin, (req,res)=>{
     // 로그인 되어있는지 판별
     res.json(req.user);
@@ -18,6 +24,7 @@ router.get("/isNotLogin", isNotLogin, (req,res)=>{
     res.json(req.user);
 })
 
+
 // 로그인
 router.post('/login', (req, res, next)=>{
     resData = { result: 0 }
@@ -26,6 +33,7 @@ router.post('/login', (req, res, next)=>{
         if(user){   // 로그인 성공
             req.logIn(user, err =>{ // customCallback 사용시 req.logIn()메서드 필수
                 if(err){ return next(err); }
+                res.cookie("c_auth", user.cid);
                 logger.info('req.login : ' + JSON.stringify(user))
                 resData.result = 1;
             }); // end of req.login()
@@ -42,9 +50,11 @@ router.get('/logout', (req, res)=>{
     resData = { result: 0 }
     req.logout();
     req.session.destroy();
+    res.clearCookie('c_auth');
     resData.result = 1;
     res.json(resData);
 });
+
 
 // mypage 접속 시 해당하는 유저 정보 가져감
 router.post('/userinfo', isLogin, (req, res)=>{

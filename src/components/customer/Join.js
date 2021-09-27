@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import {Button, Col, Form, FormGroup, Input, InputGroup, Label, Row} from "reactstrap";
+import {changePhoneFormatting} from "../../front_common/regularExpressions";
 
 function Join({history}){
 
@@ -39,10 +40,6 @@ function Join({history}){
     const regEngNum6 = /^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\d)(?=.+?[^\W|_])[\w!@#$%^&*()-_+={}\|\\\/]+$/g;
     // 대/소문자만 4글자 이상되고 숫자는 0회이상 포함
     const regEng4 = /^.*(?=.{4,})([a-zA-Z]+)(\d*)/g;
-    // 핸드폰 번호 입력 시 하이픈 넣어주려고 만듦 (구 번호는 어떻게할지 고민중...)
-    const regNumOnly = /[^0-9]/g;   //숫자가 아닌 것
-    const regPh1 = /^(\d{3})(\d)/;
-    const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
     //input창에 입력을 하면 state에 값을 저장
     let onTyping = (e)=>{
@@ -87,10 +84,11 @@ function Join({history}){
                 break;
 
             case 'ph':
-                let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
-                //핸드폰 번호 중간에 - 넣어주기
-                if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
-                if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
+                let value = changePhoneFormatting(e.target.value);
+//                let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
+//                //핸드폰 번호 중간에 - 넣어주기
+//                if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
+//                if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
                 // - 들어간 번호를 다시 useState의 ph에 넣어주기
                 setInputs({ ...inputs, ph: value });
                 break;
