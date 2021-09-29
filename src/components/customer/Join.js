@@ -85,11 +85,6 @@ function Join({history}){
 
             case 'ph':
                 let value = changePhoneFormatting(e.target.value);
-//                let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
-//                //핸드폰 번호 중간에 - 넣어주기
-//                if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
-//                if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
-                // - 들어간 번호를 다시 useState의 ph에 넣어주기
                 setInputs({ ...inputs, ph: value });
                 break;
 

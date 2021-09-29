@@ -7,13 +7,12 @@ import DaumPostcodeAPI from "../home/DaumPostcodeAPI";
 import {Button, Col, FormGroup, Input, Label, Row, Table} from "reactstrap";
 import Terms from "../home/Terms";
 import {addingObjectToObject} from "../../front_common/page_common";
+import {changePhoneFormatting} from "../../front_common/regularExpressions";
 
 function Payment({location}) {
     let dispatch = useDispatch();
     let history = useHistory();
     const regNumOnly = /[^0-9]/g;   //숫자가 아닌 것
-    const regPh1 = /^(\d{3})(\d)/;
-    const regPh2 = /^(\d{3}-\d{4})(\d)/;
 
     const [buyingList, setBuyingList] = useState([]);
     const [user, setUser] = useState({ point: 0 });
@@ -57,11 +56,7 @@ function Payment({location}) {
 
     let onTyping = (e)=> {
         if(e.target.name === "ph"){
-            let value = e.target.value.replace(regNumOnly, ''); //숫자 외의 다른 문자가 들어오면 없애줌
-            //핸드폰 번호 중간에 - 넣어주기
-            if (regPh1.test(value)) { value = value.replace(regPh1, '$1-$2'); }
-            if (regPh2.test(value)) { value = value.replace(regPh2, '$1-$2'); }
-            // - 들어간 번호를 다시 useState의 ph에 넣어주기
+            let value = changePhoneFormatting(e.target.value);
             setDeliveryInfo({ ...deliveryInfo, ph: value });
             return;
         }
