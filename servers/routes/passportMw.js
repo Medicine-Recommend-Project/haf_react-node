@@ -9,5 +9,4 @@ exports.isLogin = (req, res, next) => {
 exports.isNotLogin = (req, res, next) => {
     if (!req.isAuthenticated()) next();
     else res.send('pptrue');  //로그인 되어있다.
-    }
 };

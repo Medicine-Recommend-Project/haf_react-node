@@ -11,22 +11,12 @@ const DaumPostcodeAPI = (props) => {
         let extraAddress = '';
 
         if (data.addressType === 'R') {
-            if (data.bname !== '') {
-                extraAddress += data.bname;
-            }
-            if (data.buildingName !== '') {
-                extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
-            }
+            if (data.bname !== '') extraAddress += data.bname;
+            if (data.buildingName !== '') extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
             fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
         }
-
-        // console.log('data',data)
-        // console.log('fullAddress',fullAddress)
-        // console.log('data.zonecode', data.zonecode)
-
         //상위 컴포넌트로 정보 전달
         props.handler({fullAddress: fullAddress, zonecode: data.zonecode})
-        
     }
     //api 테마설정
     const themeObj = {
@@ -60,9 +50,10 @@ const DaumPostcodeAPI = (props) => {
                 style={postCodeStyle}
                 theme={themeObj}
                 onComplete={handlePostCode}
-                autoClose
+//                autoClose   //autoClose는 상위 컴포넌트에서 따로 안닫아줄 때 쓰면 될듯
             />
         </div>
+
     );
 }
 

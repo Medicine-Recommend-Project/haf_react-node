@@ -38,7 +38,7 @@ function Join({history}){
     const regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g;
     // 대/소문자,숫자 포함하여 6글자 이상
     const regEngNum6 = /^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\d)(?=.+?[^\W|_])[\w!@#$%^&*()-_+={}\|\\\/]+$/g;
-    // 대/소문자만 4글자 이상되고 숫자는 0회이상 포함
+    // 대/소문자만 1글자 이상되고 숫자는 0회이상 포함
     const regEng4 = /^.*(?=.{4,})([a-zA-Z]+)(\d*)/g;
 
     //input창에 입력을 하면 state에 값을 저장
@@ -131,10 +131,7 @@ function Join({history}){
 
     //daum 주소검색 API 팝업 띄운 후 입력된 값 받아오기
     let daumHandler = (data) => {
-        let api = {};
-        api = data;
-        // console.log(api);
-        setInputs({...inputs, address: api.fullAddress, zonecode : api.zonecode});
+        setInputs({...inputs, address: data.fullAddress, zonecode : data.zonecode});
         setOpen(false);
     }
 
@@ -147,6 +144,7 @@ function Join({history}){
             if(inputs[Object.keys(inputs)[i]] === "" || inputs[Object.keys(inputs)[i]].length === 0){
                 if(Object.keys(inputs)[i] ==="email") continue;
                 alert('빈칸을 채워주세요!');
+                return;
                 vc += 1;
                 break;
             }//end of if()
@@ -164,7 +162,7 @@ function Join({history}){
         if(validationCheck() > 0) return;
 
         let url = '/api/customer/join' ;
-        let data = {};
+        let data = {... inputs};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
         for(let i in Object.keys(inputs)){
@@ -237,12 +235,21 @@ function Join({history}){
                 <FormGroup row>
                     <Label sm={3}>
                         주소<strong style={{color:"red"}}>＊</strong> <br/>
-                        <Button color="success" onClick={event => {event.preventDefault(); setOpen(true);}} size="sm">주소찾기</Button>
+                        <Button color="success" onClick={() => { setOpen(true);}} size="sm">주소찾기</Button>
                     </Label>
-                        <Col lg={9} className={"text-left"}>
-                            {(inputs.zonecode === "" ? <span className="text-muted">주소를 찾아주세요.</span> : <>{inputs.zonecode} <br/> {inputs.address}</>)}
-                            <Input type="text" name="detailAddress" onChange={onTyping } value={inputs.detailAddress} style={{width:"250px"}} placeholder="상세 주소 입력"/>
-                        </Col>
+                    <Col lg={9} className={"text-left"}>
+                        {
+                        (inputs.zonecode === ""
+                            ? <span className="text-muted"> 주소를 찾아주세요. </span>
+                            : <> {inputs.zonecode} <br/> {inputs.address} </>)
+                        }
+                        <Input type="text" name="detailAddress" style={{width:"250px"}} placeholder="상세 주소 입력"
+                            onChange={onTyping}
+                            onClick={()=> {
+                                if(!inputs.zonecode && !inputs.address) setOpen(true);
+                            }}
+                            value={inputs.detailAddress} />
+                    </Col>
                 </FormGroup>{/*주소 FormGroup*/}
                 <br/>
                 <Button onClick={()=>{ submitForm();}} color="success" size="lg">가입하기</Button>
