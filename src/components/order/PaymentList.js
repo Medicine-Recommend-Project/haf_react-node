@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Button, Col, Row, Table} from "reactstrap";
 import {changeDateFormatting} from "../../front_common/page_common";
@@ -45,21 +45,8 @@ function PaymentList({history}){
                 alert('로그인 판단 에러발생');
                 console.log(err);
             }); //end of outer axios
+    // eslint-disable-next-line
     },[]);
-
-
-    let goReview = (ocode, pcode, pname)=>{
-        history.push({
-            pathname:"/board/review",
-            product:{
-                ocode: ocode,
-                pcode: pcode,
-                pname: pname
-            }
-        })
-    }
-
-    let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[]);
 
     const paymentDetails = orderTitles.length>0 && orderTitles.map((title, i)=> {
         //title의 주문코드와 동일한 detail만 골라서 반복문 돌리기 (이유: title과 detail은 1:N 관계)
@@ -68,7 +55,7 @@ function PaymentList({history}){
                 <tr key={i+"-"+j}>
                     <td style={{width:"10%"}}>{j}</td>
                     <td>
-                        <Row onClick={()=>{productDetail(detail.pcode);}} style={{cursor:"pointer"}}>
+                        <Row onClick={()=>{ history.push(`/product/detail/${detail.pcode}`);}} style={{cursor:"pointer"}}>
                             <Col sm={3}>
                                 <img src={ `/${detail.images}` } width={70} height={70} alt="상품 미리보기"/>
                             </Col>
@@ -87,7 +74,16 @@ function PaymentList({history}){
                         {(detail.addreview ?
                             <Button color="danger" disabled>후기 작성완료</Button>
                             :
-                            <Button color="outline-danger" onClick={()=>{goReview(detail.ocode, detail.pcode, detail.pname);}}>후기 작성하기</Button>
+                            <Button color="outline-danger" onClick={()=>{
+                                history.push({
+                                            pathname:"/board/review",
+                                            product:{
+                                                ocode: detail.ocode,
+                                                pcode: detail.pcode,
+                                                pname: detail.pname
+                                            }
+                                        });
+                            }}>후기 작성하기</Button>
                             )}
                         
                     </td>

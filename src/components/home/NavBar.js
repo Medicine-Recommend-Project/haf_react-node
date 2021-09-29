@@ -1,24 +1,20 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Navbar, Nav, Button, Image} from 'react-bootstrap';
 import {Link, useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {Input, InputGroup} from "reactstrap";
 import {doLogout} from "../../store/actions/loginActions";
-import {getCookie} from "../../front_common/page_common";
+import {getCookie, deleteCookie} from "../../front_common/page_common";
 
 function NavBar(){
     let dispatch = useDispatch();
     let history = useHistory();
     let basketCount = useSelector((store)=>store.basketReducer.count);
-    let loginCheck = useSelector((store)=>store.loginReducer.login);
+//    let loginCheck = useSelector((store)=>store.loginReducer.login);
 
-    let c_auth = getCookie("c_auth");
+    const c_auth =  getCookie("c_auth");
     const [search, setSearch] = useState("");
-
-    useLayoutEffect(()=>{
-        c_auth = getCookie("c_auth");
-    },[])
 
     let userIconHandler = ()=>{
         if (c_auth) {
@@ -54,7 +50,7 @@ function NavBar(){
                 if (res.data.result) {
                     alert('로그아웃 했습니다.');
                     dispatch(doLogout());
-                    c_auth = getCookie("c_auth");
+                    deleteCookie("x_auth")
                     history.push('/');
                 } else {
                     alert('로그아웃에 실패하였습니다.');

@@ -14,24 +14,27 @@ function Payment({location}) {
     let history = useHistory();
     const regNumOnly = /[^0-9]/g;   //숫자가 아닌 것
 
-    const [buyingList, setBuyingList] = useState([]);
+    const list = (location.props && location.props.buyingList) ?? [];
+    // eslint-disable-next-line
+    const [buyingList, setBuyingList] = useState(list);
     const [user, setUser] = useState({ point: 0 });
     const [point, setPoint] = useState({ usePoint: 0, checked: false });
     const [agree, setAgree] = useState(true)
     const [open, setOpen] = useState(false);    //다음 주소api를 팝업처럼 관리하기 위함
-    const [deliveryInfo, setDeliveryInfo] = useState({recipient: "", ph: "",zonecode: "", address: "", detailAddress: "", method: "" })
+    const [deliveryInfo, setDeliveryInfo] = useState({})
     const [addr, setAddr] = useState(0);
     const [saveAddr, setSaveAddr] = useState(false);
-    const totalPrice = location.props.totalPrice;
+    const totalPrice = ( location.props && location.props.totalPrice ) ?? 0;
     const delFee = (totalPrice >= 100000 ? 0 : 2500);
-    const finalTotalPrice = location.props.totalPrice - point.usePoint + delFee;
+    const finalTotalPrice = totalPrice - point.usePoint + delFee;
 
     useEffect( ()=> {
-        setOpen(false);
-        setAgree(true);
-        setAddr(0);
-        setSaveAddr(false);
-        setBuyingList(location.props.buyingList);
+        return () => {
+            setOpen(false);
+            setAgree(true);
+            setAddr(0);
+            setSaveAddr(false);
+        }
     },[]);
 
     //로그인 된 아이디로 유저정보 검색해오기
@@ -42,16 +45,18 @@ function Payment({location}) {
                 if(res.data === 'ppfalse'){
                     alert('로그인이 필요한 서비스입니다.');
                     history.replace('/customer/login'); //로그인하고나면 장바구니 화면으로 가야돼서 history에 기록을 남기지 않기 위해서 replace()사용!
+                    return;
                 }
                 if(res.data.result && res.data.user){
                     let userData = {...res.data.user};
                     setUser(userData);
-                    setDeliveryInfo({...deliveryInfo, ph: userData.ph, zonecode: userData.zonecode, address: userData.address, detailAddress: userData.detailAddress, method: "카드"})
+                    setDeliveryInfo({...userData, method: "카드"})
                 }else{
                     alert("정보를 가져오지 못했습니다.")
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log(err));
+     // eslint-disable-next-line
     },[]);
 
     let onTyping = (e)=> {

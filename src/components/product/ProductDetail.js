@@ -6,8 +6,9 @@ import {addBasket} from "../../store/actions/basketActions";
 import {Image, Tab, Tabs} from "react-bootstrap";
 import {
     Badge, Button, ButtonGroup,
+// eslint-disable-next-line
     Card, CardBody, CardTitle,
-    Col, Input, Row, Table
+    Col, Input, Row
 } from "reactstrap";
 import ReviewList from "../board/ReviewList";
 import InquiryList from "../board/InquiryList";
@@ -59,7 +60,8 @@ function ProductDetail({history}) {
             alert('상품 정보를 가져오지 못했습니다. 메인으로 돌아갑니다.');
             history.push('/');
         }//end of if()
-    },[])
+     // eslint-disable-next-line
+    },[]);
 
     //상세정보 가져오기
     const getProductDetail = () =>{
@@ -102,28 +104,29 @@ function ProductDetail({history}) {
         });
     }
 
-    const forBuying = (
-        <Card body inverse style={{padding: 0, backgroundColor:"skyblue"}}>
-            <CardBody>
-                <Row className="text-center">
-                    <Col xs="auto">
-                        수량
-                        <ButtonGroup size="sm" className="mb-2" >
-                            <Button onClick={()=>{ if(quantity === 1) return; setQuantity(prevQuantity => prevQuantity-1 );}} >-1</Button>
-                            <Input value={quantity} style={{width:"30px", padding:0, textAlign:"center"}} disabled/>
-                            <Button onClick={()=>{setQuantity(prevQuantity => prevQuantity+1 );} } >+1</Button>
-                        </ButtonGroup>
-                    </Col>
-                    <Col xs="auto">
-                        <CardTitle tag="h5" className="mb-2" > 총 금액 {product.price * quantity} 원 </CardTitle>
-                    </Col>
-                </Row>
-                <Button onClick={()=>{goingToBuy(product);}} size="md" style={{backgroundColor:"#FFF", color:"#000"}}>구매하기</Button>{'  '}
-                <Button id="goBasket" onClick={()=> { addProduct();}}  size="md"  style={{backgroundColor:"#FFF", color:"#000"}} >장바구니 담기</Button>
-                {/*<TooltipContent props={{text: "장바구니에 물건을 추가했습니다.", target:"goBasket"}}/>*/}
-            </CardBody>
-        </Card>
-    )
+//상품 상세 정보 리모컨 느낌으로
+//    const forBuying = (
+//        <Card body inverse style={{padding: 0, backgroundColor:"skyblue"}}>
+//            <CardBody>
+//                <Row className="text-center">
+//                    <Col xs="auto">
+//                        수량
+//                        <ButtonGroup size="sm" className="mb-2" >
+//                            <Button onClick={()=>{ if(quantity === 1) return; setQuantity(prevQuantity => prevQuantity-1 );}} >-1</Button>
+//                            <Input value={quantity} style={{width:"30px", padding:0, textAlign:"center"}} disabled/>
+//                            <Button onClick={()=>{setQuantity(prevQuantity => prevQuantity+1 );} } >+1</Button>
+//                        </ButtonGroup>
+//                    </Col>
+//                    <Col xs="auto">
+//                        <CardTitle tag="h5" className="mb-2" > 총 금액 {product.price * quantity} 원 </CardTitle>
+//                    </Col>
+//                </Row>
+//                <Button onClick={()=>{goingToBuy(product);}} size="md" style={{backgroundColor:"#FFF", color:"#000"}}>구매하기</Button>{'  '}
+//                <Button id="goBasket" onClick={()=> { addProduct();}}  size="md"  style={{backgroundColor:"#FFF", color:"#000"}} >장바구니 담기</Button>
+//                {/*<TooltipContent props={{text: "장바구니에 물건을 추가했습니다.", target:"goBasket"}}/>*/}
+//            </CardBody>
+//        </Card>
+//    )
 
     let changeStars = (rating) =>{
         let star = '⭐';

@@ -43,6 +43,7 @@ function PaymentDetails({location}) {
                 alert('로그인 판단 에러발생');
                 console.log(err);
             }); //end of outer axios
+     // eslint-disable-next-line
     },[]);
 
 
