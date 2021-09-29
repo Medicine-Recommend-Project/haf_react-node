@@ -24,8 +24,8 @@ app.use(session({
     resave: false,  //세션을 항상 저장할지 여부를 정하는 값. (false 권장)
     saveUninitialized: false ,   //초기화되지 않은채 스토어에 저장되는 세션
     cookie: {
-        httpOnly: true,
-        secure: true,
+        httpOnly: true, // HTTP 프로토콜만 쿠키 사용 가능
+        secure: false,  // HTTPS 프로토콜만 쿠키 사용 가능
         maxAge: 60000
     },
 }));
