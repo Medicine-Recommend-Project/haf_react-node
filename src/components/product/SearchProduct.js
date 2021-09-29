@@ -12,10 +12,10 @@ import CarouselImages from "../home/CalrouselImages";
 function SearchProduct({location}) {
     let dispatch = useDispatch();
     let history = useHistory();
-    const [Products, setProducts] = useState({});
+    const [Products, setProducts] = useState([]);
 
     useEffect(()=>{
-        setProducts(location.product);
+        location.product && setProducts(location.product);
     }, [location]);
 
     let productDetail = useCallback((pcode)=>{ history.push(`/product/detail/${pcode}`); } ,[]);
