@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import { useHistory } from 'react-router-dom';
 import axios from "axios";
 import {Button, Col, Form, FormGroup, Input, Label} from "reactstrap";
@@ -14,12 +14,14 @@ function Review({location}) {
     const [stars, setStars] = useState(['★','★','★','★','★']);
 
     useEffect(()=>{
+        alert("후기!!")
+        console.log(location)
         if(pcode){
             setReview({...review, ocode: location.product.ocode, pcode: location.product.pcode, pname: location.product.pname})
         }
-    },[location])
+    },[]);
 
-    useEffect(async ()=>{
+    useEffect(()=>{
         let url = '/api/customer/isLogin' ;
         axios.get(url)
             .then(res => {

@@ -62,14 +62,15 @@ function FileUpload(props) {
           </Dropzone>
           <div style={{display:'flex' , width:'350px', height:'240px', overflowX:'scroll'}}>
 
-            {Images.map((image, index)=> (
+            {Images.map((image, index)=> {
               // ${image} 안에는 '/uploads/파일명'이 들어있음 ex) uploads\1618413568589_270px-His-tag.png
-              <div onClick={()=>deleteHandler(image)} key={index}>
-                <img style={{ minWidth:'300px', width:'300px', height:'240px'}}
-                  src={`http://localhost:3001/${image}`} />
-              </div>
-
-            ))}
+              return(
+                <div onClick={()=>deleteHandler(image)} key={index}>
+                    <img alt="업로드 이미지" style={{ minWidth:'300px', width:'300px', height:'240px'}}
+                        src={`http://localhost:3001/${image}`} />
+                </div>
+              );
+            })}
           </div>
 
         </div>

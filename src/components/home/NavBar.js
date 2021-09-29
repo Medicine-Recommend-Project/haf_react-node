@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState} from 'react';
 import {Navbar, Nav, Button, Image} from 'react-bootstrap';
 import {Link, useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
@@ -15,7 +15,15 @@ function NavBar(){
 
     const c_auth =  getCookie("c_auth");
     const [search, setSearch] = useState("");
+    // const [c_auth, setC_auth] = useState(getCookie("c_auth"));
 
+    // useEffect(()=>{
+    //     return() => {
+    //         setC_auth(getCookie("c_auth"))
+    //     }
+    // }, [c_auth]);
+
+    // alert(c_auth);
     let userIconHandler = ()=>{
         if (c_auth) {
             history.push("/customer/mypage");
@@ -43,14 +51,14 @@ function NavBar(){
     }
 
 
-    let onLogout = async()=> {
+    let onLogout = ()=> {
         let url = '/api/customer/logout';
         axios.get(url)
             .then(res => {
                 if (res.data.result) {
                     alert('로그아웃 했습니다.');
                     dispatch(doLogout());
-                    deleteCookie("x_auth")
+                    deleteCookie("x_auth");
                     history.push('/');
                 } else {
                     alert('로그아웃에 실패하였습니다.');

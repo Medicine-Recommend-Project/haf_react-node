@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from "react";
+import React from "react";
 import {Table} from "reactstrap";
 import {changeDateFormatting} from "../../front_common/page_common";
 

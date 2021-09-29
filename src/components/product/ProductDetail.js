@@ -31,7 +31,6 @@ function ProductDetail({history}) {
         if(pcode){
             axios.all([getProductDetail(), getBoardList()])
                 .then(axios.spread((productDetailResult, boardListResult)=>{
-                    console.log(productDetailResult, boardListResult)
                     if(productDetailResult.data.result && productDetailResult.data.product) {
                         setProduct(productDetailResult.data.product);
                     }else {

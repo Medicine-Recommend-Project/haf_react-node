@@ -26,7 +26,7 @@ app.use(session({
     cookie: {
         httpOnly: true, // HTTP 프로토콜만 쿠키 사용 가능
         secure: false,  // HTTPS 프로토콜만 쿠키 사용 가능
-        maxAge: 60000
+        // maxAge: 60000
     },
 }));
 

@@ -21,8 +21,9 @@ function Login({history}) {
             })
             .catch(err => {
                 console.log(err);
-            })
-    },[])
+            });
+    // eslint-disable-next-line
+    },[]);
 
     //input창 값 입력 시 useState에 반영
     let onTyping = (e)=> {

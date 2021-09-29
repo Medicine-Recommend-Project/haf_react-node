@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     Carousel,
     CarouselItem,
@@ -8,13 +8,11 @@ import {
 
 
 const CarouselImages = () => {
-    const [img, setImg] = useState([]);
+    let images = ['/banner/bannerMayEvent.png', '/banner/bannerEnergy.png', '/banner/bannerOrganic.png'];
+    // eslint-disable-next-line
+    const [img, setImg] = useState(images);
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
-    let images = ['/banner/bannerMayEvent.png', '/banner/bannerEnergy.png', '/banner/bannerOrganic.png'];
-    useCallback(useEffect(()=>{
-        setImg(images);
-    },[]));
 
     const next = () => {
         if (animating) return;
