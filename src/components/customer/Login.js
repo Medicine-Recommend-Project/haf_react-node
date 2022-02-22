@@ -37,18 +37,13 @@ function Login({history}) {
             return;
         }
         let url = '/api/customer/login';
-        let data = {};
-
-        //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
-        for(let i in Object.keys(user)){
-            data[Object.keys(user)[i]] = user[Object.keys(user)[i]];
-        }//end of for
+        let data = {...user};
 
         axios.post(url, JSON.stringify(data), { headers: {"Content-Type": "application/json"} })
             .then(res => {
                 if(res.data.result){
                     alert('로그인 성공');
-                    dispatch(doLogin());
+                    // dispatch(doLogin());
                     // history.goBack();
                     history.push('/');
                 }else {

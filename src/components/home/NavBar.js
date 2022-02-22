@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Navbar, Nav, Button, Image} from 'react-bootstrap';
 import {Link, useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
@@ -13,18 +13,19 @@ function NavBar(){
     let basketCount = useSelector((store)=>store.basketReducer.count);
 //    let loginCheck = useSelector((store)=>store.loginReducer.login);
 
-    const c_auth =  getCookie("c_auth");
+    // const c_auth =  getCookie("c_auth");
     const [search, setSearch] = useState("");
-    // const [c_auth, setC_auth] = useState(getCookie("c_auth"));
+    const [c_auth, setC_auth] = useState(getCookie("c_auth"));
 
-    // useEffect(()=>{
-    //     return() => {
-    //         setC_auth(getCookie("c_auth"))
-    //     }
-    // }, [c_auth]);
+    useEffect(()=>{
+        return() => {
+            alert("겟 쿠키: " + getCookie("c_auth"));
+            setC_auth(getCookie("c_auth"))
+        }
+    }, [getCookie("c_auth")]);
 
-    // alert(c_auth);
     let userIconHandler = ()=>{
+        alert("userIconHandler : " + c_auth);
         if (c_auth) {
             history.push("/customer/mypage");
         }else {
@@ -58,7 +59,8 @@ function NavBar(){
                 if (res.data.result) {
                     alert('로그아웃 했습니다.');
                     dispatch(doLogout());
-                    deleteCookie("x_auth");
+                    deleteCookie("c_auth");
+                    setC_auth(null);
                     history.push('/');
                 } else {
                     alert('로그아웃에 실패하였습니다.');
