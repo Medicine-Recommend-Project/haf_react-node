@@ -9,7 +9,7 @@ function FileUpload(props) {
   const [Images, setImages] = useState([]);
 
   const dropHandler =(files) => {
-    let url = '/management/image';
+    let url = '/api/management/image';
     let formData = new FormData();
     let config ={ header:{'content-type': 'multipart/form-data'} }
     formData.append("file", files[0]);

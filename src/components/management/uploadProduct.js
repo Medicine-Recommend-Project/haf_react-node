@@ -40,7 +40,7 @@ function UploadProduct(props){
             }
         }
 
-        let url = '/management/addProduct';
+        let url = '/api/management/addProduct';
         //서버에 채운값을을 request에 보낸다
         const body ={
             pname: newProduct.pname,

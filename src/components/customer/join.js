@@ -111,7 +111,7 @@ function Join({history}){
             return;
         }
 
-        let url = '/customer/checkId';
+        let url = '/api/customer/checkId';
         let data = {"cId": inputs.cId};
 
         fetch(url,{
@@ -166,7 +166,7 @@ function Join({history}){
 
         if(validationCheck() > 0) return;
 
-        let url = '/customer/join' ;
+        let url = '/api/customer/join' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가

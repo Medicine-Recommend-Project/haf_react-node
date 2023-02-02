@@ -10,7 +10,7 @@ function Login({history}) {
     const [user, setUser] = useState({ cid : "", cpw : "" });
 
     useEffect(() => {
-        let url = '/customer/isLogin';
+        let url = '/api/customer/isLogin';
         fetch(url,{ method:"get"})
             .then(res => {
                 if(res.data === 'ppfalse'){
@@ -35,7 +35,7 @@ function Login({history}) {
             alert('빈칸을 채워주세요');
             return;
         }
-        let url = '/customer/login';
+        let url = '/api/customer/login';
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
@@ -47,7 +47,7 @@ function Login({history}) {
             .then(res => {
                 if(res.data === 'false'){ alert('아이디/비밀번호가 틀렸습니다.'); }
                 else {
-                    alert('로그인 성공');
+                    // alert('로그인 성공');
                     dispatch(doLogin());
                     // history.goBack();
                     history.push('/');

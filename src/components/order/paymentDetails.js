@@ -12,7 +12,7 @@ function PaymentDetails({location}) {
     const delFee = orderTitles.length>0 ? (orderTitles.totalPrice >= 100000 ? 0 : 2500) : "0";
 
     useEffect(()=>{
-        let url = '/customer/isLogin';
+        let url = '/api/customer/isLogin';
         axios.get(url)
             .then(res =>{
                 if(res.data==="ppfalse"){
@@ -20,7 +20,7 @@ function PaymentDetails({location}) {
                     history.push('/customer/login');
                     return;
                 }else{
-                    url = '/order/paymentDetails';
+                    url = '/api/order/paymentDetails';
                     let ocode = location.ocode;
                     let data = { ocode: ocode }
 

@@ -7,61 +7,65 @@ let data, sqlQuery, sql;
 router.post('/buying', (req, res)=>{
     let buyingList = req.body.buyingList;
 
-    sqlQuery = "SELECT CREATE_OCODE_FC() AS ocode;";
-    sql = db.query(sqlQuery, (err, row)=>{
-        if(err) logger.error(err);
-        else{
-            result(JSON.stringify(row[0]));
-            
-            let ocode = row[0].ocode;
-            // 주문 title 테이블에 저장할 쿼리
-            let sqlQuery1 = " INSERT INTO orderTitle(ocode, totalQuantity, totalPrice, cid, ph, recipient, zonecode, address, detailAddress, usePoint, method) VALUES (?,?,?,?,?,?,?,?,?,?,?) ;";
-            let query1Param = [
-                ocode, req.body.totalQuantity, req.body.totalPrice, req.user.cid,
-                req.body.deliveryInfo.ph, req.body.deliveryInfo.recipient,
-                req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress,
-                Number(req.body.usePoint), req.body.deliveryInfo.method
-            ]
+    // 주문 title 테이블에 저장할 쿼리
+    let sqlQuery1 = " INSERT INTO orderTitle(totalQuantity, totalPrice, cid, ph, recipient, zonecode, address, detailAddress, usePoint, method) VALUES (?,?,?,?,?,?,?,?,?,?) ;";
+    let query1Param = [
+        req.body.totalQuantity, req.body.totalPrice, req.user.cid,
+        req.body.deliveryInfo.ph, req.body.deliveryInfo.recipient,
+        req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress,
+        Number(req.body.usePoint), req.body.deliveryInfo.method
+    ]
 
-            let query1 = db.format(sqlQuery1, query1Param)
+    let query1 = db.format(sqlQuery1, query1Param)
+    let ocode;
 
-            // 주문 detail 테이블에 저장할 쿼리
-            let sqlQuery2 = " INSERT INTO orderDetail(ocode, cid, pcode, pname, quantity, price) VALUES (?,?,?,?,?,?) ; ";
-            let query2 = "";
-            buyingList.map(product =>{
-                let query2Param = [ocode, req.user.cid, product.pcode, product.pname, product.quantity, (product.price * product.quantity) ];
-                return query2 += db.format(sqlQuery2, query2Param);
-            });
+    sql = db.query(query1 ,(err, row)=>{
+        if(err) logger.error('에러다 : '+err);
+        else {
+            let result1 = row[0].affectedRows;
 
-            let sqlQuery3, query3Param;
-            if(req.body.saveAddr){  //만약 새로운 배송지 정보를 기본 배송지로 저장한다면
-                // 기본 주소지 변경 + 포인트 차감
-                sqlQuery3 = " UPDATE customer SET point = point-?, zonecode = ?, address = ?, detailAddress = ? WHERE cid = ? ;" ;
-                query3Param = [Number(req.body.usePoint), req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress, req.user.cid];
-            }else{
-                // 고객 테이블 point 차감
-                 sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
-                 query3Param = [Number(req.body.usePoint), req.user.cid];
+            if( result1 > 0 ) {
+                ocode = row.insertId;
+            }else {
+                res.json({result: 'false'});
             }
-            let query3 = db.format(sqlQuery3, query3Param);
+        }
+    }); // end of sql2
 
-            let sql2 = db.query(query1 + query2 + query3,(err, row)=>{
-                if(err) logger.error('에러다 : '+err);
-                else {
-                    let result1 = row[0].affectedRows;
-                    let result2 = row[1].affectedRows;
-                    let result3 = row[2].affectedRows;
+    // 주문 detail 테이블에 저장할 쿼리
+    let sqlQuery2 = " INSERT INTO orderDetail(ocode, cid, pcode, pname, quantity, price) VALUES (?,?,?,?,?,?) ; ";
+    let query2 = "";
+    buyingList.map(product =>{
+        let query2Param = [ocode, req.user.cid, product.pcode, product.pname, product.quantity, (product.price * product.quantity) ];
+        return query2 += db.format(sqlQuery2, query2Param);
+    });
 
-                    logger.debug(sql2.sql +' → title: '+ result1 +', detail: '+ result2 +', customer: '+ result3);
-                    if( result1 > 0 && result2 > 0 && result3 >= 0) res.json({
-                        result: 'success',
-                        ocode: ocode
-                    });
-                    else res.json({ result: 'false' });
-                }
-            }); // end of sql2
-        }// end of if else
-    }); // end of sql1
+    let sqlQuery3, query3Param;
+    if(req.body.saveAddr){  //만약 새로운 배송지 정보를 기본 배송지로 저장한다면
+        // 기본 주소지 변경 + 포인트 차감
+        sqlQuery3 = " UPDATE customer SET point = point-?, zonecode = ?, address = ?, detailAddress = ? WHERE cid = ? ;" ;
+        query3Param = [Number(req.body.usePoint), req.body.deliveryInfo.zonecode, req.body.deliveryInfo.address, req.body.deliveryInfo.detailAddress, req.user.cid];
+    }else{
+        // 고객 테이블 point 차감
+        sqlQuery3 = " UPDATE customer SET point = point-? WHERE cid = ? ;" ;
+        query3Param = [Number(req.body.usePoint), req.user.cid];
+    }
+    let query3 = db.format(sqlQuery3, query3Param);
+
+    let sql2 = db.query(query2 + query3,(err, row)=>{
+        if(err) logger.error('에러다 : '+err);
+        else {
+            let result2 = row[0].affectedRows;
+            let result3 = row[1].affectedRows;
+
+            if( result2 > 0 && result3 >= 0) res.json({
+                result: 'success',
+                ocode
+            });
+            else res.json({ result: 'false' });
+        }
+    }); // end of sql2
+
 });// end of router.post('/buying');
 
 router.post('/paymentDetails',(req, res)=>{

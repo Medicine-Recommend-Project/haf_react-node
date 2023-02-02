@@ -9,7 +9,7 @@ function NavBar2(){
 
 
     let searchType = (type)=>{
-        let url = "/product/type";
+        let url = "/api/product/type";
         let data = {type: type};
         axios.post(url, data)
             .then(res => {

@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
-const port =process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 // const path = require('path');
-// app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, "../client/build")));
+
 /**********로거 출력용 logger, morgan**********/
 global.logger || (global.logger = require('./config/logger'));  // → 전역에서 사용
 const morganMiddleware = require('./config/morganMiddleware');
@@ -22,10 +23,10 @@ const managementRoute = require('.././servers/routes/managementRoute');
 
 // 반드시 session이후에 passport.initialize()와 passport.session()이 위치해야 합니다.
 app.use(session({
-    secret: 'hafProject',   //세션 암호화
-    resave: false,  //세션을 항상 저장할지 여부를 정하는 값. (false 권장)
-    saveUninitialized: true ,   //초기화되지 않은채 스토어에 저장되는 세션
-    // cookie: { secure: false, maxAge: 60000  },
+  secret: 'hafProject',   //세션 암호화
+  resave: false,  //세션을 항상 저장할지 여부를 정하는 값. (false 권장)
+  saveUninitialized: true,   //초기화되지 않은채 스토어에 저장되는 세션
+  // cookie: { secure: false, maxAge: 60000  },
 }));
 
 app.use('/uploads', express.static('uploads')); //uploads 폴더로 이동
@@ -36,25 +37,25 @@ passportConfig(passport);
 
 app.use(express.json()); // json으로 받아들인 정보를 분석함
 // 아래 옵션이 false면 노드의 querystring 모듈을 사용하여 쿼리스트링을 해석하고, true면 qs 모듈을 사용하여 쿼리스트링을 해석한다
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
 
-app.use('/api', apiRoute);
+app.use('/a', apiRoute);
 
-app.use('/customer', customerRoute);
+app.use('/api/customer', customerRoute);
 
-app.use('/product', productRoute);
+app.use('/api/product', productRoute);
 
-app.use('/board', boardRoute);
+app.use('/api/board', boardRoute);
 
-app.use('/order', orderRoute);
+app.use('/api/order', orderRoute);
 
-app.use('/management', managementRoute);
+app.use('/api/management', managementRoute);
 
 // will serve index.html for every page refresh.
 // app.get("*", function(req, res) {
 //     res.sendFile(path.join(__dirname, "../public" ,"index.html"));
 // });
 app.listen(port, () => {
-    logger.debug(`SERVER ON ... Express is running on http:localhost:${port}`);
+  logger.debug(`SERVER ON ... Express is running on http:localhost:${port}`);
 });

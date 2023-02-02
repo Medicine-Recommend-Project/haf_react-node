@@ -37,7 +37,7 @@ router.post('/image', (req, res) =>{
 router.post('/addProduct', (req, res) =>{
 
 // 받아온 정보들을 DB에 넣어준다
-    sqlQuery = " INSERT INTO product(pcode, type, pname, description, price, continents, images) VALUES (CREATE_PCODE_FC(), ?, ?, ?, ?, ?, ?) ";
+    sqlQuery = " INSERT INTO product(type, pname, description, price, continents, images) VALUES (?, ?, ?, ?, ?, ?) ";
     data = [req.body.type, req.body.pname, req.body.description, req.body.price ,req.body.continents, req.body.images ];
     // logger.info('여기서 이미지 값 내용은? ' + req.body.images);
     sql = db.query(sqlQuery, data, (err, row) => {

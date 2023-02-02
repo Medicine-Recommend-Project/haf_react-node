@@ -24,7 +24,7 @@ function ProductDetail({match, history}) {
     useCallback(useEffect(()=>{
         if(match.params.pcode !== ""){
             let data = {"pcode" : match.params.pcode};
-            let url = '/product/detail' ;
+            let url = '/api/product/detail' ;
             axios.post(url, data)
                 .then(res =>{
                     if(res.data !== null) setProduct(res.data);
@@ -39,7 +39,7 @@ function ProductDetail({match, history}) {
 
     //문의,후기게시글 가져오기
     useCallback(useEffect(()=>{
-        let url = '/board/getBoards';
+        let url = '/api/board/getBoards';
         let data = { where : '%' , pcode : match.params.pcode}
         axios.post(url, data)
             .then(res => {

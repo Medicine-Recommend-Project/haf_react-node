@@ -27,7 +27,7 @@ function ProductMain() {
 
     //페이지 이동
     let movePage = (currentPage, showDataCount) =>{
-        let url = '/product/products' ;
+        let url = '/api/product/products' ;
         let data = {
             currentPage: currentPage,
             showDataCount: showDataCount

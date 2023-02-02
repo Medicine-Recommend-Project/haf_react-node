@@ -18,7 +18,7 @@ function Review({location}) {
     },[location]));
 
     useCallback(useEffect(async ()=>{
-        let url = '/customer/isLogin' ;
+        let url = '/api/customer/isLogin' ;
         axios.get(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
@@ -62,7 +62,7 @@ function Review({location}) {
             }//end of if()
         }//end of for()
 
-        let url = '/board/review' ;
+        let url = '/api/board/review' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가

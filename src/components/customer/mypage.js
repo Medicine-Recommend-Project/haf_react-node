@@ -22,7 +22,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
 
     //로그인 된 아이디로 유저정보 검색해오기
     useEffect( ()=>{
-        let url = '/customer/userinfo';
+        let url = '/api/customer/userinfo';
         axios.post(url)
             .then(res => {
                 if(res.data === 'ppfalse'){
@@ -71,7 +71,7 @@ function Mypage({history}) {  //라우트 통해서 매개변수처럼 들고오
 
     //회원 정보 수정 폼 제출
     let submitForm = async () => {
-        let url = '/customer/mypage' ;
+        let url = '/api/customer/mypage' ;
         let data = {};
 
         //data 객체에 inputs state에 있는 값들을 for 문을 통해 간편히 추가
